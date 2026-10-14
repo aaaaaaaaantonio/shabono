@@ -424,10 +424,14 @@ function aplicarIdioma(idioma, { actualizarUrl = true } = {}) {
 
   guardarIdioma(idiomaActual);
   if (actualizarUrl) {
-    const url = new URL(location.href);
-    if (idiomaActual === IDIOMA_POR_DEFECTO) url.searchParams.delete('lang');
-    else url.searchParams.set('lang', idiomaActual);
-    history.replaceState(null, '', url);
+    try {
+      const url = new URL(location.href);
+      if (idiomaActual === IDIOMA_POR_DEFECTO) url.searchParams.delete('lang');
+      else url.searchParams.set('lang', idiomaActual);
+      history.replaceState(null, '', url);
+    } catch {
+      /* abierto como archivo local o dentro de un visor: el idioma cambia igual, sin tocar la URL */
+    }
   }
 }
 
