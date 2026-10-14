@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
+
+  <!-- Los textos de title, description y Open Graph en inglés están en main.js (TRADUCCIONES.en.meta) -->
+  <title>Shabono by Nelson Méndez | Alta cocina de autor en Puerto Ayacucho, Amazonas</title>
+  <meta name="description" content="Restaurante de alta cocina de autor del chef venezolano Nelson Méndez en Puerto Ayacucho, estado Amazonas, Venezuela. Ingredientes amazónicos y productores locales. Reservas por WhatsApp.">
+
+  <!-- DEMO: evita que los buscadores indexen la demo. QUITAR esta línea al publicar la versión definitiva. -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="canonical" href="https://[DOMINIO]/">
+  <link rel="alternate" hreflang="es" href="https://[DOMINIO]/">
+  <link rel="alternate" hreflang="en" href="https://[DOMINIO]/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://[DOMINIO]/">
+
+  <!-- Open Graph (WhatsApp, Facebook, Instagram) y Twitter/X -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Shabono by Nelson Méndez">
+  <meta property="og:title" content="Shabono by Nelson Méndez · Alta cocina de autor en Puerto Ayacucho">
+  <meta property="og:description" content="Cocina de autor con ingredientes amazónicos del chef venezolano Nelson Méndez, en Puerto Ayacucho, Amazonas. Reserva tu mesa por WhatsApp.">
+  <meta property="og:url" content="https://[DOMINIO]/">
+  <meta property="og:image" content="https://[DOMINIO]/img/og-imagen.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Shabono by Nelson Méndez, restaurante en Puerto Ayacucho, Amazonas">
+  <meta property="og:locale" content="es_VE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta name="theme-color" content="#4F5A2E">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preload" href="fonts/playfair-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+
+  <!-- Datos estructurados. Sustituir los marcadores entre corchetes antes de publicar. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Shabono by Nelson Méndez",
+    "description": "Restaurante de alta cocina de autor del chef venezolano Nelson Méndez en Puerto Ayacucho, estado Amazonas, Venezuela.",
+    "url": "https://[DOMINIO]/",
+    "image": "https://[DOMINIO]/img/og-imagen.jpg",
+    "logo": "https://[DOMINIO]/img/[LOGO SVG o PNG]",
+    "telephone": "[TELÉFONO]",
+    "email": "[CORREO]",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "[DIRECCIÓN]",
+      "addressLocality": "Puerto Ayacucho",
+      "addressRegion": "Amazonas",
+      "addressCountry": "VE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "[LATITUD]",
+      "longitude": "[LONGITUD]"
+    },
+    "hasMap": "[ENLACE MAPS]",
+    "openingHours": "[HORARIOS]",
+    "servesCuisine": "Cocina de autor con ingredientes amazónicos",
+    "priceRange": "[RANGO DE PRECIOS]",
+    "paymentAccepted": "[MÉTODOS]",
+    "acceptsReservations": true,
+    "menu": "https://[DOMINIO]/#menu",
+    "founder": {
+      "@type": "Person",
+      "name": "Nelson Méndez",
+      "jobTitle": "Chef"
+    },
+    "sameAs": ["[INSTAGRAM]"]
+  }
+  </script>
+</head>
+<body>
+  <a class="saltar" href="#contenido" data-i18n="general.saltar">Saltar al contenido</a>
+
+  <!-- 1. NAVEGACIÓN -->
+  <header class="nav" data-nav>
+    <div class="nav__barra contenedor">
+      <a class="nav__marca" href="#inicio" data-i18n-attr="aria-label:general.inicio" aria-label="Shabono by Nelson Méndez, ir al inicio">
+        <img class="nav__logo" src="img/logo-pendiente.svg" width="44" height="44" alt="[LOGO SVG o PNG]">
+        <span class="nav__nombre">Shabono <small>by Nelson Méndez</small></span>
+      </a>
+
+      <button class="nav__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal"
+              data-menu-boton data-i18n-attr="aria-label:general.menuAbrir" aria-label="Abrir menú">
+        <span aria-hidden="true"></span>
+      </button>
+
+      <nav class="nav__menu" id="menu-principal" data-menu data-i18n-attr="aria-label:nav.etiqueta" aria-label="Principal">
+        <ul class="nav__enlaces">
+          <li><a href="#chef" data-i18n="nav.chef">El chef</a></li>
+          <li><a href="#concepto" data-i18n="nav.concepto">El concepto</a></li>
+          <li><a href="#menu" data-i18n="nav.menu">Menú</a></li>
+          <li><a href="#galeria" data-i18n="nav.galeria">Galería</a></li>
+          <li data-seccion="reconocimientos"><a href="#reconocimientos" data-i18n="nav.reconocimientos">Reconocimientos</a></li>
+          <li><a href="#visitanos" data-i18n="nav.visitanos">Visítanos</a></li>
+        </ul>
+        <div class="idioma" role="group" data-i18n-attr="aria-label:general.idioma" aria-label="Idioma">
+          <button type="button" class="idioma__btn" data-lang="es" lang="es" aria-pressed="true">ES</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" class="idioma__btn" data-lang="en" lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="btn btn--reserva nav__reservar" href="#reserva" data-i18n="nav.reservar">Reservar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- 2. PORTADA -->
+    <section class="portada" id="inicio" aria-labelledby="portada-titulo">
+      <picture class="portada__fondo">
+        <source media="(min-width: 700px)" srcset="img/portada.webp" width="1920" height="1200">
+        <!-- La portada no lleva loading="lazy": es la primera imagen visible y debe cargar cuanto antes -->
+        <img src="img/portada-movil.webp" width="900" height="1400" fetchpriority="high" decoding="async"
+             alt="Roca de granito con cascada en el interior de Shabono, de noche"
+             data-i18n-attr="alt:portada.imagenAlt">
+      </picture>
+      <div class="portada__velo" aria-hidden="true"></div>
+
+      <div class="portada__contenido contenedor">
+        <p class="portada__lugar"><span class="punto-luz" aria-hidden="true"></span><span data-i18n="portada.lugar">Alta cocina de autor · Puerto Ayacucho, Amazonas</span></p>
+        <h1 class="portada__titulo" id="portada-titulo">Shabono <span>by Nelson Méndez</span></h1>
+        <p class="portada__frase" data-i18n="portada.frase"><mark class="pendiente">[FRASE DE CONCEPTO]</mark></p>
+        <div class="portada__acciones">
+          <a class="btn btn--reserva btn--grande" href="#reserva" data-i18n="portada.reservar">Reservar</a>
+          <a class="btn btn--contorno btn--grande" href="#menu" data-i18n="portada.verMenu">Ver menú</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. EL CHEF -->
+    <section class="seccion seccion--oscura chef" id="chef" aria-labelledby="chef-titulo">
+      <div class="contenedor chef__rejilla">
+        <figure class="chef__foto marco-halo revelar">
+          <img src="img/chef.webp" width="800" height="800" loading="lazy" decoding="async"
+               alt="Retrato del chef Nelson Méndez" data-i18n-attr="alt:chef.fotoAlt">
+        </figure>
+
+        <div class="chef__texto revelar">
+          <p class="antetitulo" data-i18n="chef.antetitulo">El chef</p>
+          <h2 class="titulo" id="chef-titulo">Nelson Méndez</h2>
+          <p class="chef__rol" data-i18n="chef.rol">Chef y propietario · Chef venezolano con reconocimiento internacional</p>
+          <p data-i18n="chef.bio"><mark class="pendiente">[BIOGRAFÍA]</mark></p>
+
+          <div class="separador" aria-hidden="true"></div>
+
+          <figure class="cita">
+            <blockquote>
+              <p data-i18n="chef.cita"><mark class="pendiente">[CITA DEL CHEF]</mark></p>
+            </blockquote>
+            <figcaption>— Nelson Méndez</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. EL CONCEPTO -->
+    <section class="seccion seccion--clara concepto" id="concepto" aria-labelledby="concepto-titulo">
+      <div class="contenedor">
+        <header class="cabecera revelar">
+          <p class="antetitulo" data-i18n="concepto.antetitulo">El concepto</p>
+          <h2 class="titulo" id="concepto-titulo" data-i18n="concepto.titulo">Cocina de autor con raíz amazónica</h2>
+          <p class="entradilla" data-i18n="concepto.intro"><mark class="pendiente">[TEXTO CONCEPTO]</mark></p>
+        </header>
+
+        <ul class="pilares" role="list">
+          <li class="pilar revelar">
+            <span class="pilar__circulo" aria-hidden="true"></span>
+            <h3 data-i18n="concepto.ingredientesTitulo">Ingredientes amazónicos</h3>
+            <p data-i18n="concepto.ingredientesTexto"><mark class="pendiente">[TEXTO CONCEPTO: ingredientes amazónicos]</mark></p>
+          </li>
+          <li class="pilar revelar">
+            <span class="pilar__circulo" aria-hidden="true"></span>
+            <h3 data-i18n="concepto.origenTitulo">Origen</h3>
+            <p data-i18n="concepto.origenTexto"><mark class="pendiente">[TEXTO CONCEPTO: origen]</mark></p>
+          </li>
+          <li class="pilar revelar">
+            <span class="pilar__circulo" aria-hidden="true"></span>
+            <h3 data-i18n="concepto.productoresTitulo">Productores locales</h3>
+            <p data-i18n="concepto.productoresTexto"><mark class="pendiente">[TEXTO CONCEPTO: productores locales]</mark></p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. MENÚ -->
+    <section class="seccion seccion--oscura menu" id="menu" aria-labelledby="menu-titulo">
+      <div class="contenedor">
+        <header class="cabecera revelar">
+          <p class="antetitulo" data-i18n="menu.antetitulo">Menú</p>
+          <h2 class="titulo" id="menu-titulo" data-i18n="menu.titulo">La carta</h2>
+          <p class="entradilla" data-i18n="menu.intro">Una selección de nuestra carta. Precios en dólares estadounidenses (USD).</p>
+        </header>
+
+        <ol class="platos" role="list">
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">01</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.0.nombre"><mark class="pendiente">[NOMBRE PLATO 1]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.0.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 1]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.0.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">02</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.1.nombre"><mark class="pendiente">[NOMBRE PLATO 2]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.1.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 2]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.1.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">03</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.2.nombre"><mark class="pendiente">[NOMBRE PLATO 3]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.2.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 3]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.2.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">04</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.3.nombre"><mark class="pendiente">[NOMBRE PLATO 4]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.3.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 4]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.3.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">05</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.4.nombre"><mark class="pendiente">[NOMBRE PLATO 5]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.4.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 5]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.4.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+          <li class="plato revelar">
+            <span class="plato__num" aria-hidden="true">06</span>
+            <h3 class="plato__nombre" data-i18n="menu.platos.5.nombre"><mark class="pendiente">[NOMBRE PLATO 6]</mark></h3>
+            <p class="plato__desc" data-i18n="menu.platos.5.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 6]</mark></p>
+            <p class="plato__precio" data-i18n="menu.platos.5.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+          </li>
+        </ol>
+
+        <div class="degustacion revelar">
+          <div>
+            <h3 class="degustacion__titulo" data-i18n="menu.degustacionTitulo">Menú degustación</h3>
+            <p data-i18n="menu.degustacionTexto"><mark class="pendiente">[DETALLE DEGUSTACIÓN: número de tiempos, precio USD, maridaje]</mark></p>
+          </div>
+          <a class="btn btn--reserva" href="#reserva" data-i18n="menu.degustacionBoton">Reservar degustación</a>
+        </div>
+
+        <div class="menu__notas">
+          <p data-i18n="menu.alergias">¿Alergias o restricciones alimentarias? Indícalo al hacer tu reserva. <mark class="pendiente">[NOTA SOBRE ALERGIAS]</mark></p>
+          <p data-i18n="menu.impuestos"><mark class="pendiente">[IMPUESTOS Y SERVICIO: indicar si los precios los incluyen]</mark></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. GALERÍA -->
+    <section class="seccion seccion--clara galeria" id="galeria" aria-labelledby="galeria-titulo">
+      <div class="contenedor">
+        <header class="cabecera revelar">
+          <p class="antetitulo" data-i18n="galeria.antetitulo">Galería</p>
+          <h2 class="titulo" id="galeria-titulo" data-i18n="galeria.titulo">Shabono por dentro</h2>
+          <p class="entradilla" data-i18n="galeria.intro">Toca una imagen para ampliarla.</p>
+        </header>
+
+        <!-- Cada foto tiene dos tamaños: NN-600.webp (miniatura cuadrada) y NN-1200.webp (ampliada, 3:2).
+             Sin JavaScript, el enlace abre la imagen grande directamente. -->
+        <ul class="galeria__rejilla" role="list" data-galeria>
+          <li><a class="galeria__item" href="img/galeria/01-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/01-600.webp" srcset="img/galeria/01-600.webp 600w, img/galeria/01-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 44rem, (min-width: 40rem) 66vw, 100vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 1 de 9" data-i18n-attr="alt:galeria.fotos.0">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/02-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/02-600.webp" srcset="img/galeria/02-600.webp 600w, img/galeria/02-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 2 de 9" data-i18n-attr="alt:galeria.fotos.1">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/03-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/03-600.webp" srcset="img/galeria/03-600.webp 600w, img/galeria/03-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 3 de 9" data-i18n-attr="alt:galeria.fotos.2">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/04-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/04-600.webp" srcset="img/galeria/04-600.webp 600w, img/galeria/04-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 4 de 9" data-i18n-attr="alt:galeria.fotos.3">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/05-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/05-600.webp" srcset="img/galeria/05-600.webp 600w, img/galeria/05-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 5 de 9" data-i18n-attr="alt:galeria.fotos.4">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/06-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/06-600.webp" srcset="img/galeria/06-600.webp 600w, img/galeria/06-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 6 de 9" data-i18n-attr="alt:galeria.fotos.5">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/07-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/07-600.webp" srcset="img/galeria/07-600.webp 600w, img/galeria/07-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 7 de 9" data-i18n-attr="alt:galeria.fotos.6">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/08-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/08-600.webp" srcset="img/galeria/08-600.webp 600w, img/galeria/08-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 8 de 9" data-i18n-attr="alt:galeria.fotos.7">
+          </a></li>
+          <li><a class="galeria__item" href="img/galeria/09-1200.webp">
+            <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
+            <img src="img/galeria/09-600.webp" srcset="img/galeria/09-600.webp 600w, img/galeria/09-1200.webp 1200w"
+                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 9 de 9" data-i18n-attr="alt:galeria.fotos.8">
+          </a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. RECONOCIMIENTOS
+         Oculta mientras no haya datos verificados. Para activarla, quita la clase "seccion--oculta"
+         de esta etiqueta <section>: el enlace del menú aparece solo. -->
+    <section class="seccion seccion--oscura reconocimientos seccion--oculta" id="reconocimientos" aria-labelledby="reconocimientos-titulo">
+      <div class="contenedor">
+        <header class="cabecera revelar">
+          <p class="antetitulo" data-i18n="reconocimientos.antetitulo">Reconocimientos</p>
+          <h2 class="titulo" id="reconocimientos-titulo" data-i18n="reconocimientos.titulo">Premios y prensa</h2>
+        </header>
+
+        <div class="reconocimientos__columnas">
+          <div class="revelar">
+            <h3 class="reconocimientos__subtitulo" data-i18n="reconocimientos.premios">Premios</h3>
+            <!-- Copia un <li> por cada premio verificado: año, nombre y enlace a la fuente -->
+            <ul class="logros" role="list">
+              <li class="logro">
+                <span class="logro__anio"><mark class="pendiente">[AÑO]</mark></span>
+                <span class="logro__nombre"><mark class="pendiente">[NOMBRE DEL PREMIO]</mark></span>
+                <a class="logro__enlace" href="#reconocimientos"><mark class="pendiente">[ENLACE]</mark></a>
+                <span class="logro__estado"><mark class="pendiente">[PENDIENTE DE VERIFICAR]</mark></span>
+              </li>
+            </ul>
+          </div>
+          <div class="revelar">
+            <h3 class="reconocimientos__subtitulo" data-i18n="reconocimientos.prensa">Prensa</h3>
+            <ul class="logros" role="list">
+              <li class="logro">
+                <span class="logro__anio"><mark class="pendiente">[AÑO]</mark></span>
+                <span class="logro__nombre"><mark class="pendiente">[MEDIO Y TÍTULO DEL ARTÍCULO]</mark></span>
+                <a class="logro__enlace" href="#reconocimientos"><mark class="pendiente">[ENLACE]</mark></a>
+                <span class="logro__estado"><mark class="pendiente">[PENDIENTE DE VERIFICAR]</mark></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. VISÍTANOS -->
+    <section class="seccion seccion--salvia visitanos" id="visitanos" aria-labelledby="visitanos-titulo">
+      <div class="contenedor">
+        <header class="cabecera revelar">
+          <p class="antetitulo" data-i18n="visitanos.antetitulo">Visítanos</p>
+          <h2 class="titulo" id="visitanos-titulo" data-i18n="visitanos.titulo">Te esperamos en Puerto Ayacucho</h2>
+        </header>
+
+        <div class="visitanos__rejilla">
+          <div class="mapa revelar" data-mapa>
+            <div class="mapa__fachada">
+              <span class="mapa__luces" aria-hidden="true"><span></span></span>
+              <p class="mapa__texto" data-mapa-pendiente data-i18n="visitanos.mapaPendiente">Mapa pendiente <mark class="pendiente">[ENLACE MAPS]</mark></p>
+              <p class="mapa__texto" data-mapa-listo hidden data-i18n="visitanos.mapaNota">El mapa se carga solo si lo pides, para ahorrar datos.</p>
+              <button class="btn btn--contorno" type="button" data-mapa-cargar hidden data-i18n="visitanos.mapaCargar">Ver mapa</button>
+            </div>
+          </div>
+
+          <div class="datos">
+            <div class="dato revelar">
+              <h3 class="dato__titulo" data-i18n="visitanos.direccionTitulo">Dirección</h3>
+              <address>
+                <span data-i18n="visitanos.direccion"><mark class="pendiente">[DIRECCIÓN]</mark></span><br>
+                <span data-i18n="visitanos.ciudad">Puerto Ayacucho, estado Amazonas, Venezuela</span>
+              </address>
+              <p class="dato__enlace">
+                <a class="enlace" data-enlace-maps target="_blank" rel="noopener" data-i18n="visitanos.abrirMaps">Abrir en Google Maps</a>
+                <mark class="pendiente" data-pendiente-maps>[ENLACE MAPS]</mark>
+              </p>
+            </div>
+
+            <div class="dato revelar">
+              <h3 class="dato__titulo" data-i18n="visitanos.horariosTitulo">Horarios</h3>
+              <p data-i18n="visitanos.horarios"><mark class="pendiente">[HORARIOS]</mark></p>
+            </div>
+
+            <div class="dato revelar">
+              <h3 class="dato__titulo" data-i18n="visitanos.pagoTitulo">Métodos de pago</h3>
+              <p data-i18n="visitanos.pago"><mark class="pendiente">[MÉTODOS]</mark></p>
+            </div>
+
+            <div class="dato revelar">
+              <h3 class="dato__titulo" data-i18n="visitanos.llegarTitulo">Cómo llegar a Puerto Ayacucho</h3>
+              <dl class="llegar">
+                <dt data-i18n="visitanos.avion">En avión</dt>
+                <dd data-i18n="visitanos.avionTexto"><mark class="pendiente">[CÓMO LLEGAR: EN AVIÓN]</mark></dd>
+                <dt data-i18n="visitanos.carretera">Por carretera</dt>
+                <dd data-i18n="visitanos.carreteraTexto"><mark class="pendiente">[CÓMO LLEGAR: POR CARRETERA]</mark></dd>
+                <dt data-i18n="visitanos.enCiudad">En la ciudad</dt>
+                <dd data-i18n="visitanos.enCiudadTexto"><mark class="pendiente">[CÓMO LLEGAR: DENTRO DE LA CIUDAD]</mark></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. RESERVA -->
+    <section class="seccion seccion--clara reserva" id="reserva" aria-labelledby="reserva-titulo">
+      <div class="contenedor reserva__caja">
+        <div class="reserva__llamada revelar">
+          <p class="antetitulo" data-i18n="reserva.antetitulo">Reservas</p>
+          <h2 class="titulo" id="reserva-titulo" data-i18n="reserva.titulo">Reserva tu mesa</h2>
+          <p class="entradilla" data-i18n="reserva.texto">Escríbenos por WhatsApp con la fecha y el número de personas.</p>
+
+          <a class="btn btn--reserva btn--whatsapp" data-whatsapp target="_blank" rel="noopener"
+             href="https://wa.me/?text=Hola%2C%20quisiera%20reservar%20en%20Shabono%20para%20%5Bfecha%5D%20y%20%5Bn%C3%BAmero%5D%20personas">
+            <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            <span data-i18n="reserva.boton">Reservar por WhatsApp</span>
+          </a>
+          <p class="reserva__telefono"><span data-i18n="reserva.telefono">WhatsApp:</span> <span data-telefono><mark class="pendiente">[TELÉFONO]</mark></span></p>
+        </div>
+
+        <div class="politicas">
+          <div class="politica revelar">
+            <h3 class="politica__titulo" data-i18n="reserva.politicasTitulo">Política de reservas</h3>
+            <p data-i18n="reserva.politicas"><mark class="pendiente">[POLÍTICAS DE RESERVA]</mark></p>
+          </div>
+          <div class="politica revelar">
+            <h3 class="politica__titulo" data-i18n="reserva.cancelacionTitulo">Cancelaciones</h3>
+            <p data-i18n="reserva.cancelacion"><mark class="pendiente">[POLÍTICAS DE CANCELACIÓN]</mark></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Botón flotante de reserva (solo móvil y tableta) -->
+    <a class="reserva-flotante btn btn--reserva" href="#reserva" data-flotante data-i18n="flotante">Reservar</a>
+  </main>
+
+  <!-- 10. PIE DE PÁGINA -->
+  <footer class="pie">
+    <div class="separador" aria-hidden="true"></div>
+    <div class="contenedor pie__rejilla">
+      <div class="pie__marca">
+        <img src="img/logo-pendiente.svg" width="64" height="64" loading="lazy" alt="[LOGO SVG o PNG]">
+        <p class="pie__nombre">Shabono <small>by Nelson Méndez</small></p>
+        <p data-i18n="pie.lema">Alta cocina de autor en Puerto Ayacucho, Amazonas, Venezuela.</p>
+      </div>
+
+      <div class="pie__bloque">
+        <h2 class="pie__titulo" data-i18n="pie.contacto">Contacto</h2>
+        <ul class="pie__lista" role="list">
+          <li><span data-i18n="pie.whatsapp">WhatsApp:</span> <a class="enlace" data-whatsapp-texto target="_blank" rel="noopener"><mark class="pendiente">[TELÉFONO]</mark></a></li>
+          <li><span data-i18n="pie.correo">Correo:</span> <a class="enlace" data-correo><mark class="pendiente">[CORREO]</mark></a></li>
+        </ul>
+      </div>
+
+      <div class="pie__bloque">
+        <h2 class="pie__titulo" data-i18n="pie.ubicacion">Ubicación</h2>
+        <p><span data-i18n="visitanos.direccion"><mark class="pendiente">[DIRECCIÓN]</mark></span><br>Puerto Ayacucho, Amazonas</p>
+        <p>
+          <a class="enlace" data-enlace-maps target="_blank" rel="noopener" data-i18n="pie.verMaps">Ver en Google Maps</a>
+          <mark class="pendiente" data-pendiente-maps>[ENLACE MAPS]</mark>
+        </p>
+      </div>
+
+      <div class="pie__bloque">
+        <h2 class="pie__titulo" data-i18n="pie.redes">Síguenos</h2>
+        <p class="pie__instagram">
+          <a class="enlace enlace--icono" data-instagram target="_blank" rel="noopener">
+            <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>
+            <span>Instagram</span>
+          </a>
+          <mark class="pendiente" data-pendiente-instagram>[INSTAGRAM]</mark>
+        </p>
+      </div>
+
+      <div class="pie__bloque pie__bloque--idioma">
+        <h2 class="pie__titulo" data-i18n="pie.idioma">Idioma</h2>
+        <div class="idioma" role="group" data-i18n-attr="aria-label:general.idioma" aria-label="Idioma">
+          <button type="button" class="idioma__btn" data-lang="es" lang="es" aria-pressed="true">Español</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" class="idioma__btn" data-lang="en" lang="en" aria-pressed="false">English</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pie__base contenedor">
+      <p>© <span data-anio>2026</span> Shabono by Nelson Méndez. <span data-i18n="pie.derechos">Todos los derechos reservados.</span></p>
+    </div>
+  </footer>
+
+  <!-- Visor ampliado de la galería -->
+  <dialog class="visor" data-visor data-i18n-attr="aria-label:visor.etiqueta" aria-label="Visor de imágenes">
+    <figure class="visor__figura">
+      <img class="visor__img" data-visor-img alt="">
+      <figcaption class="visor__contador" data-visor-contador aria-live="polite"></figcaption>
+    </figure>
+    <button class="visor__boton visor__cerrar" type="button" data-visor-cerrar data-i18n-attr="aria-label:visor.cerrar" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button class="visor__boton visor__ant" type="button" data-visor-ant data-i18n-attr="aria-label:visor.anterior" aria-label="Imagen anterior">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="visor__boton visor__sig" type="button" data-visor-sig data-i18n-attr="aria-label:visor.siguiente" aria-label="Imagen siguiente">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </dialog>
+</body>
+</html>

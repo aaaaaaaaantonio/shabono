@@ -1,0 +1,678 @@
+/* ==========================================================================
+   Shabono by Nelson Méndez — main.js
+   Sin frameworks. Contiene:
+     1. CONFIG: datos de contacto (teléfono, mapa, Instagram, correo)
+     2. TRADUCCIONES: todos los textos del sitio en español e inglés
+     3. Funciones del sitio (idioma, menú, galería, mapa, WhatsApp)
+
+   Cualquier texto entre corchetes [ASÍ] es un dato pendiente de confirmar con
+   el restaurante y se resalta automáticamente en la página. Al sustituirlo por
+   el dato real, el resaltado desaparece solo.
+   ========================================================================== */
+'use strict';
+
+/* --------------------------------------------------------------------------
+   1. CONFIGURACIÓN
+   -------------------------------------------------------------------------- */
+const CONFIG = {
+  // Número de WhatsApp en formato internacional, p. ej. '+58 412 000 0000'
+  // (se usa tal cual para mostrarlo y sin espacios ni '+' para el enlace wa.me).
+  telefono: '[TELÉFONO]',
+
+  // Enlace para abrir la ubicación en Google Maps (botón «Compartir» > «Copiar enlace»).
+  mapsEnlace: '[ENLACE MAPS]',
+
+  // URL del mapa insertado: en Google Maps, «Compartir» > «Insertar un mapa»,
+  // copiar solo el valor de src="..." del código <iframe>.
+  mapsInsertar: '[ENLACE MAPS]',
+
+  // Perfil de Instagram completo, p. ej. 'https://www.instagram.com/usuario/'
+  instagram: '[INSTAGRAM]',
+
+  // Correo de contacto (opcional).
+  correo: '[CORREO]',
+};
+
+/* --------------------------------------------------------------------------
+   2. TRADUCCIONES
+   Edita aquí los textos. Las claves coinciden con los atributos data-i18n
+   de index.html. Si cambias un texto en español, el HTML guarda una copia
+   de respaldo para quien navega sin JavaScript: conviene actualizarla también.
+   -------------------------------------------------------------------------- */
+const TRADUCCIONES = {
+  es: {
+    meta: {
+      titulo: 'Shabono by Nelson Méndez | Alta cocina de autor en Puerto Ayacucho, Amazonas',
+      descripcion: 'Restaurante de alta cocina de autor del chef venezolano Nelson Méndez en Puerto Ayacucho, estado Amazonas, Venezuela. Ingredientes amazónicos y productores locales. Reservas por WhatsApp.',
+      ogTitulo: 'Shabono by Nelson Méndez · Alta cocina de autor en Puerto Ayacucho',
+      ogDescripcion: 'Cocina de autor con ingredientes amazónicos del chef venezolano Nelson Méndez, en Puerto Ayacucho, Amazonas. Reserva tu mesa por WhatsApp.',
+      ogLocale: 'es_VE',
+    },
+    general: {
+      saltar: 'Saltar al contenido',
+      inicio: 'Shabono by Nelson Méndez, ir al inicio',
+      menuAbrir: 'Abrir menú',
+      menuCerrar: 'Cerrar menú',
+      idioma: 'Idioma',
+    },
+    nav: {
+      etiqueta: 'Principal',
+      chef: 'El chef',
+      concepto: 'El concepto',
+      menu: 'Menú',
+      galeria: 'Galería',
+      reconocimientos: 'Reconocimientos',
+      visitanos: 'Visítanos',
+      reservar: 'Reservar',
+    },
+    portada: {
+      lugar: 'Alta cocina de autor · Puerto Ayacucho, Amazonas',
+      frase: '[FRASE DE CONCEPTO]',
+      reservar: 'Reservar',
+      verMenu: 'Ver menú',
+      imagenAlt: 'Roca de granito con cascada en el interior de Shabono, de noche',
+    },
+    chef: {
+      antetitulo: 'El chef',
+      rol: 'Chef y propietario · Chef venezolano con reconocimiento internacional',
+      bio: '[BIOGRAFÍA]',
+      cita: '[CITA DEL CHEF]',
+      fotoAlt: 'Retrato del chef Nelson Méndez',
+    },
+    concepto: {
+      antetitulo: 'El concepto',
+      titulo: 'Cocina de autor con raíz amazónica',
+      intro: '[TEXTO CONCEPTO]',
+      ingredientesTitulo: 'Ingredientes amazónicos',
+      ingredientesTexto: '[TEXTO CONCEPTO: ingredientes amazónicos]',
+      origenTitulo: 'Origen',
+      origenTexto: '[TEXTO CONCEPTO: origen]',
+      productoresTitulo: 'Productores locales',
+      productoresTexto: '[TEXTO CONCEPTO: productores locales]',
+    },
+    menu: {
+      antetitulo: 'Menú',
+      titulo: 'La carta',
+      intro: 'Una selección de nuestra carta. Precios en dólares estadounidenses (USD).',
+      platos: [
+        { nombre: '[NOMBRE PLATO 1]', descripcion: '[DESCRIPCIÓN PLATO 1]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 2]', descripcion: '[DESCRIPCIÓN PLATO 2]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 3]', descripcion: '[DESCRIPCIÓN PLATO 3]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 4]', descripcion: '[DESCRIPCIÓN PLATO 4]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 5]', descripcion: '[DESCRIPCIÓN PLATO 5]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 6]', descripcion: '[DESCRIPCIÓN PLATO 6]', precio: '[PRECIO USD]' },
+      ],
+      degustacionTitulo: 'Menú degustación',
+      degustacionTexto: '[DETALLE DEGUSTACIÓN: número de tiempos, precio USD, maridaje]',
+      degustacionBoton: 'Reservar degustación',
+      alergias: '¿Alergias o restricciones alimentarias? Indícalo al hacer tu reserva. [NOTA SOBRE ALERGIAS]',
+      impuestos: '[IMPUESTOS Y SERVICIO: indicar si los precios los incluyen]',
+    },
+    galeria: {
+      antetitulo: 'Galería',
+      titulo: 'Shabono por dentro',
+      intro: 'Toca una imagen para ampliarla.',
+      ampliar: 'Ampliar:',
+      // Texto alternativo de cada foto (describe lo que se ve cuando lleguen las fotos reales)
+      fotos: [
+        'Foto pendiente de la galería, 1 de 9',
+        'Foto pendiente de la galería, 2 de 9',
+        'Foto pendiente de la galería, 3 de 9',
+        'Foto pendiente de la galería, 4 de 9',
+        'Foto pendiente de la galería, 5 de 9',
+        'Foto pendiente de la galería, 6 de 9',
+        'Foto pendiente de la galería, 7 de 9',
+        'Foto pendiente de la galería, 8 de 9',
+        'Foto pendiente de la galería, 9 de 9',
+      ],
+    },
+    visor: {
+      etiqueta: 'Visor de imágenes',
+      cerrar: 'Cerrar',
+      anterior: 'Imagen anterior',
+      siguiente: 'Imagen siguiente',
+    },
+    reconocimientos: {
+      antetitulo: 'Reconocimientos',
+      titulo: 'Premios y prensa',
+      premios: 'Premios',
+      prensa: 'Prensa',
+    },
+    visitanos: {
+      antetitulo: 'Visítanos',
+      titulo: 'Te esperamos en Puerto Ayacucho',
+      direccionTitulo: 'Dirección',
+      direccion: '[DIRECCIÓN]',
+      ciudad: 'Puerto Ayacucho, estado Amazonas, Venezuela',
+      abrirMaps: 'Abrir en Google Maps',
+      horariosTitulo: 'Horarios',
+      horarios: '[HORARIOS]',
+      pagoTitulo: 'Métodos de pago',
+      pago: '[MÉTODOS]',
+      llegarTitulo: 'Cómo llegar a Puerto Ayacucho',
+      avion: 'En avión',
+      avionTexto: '[CÓMO LLEGAR: EN AVIÓN]',
+      carretera: 'Por carretera',
+      carreteraTexto: '[CÓMO LLEGAR: POR CARRETERA]',
+      enCiudad: 'En la ciudad',
+      enCiudadTexto: '[CÓMO LLEGAR: DENTRO DE LA CIUDAD]',
+      mapaPendiente: 'Mapa pendiente [ENLACE MAPS]',
+      mapaNota: 'El mapa se carga solo si lo pides, para ahorrar datos.',
+      mapaCargar: 'Ver mapa',
+      mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
+    },
+    reserva: {
+      antetitulo: 'Reservas',
+      titulo: 'Reserva tu mesa',
+      texto: 'Escríbenos por WhatsApp con la fecha y el número de personas.',
+      boton: 'Reservar por WhatsApp',
+      telefono: 'WhatsApp:',
+      // Mensaje que aparece ya escrito al abrir WhatsApp
+      mensaje: 'Hola, quisiera reservar en Shabono para [fecha] y [número] personas',
+      politicasTitulo: 'Política de reservas',
+      politicas: '[POLÍTICAS DE RESERVA]',
+      cancelacionTitulo: 'Cancelaciones',
+      cancelacion: '[POLÍTICAS DE CANCELACIÓN]',
+    },
+    pie: {
+      lema: 'Alta cocina de autor en Puerto Ayacucho, Amazonas, Venezuela.',
+      contacto: 'Contacto',
+      whatsapp: 'WhatsApp:',
+      correo: 'Correo:',
+      ubicacion: 'Ubicación',
+      verMaps: 'Ver en Google Maps',
+      redes: 'Síguenos',
+      idioma: 'Idioma',
+      derechos: 'Todos los derechos reservados.',
+    },
+    flotante: 'Reservar',
+  },
+
+  en: {
+    meta: {
+      titulo: 'Shabono by Nelson Méndez | Signature fine dining in Puerto Ayacucho, Amazonas',
+      descripcion: 'Signature fine-dining restaurant by Venezuelan chef Nelson Méndez in Puerto Ayacucho, Amazonas State, Venezuela. Amazonian ingredients and local producers. Book via WhatsApp.',
+      ogTitulo: 'Shabono by Nelson Méndez · Signature fine dining in Puerto Ayacucho',
+      ogDescripcion: 'Signature cuisine with Amazonian ingredients by Venezuelan chef Nelson Méndez, in Puerto Ayacucho, Amazonas. Book your table via WhatsApp.',
+      ogLocale: 'en_US',
+    },
+    general: {
+      saltar: 'Skip to content',
+      inicio: 'Shabono by Nelson Méndez, back to top',
+      menuAbrir: 'Open menu',
+      menuCerrar: 'Close menu',
+      idioma: 'Language',
+    },
+    nav: {
+      etiqueta: 'Main',
+      chef: 'The chef',
+      concepto: 'Our concept',
+      menu: 'Menu',
+      galeria: 'Gallery',
+      reconocimientos: 'Recognition',
+      visitanos: 'Visit us',
+      reservar: 'Book a table',
+    },
+    portada: {
+      lugar: 'Signature fine dining · Puerto Ayacucho, Amazonas',
+      frase: '[FRASE DE CONCEPTO · EN]',
+      reservar: 'Book a table',
+      verMenu: 'View menu',
+      imagenAlt: 'Granite rock with a waterfall inside Shabono, at night',
+    },
+    chef: {
+      antetitulo: 'The chef',
+      rol: 'Chef and owner · Internationally recognized Venezuelan chef',
+      bio: '[BIOGRAFÍA · EN]',
+      cita: '[CITA DEL CHEF · EN]',
+      fotoAlt: 'Portrait of chef Nelson Méndez',
+    },
+    concepto: {
+      antetitulo: 'Our concept',
+      titulo: 'Signature cuisine with Amazonian roots',
+      intro: '[TEXTO CONCEPTO · EN]',
+      ingredientesTitulo: 'Amazonian ingredients',
+      ingredientesTexto: '[TEXTO CONCEPTO: ingredientes amazónicos · EN]',
+      origenTitulo: 'Origin',
+      origenTexto: '[TEXTO CONCEPTO: origen · EN]',
+      productoresTitulo: 'Local producers',
+      productoresTexto: '[TEXTO CONCEPTO: productores locales · EN]',
+    },
+    menu: {
+      antetitulo: 'Menu',
+      titulo: 'À la carte',
+      intro: 'A selection from our menu. Prices in US dollars (USD).',
+      platos: [
+        { nombre: '[NOMBRE PLATO 1 · EN]', descripcion: '[DESCRIPCIÓN PLATO 1 · EN]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 2 · EN]', descripcion: '[DESCRIPCIÓN PLATO 2 · EN]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 3 · EN]', descripcion: '[DESCRIPCIÓN PLATO 3 · EN]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 4 · EN]', descripcion: '[DESCRIPCIÓN PLATO 4 · EN]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 5 · EN]', descripcion: '[DESCRIPCIÓN PLATO 5 · EN]', precio: '[PRECIO USD]' },
+        { nombre: '[NOMBRE PLATO 6 · EN]', descripcion: '[DESCRIPCIÓN PLATO 6 · EN]', precio: '[PRECIO USD]' },
+      ],
+      degustacionTitulo: 'Tasting menu',
+      degustacionTexto: '[DETALLE DEGUSTACIÓN · EN]',
+      degustacionBoton: 'Book the tasting menu',
+      alergias: 'Allergies or dietary restrictions? Please let us know when you book. [NOTA SOBRE ALERGIAS · EN]',
+      impuestos: '[IMPUESTOS Y SERVICIO · EN]',
+    },
+    galeria: {
+      antetitulo: 'Gallery',
+      titulo: 'Inside Shabono',
+      intro: 'Tap an image to enlarge it.',
+      ampliar: 'Enlarge:',
+      fotos: [
+        'Gallery photo pending, 1 of 9',
+        'Gallery photo pending, 2 of 9',
+        'Gallery photo pending, 3 of 9',
+        'Gallery photo pending, 4 of 9',
+        'Gallery photo pending, 5 of 9',
+        'Gallery photo pending, 6 of 9',
+        'Gallery photo pending, 7 of 9',
+        'Gallery photo pending, 8 of 9',
+        'Gallery photo pending, 9 of 9',
+      ],
+    },
+    visor: {
+      etiqueta: 'Image viewer',
+      cerrar: 'Close',
+      anterior: 'Previous image',
+      siguiente: 'Next image',
+    },
+    reconocimientos: {
+      antetitulo: 'Recognition',
+      titulo: 'Awards and press',
+      premios: 'Awards',
+      prensa: 'Press',
+    },
+    visitanos: {
+      antetitulo: 'Visit us',
+      titulo: 'Find us in Puerto Ayacucho',
+      direccionTitulo: 'Address',
+      direccion: '[DIRECCIÓN]',
+      ciudad: 'Puerto Ayacucho, Amazonas State, Venezuela',
+      abrirMaps: 'Open in Google Maps',
+      horariosTitulo: 'Opening hours',
+      horarios: '[HORARIOS · EN]',
+      pagoTitulo: 'Payment methods',
+      pago: '[MÉTODOS · EN]',
+      llegarTitulo: 'Getting to Puerto Ayacucho',
+      avion: 'By air',
+      avionTexto: '[CÓMO LLEGAR: EN AVIÓN · EN]',
+      carretera: 'By road',
+      carreteraTexto: '[CÓMO LLEGAR: POR CARRETERA · EN]',
+      enCiudad: 'In town',
+      enCiudadTexto: '[CÓMO LLEGAR: DENTRO DE LA CIUDAD · EN]',
+      mapaPendiente: 'Map pending [ENLACE MAPS]',
+      mapaNota: 'The map only loads when you ask for it, to save data.',
+      mapaCargar: 'Show map',
+      mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
+    },
+    reserva: {
+      antetitulo: 'Reservations',
+      titulo: 'Book your table',
+      texto: 'Message us on WhatsApp with the date and the number of guests.',
+      boton: 'Book via WhatsApp',
+      telefono: 'WhatsApp:',
+      mensaje: 'Hello, I would like to book a table at Shabono on [date] for [number] people',
+      politicasTitulo: 'Booking policy',
+      politicas: '[POLÍTICAS DE RESERVA · EN]',
+      cancelacionTitulo: 'Cancellations',
+      cancelacion: '[POLÍTICAS DE CANCELACIÓN · EN]',
+    },
+    pie: {
+      lema: 'Signature fine dining in Puerto Ayacucho, Amazonas, Venezuela.',
+      contacto: 'Contact',
+      whatsapp: 'WhatsApp:',
+      correo: 'Email:',
+      ubicacion: 'Location',
+      verMaps: 'View on Google Maps',
+      redes: 'Follow us',
+      idioma: 'Language',
+      derechos: 'All rights reserved.',
+    },
+    flotante: 'Book',
+  },
+};
+
+/* --------------------------------------------------------------------------
+   3. FUNCIONES DEL SITIO
+   -------------------------------------------------------------------------- */
+const IDIOMAS = ['es', 'en'];
+const IDIOMA_POR_DEFECTO = 'es';
+const CLAVE_IDIOMA = 'shabono-idioma';
+
+let idiomaActual = IDIOMA_POR_DEFECTO;
+
+const $ = (selector, contexto = document) => contexto.querySelector(selector);
+const $$ = (selector, contexto = document) => Array.from(contexto.querySelectorAll(selector));
+
+/** true si el valor falta o todavía contiene un marcador entre corchetes. */
+const esPendiente = (valor) => !valor || /\[[^\]]*\]/.test(valor);
+
+/** Busca un texto por su ruta, p. ej. 'menu.platos.0.nombre'. */
+function t(ruta, idioma = idiomaActual) {
+  const valor = ruta.split('.').reduce((obj, clave) => (obj == null ? undefined : obj[clave]), TRADUCCIONES[idioma]);
+  if (valor === undefined && idioma !== IDIOMA_POR_DEFECTO) return t(ruta, IDIOMA_POR_DEFECTO);
+  return valor === undefined ? '' : String(valor);
+}
+
+const escaparHTML = (texto) =>
+  texto.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/** Convierte un texto en HTML seguro y resalta los marcadores [ ... ]. */
+const marcarPendientes = (texto) =>
+  escaparHTML(texto).replace(/\[[^\]]*\]/g, (m) => `<mark class="pendiente">${m}</mark>`);
+
+/* ---------- Idioma ---------- */
+function leerIdiomaGuardado() {
+  try {
+    return localStorage.getItem(CLAVE_IDIOMA);
+  } catch {
+    return null;
+  }
+}
+
+function guardarIdioma(idioma) {
+  try {
+    localStorage.setItem(CLAVE_IDIOMA, idioma);
+  } catch {
+    /* almacenamiento no disponible: no pasa nada */
+  }
+}
+
+function idiomaInicial() {
+  const deUrl = new URLSearchParams(location.search).get('lang');
+  if (IDIOMAS.includes(deUrl)) return deUrl;
+  const guardado = leerIdiomaGuardado();
+  return IDIOMAS.includes(guardado) ? guardado : IDIOMA_POR_DEFECTO;
+}
+
+function ponerMeta(selector, valor) {
+  const el = $(selector);
+  if (el) el.setAttribute('content', valor);
+}
+
+function aplicarIdioma(idioma, { actualizarUrl = true } = {}) {
+  idiomaActual = IDIOMAS.includes(idioma) ? idioma : IDIOMA_POR_DEFECTO;
+  document.documentElement.lang = idiomaActual;
+
+  $$('[data-i18n]').forEach((el) => {
+    el.innerHTML = marcarPendientes(t(el.dataset.i18n));
+  });
+
+  // data-i18n-attr="alt:clave; aria-label:otra.clave"
+  $$('[data-i18n-attr]').forEach((el) => {
+    el.dataset.i18nAttr.split(';').forEach((par) => {
+      const [atributo, clave] = par.split(':').map((s) => s.trim());
+      if (atributo && clave) el.setAttribute(atributo, t(clave));
+    });
+  });
+
+  document.title = t('meta.titulo');
+  ponerMeta('meta[name="description"]', t('meta.descripcion'));
+  ponerMeta('meta[property="og:title"]', t('meta.ogTitulo'));
+  ponerMeta('meta[property="og:description"]', t('meta.ogDescripcion'));
+  ponerMeta('meta[property="og:locale"]', t('meta.ogLocale'));
+  ponerMeta('meta[property="og:locale:alternate"]', idiomaActual === 'es' ? 'en_US' : 'es_VE');
+
+  $$('[data-lang]').forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.lang === idiomaActual)));
+
+  actualizarMenuBoton();
+  actualizarContacto();
+  actualizarMapa();
+
+  guardarIdioma(idiomaActual);
+  if (actualizarUrl) {
+    const url = new URL(location.href);
+    if (idiomaActual === IDIOMA_POR_DEFECTO) url.searchParams.delete('lang');
+    else url.searchParams.set('lang', idiomaActual);
+    history.replaceState(null, '', url);
+  }
+}
+
+function iniciarIdioma() {
+  $$('[data-lang]').forEach((btn) => {
+    btn.addEventListener('click', () => aplicarIdioma(btn.dataset.lang));
+  });
+  aplicarIdioma(idiomaInicial(), { actualizarUrl: false });
+}
+
+/* ---------- Contacto: WhatsApp, Maps, Instagram, correo ---------- */
+function enlaceWhatsApp() {
+  const mensaje = encodeURIComponent(t('reserva.mensaje'));
+  const numero = esPendiente(CONFIG.telefono) ? '' : CONFIG.telefono.replace(/\D/g, '');
+  // Sin número confirmado, wa.me abre WhatsApp con el mensaje y deja elegir el contacto (útil en la demo).
+  return `https://wa.me/${numero}?text=${mensaje}`;
+}
+
+/** Activa un enlace si el dato está confirmado; si no, lo deja inerte y muestra su marcador. */
+function configurarEnlace(enlace, valor, href, marcadores) {
+  const pendiente = esPendiente(valor);
+  if (pendiente) enlace.removeAttribute('href');
+  else enlace.setAttribute('href', href);
+  marcadores.forEach((m) => { m.hidden = !pendiente; });
+}
+
+function actualizarContacto() {
+  const telefonoPendiente = esPendiente(CONFIG.telefono);
+  const telefonoHTML = telefonoPendiente ? marcarPendientes(CONFIG.telefono || '[TELÉFONO]') : escaparHTML(CONFIG.telefono);
+
+  $$('[data-whatsapp]').forEach((a) => a.setAttribute('href', enlaceWhatsApp()));
+  $$('[data-telefono]').forEach((el) => { el.innerHTML = telefonoHTML; });
+  $$('[data-whatsapp-texto]').forEach((a) => {
+    a.innerHTML = telefonoHTML;
+    if (telefonoPendiente) a.removeAttribute('href');
+    else a.setAttribute('href', enlaceWhatsApp());
+  });
+
+  $$('[data-enlace-maps]').forEach((a) => configurarEnlace(a, CONFIG.mapsEnlace, CONFIG.mapsEnlace, []));
+  $$('[data-pendiente-maps]').forEach((m) => { m.hidden = !esPendiente(CONFIG.mapsEnlace); });
+
+  $$('[data-instagram]').forEach((a) => configurarEnlace(a, CONFIG.instagram, CONFIG.instagram, []));
+  $$('[data-pendiente-instagram]').forEach((m) => { m.hidden = !esPendiente(CONFIG.instagram); });
+
+  $$('[data-correo]').forEach((a) => {
+    const pendiente = esPendiente(CONFIG.correo);
+    a.innerHTML = pendiente ? marcarPendientes(CONFIG.correo || '[CORREO]') : escaparHTML(CONFIG.correo);
+    if (pendiente) a.removeAttribute('href');
+    else a.setAttribute('href', `mailto:${CONFIG.correo}`);
+  });
+}
+
+/* ---------- Mapa (se carga al tocar, para ahorrar datos) ---------- */
+function actualizarMapa() {
+  const contenedor = $('[data-mapa]');
+  if (!contenedor) return;
+  const pendiente = esPendiente(CONFIG.mapsInsertar);
+  const boton = $('[data-mapa-cargar]', contenedor);
+  const avisoPendiente = $('[data-mapa-pendiente]', contenedor);
+  const nota = $('[data-mapa-listo]', contenedor);
+  if (boton) boton.hidden = pendiente;
+  if (avisoPendiente) avisoPendiente.hidden = !pendiente;
+  if (nota) nota.hidden = pendiente;
+  const iframe = $('iframe', contenedor);
+  if (iframe) iframe.title = t('visitanos.mapaTitulo');
+}
+
+function iniciarMapa() {
+  const contenedor = $('[data-mapa]');
+  const boton = contenedor && $('[data-mapa-cargar]', contenedor);
+  if (!boton) return;
+  boton.addEventListener('click', () => {
+    if (esPendiente(CONFIG.mapsInsertar)) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = CONFIG.mapsInsertar;
+    iframe.title = t('visitanos.mapaTitulo');
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.allowFullscreen = true;
+    $('.mapa__fachada', contenedor)?.remove();
+    contenedor.appendChild(iframe);
+    iframe.focus();
+  });
+}
+
+/* ---------- Navegación ---------- */
+const nav = $('[data-nav]');
+const menuBoton = $('[data-menu-boton]');
+const escritorio = window.matchMedia('(min-width: 64rem)');
+
+function actualizarMenuBoton() {
+  if (!menuBoton) return;
+  const abierto = menuBoton.getAttribute('aria-expanded') === 'true';
+  menuBoton.setAttribute('aria-label', t(abierto ? 'general.menuCerrar' : 'general.menuAbrir'));
+}
+
+function abrirMenu(abrir) {
+  if (!nav || !menuBoton) return;
+  nav.classList.toggle('nav--abierta', abrir);
+  document.body.classList.toggle('menu-abierto', abrir);
+  menuBoton.setAttribute('aria-expanded', String(abrir));
+  actualizarMenuBoton();
+  // Mientras el menú está abierto, el resto de la página no recibe foco
+  ['main', '.pie', '[data-flotante]'].forEach((sel) => {
+    const el = $(sel);
+    if (el) el.inert = abrir;
+  });
+  if (abrir) $('[data-menu] a')?.focus();
+}
+
+function iniciarNavegacion() {
+  if (!nav) return;
+
+  menuBoton?.addEventListener('click', () => abrirMenu(menuBoton.getAttribute('aria-expanded') !== 'true'));
+
+  $$('[data-menu] a').forEach((a) => a.addEventListener('click', () => {
+    if (!escritorio.matches) abrirMenu(false);
+  }));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('nav--abierta')) {
+      abrirMenu(false);
+      menuBoton.focus();
+    }
+  });
+
+  escritorio.addEventListener('change', (e) => { if (e.matches) abrirMenu(false); });
+
+  // Fondo sólido al bajar
+  let pendienteFrame = false;
+  const actualizarFondo = () => {
+    nav.classList.toggle('nav--solida', window.scrollY > 24);
+    pendienteFrame = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (!pendienteFrame) {
+      pendienteFrame = true;
+      requestAnimationFrame(actualizarFondo);
+    }
+  }, { passive: true });
+  actualizarFondo();
+
+  // Secciones ocultas (p. ej. Reconocimientos con la clase seccion--oculta): ocultar su enlace
+  $$('[data-seccion]').forEach((li) => {
+    const seccion = document.getElementById(li.dataset.seccion);
+    li.hidden = !seccion || seccion.classList.contains('seccion--oculta');
+  });
+
+  // Marcar el enlace de la sección visible
+  if ('IntersectionObserver' in window) {
+    const enlaces = $$('.nav__enlaces a');
+    const observador = new IntersectionObserver((entradas) => {
+      entradas.forEach((entrada) => {
+        if (!entrada.isIntersecting) return;
+        enlaces.forEach((a) => {
+          if (a.getAttribute('href') === `#${entrada.target.id}`) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    $$('main section[id]').forEach((s) => observador.observe(s));
+  }
+}
+
+/* ---------- Galería y visor ---------- */
+function iniciarGaleria() {
+  const items = $$('[data-galeria] a');
+  const visor = $('[data-visor]');
+  if (!items.length || !visor || typeof visor.showModal !== 'function') return; // sin <dialog>: los enlaces abren la imagen
+
+  const img = $('[data-visor-img]', visor);
+  const contador = $('[data-visor-contador]', visor);
+  let indice = 0;
+  let disparador = null;
+
+  const mostrar = (i) => {
+    indice = (i + items.length) % items.length;
+    const miniatura = $('img', items[indice]);
+    img.src = items[indice].getAttribute('href');
+    img.alt = miniatura ? miniatura.alt : '';
+    contador.textContent = `${indice + 1} / ${items.length}`;
+  };
+
+  items.forEach((a, i) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    disparador = a;
+    mostrar(i);
+    visor.showModal();
+  }));
+
+  $('[data-visor-cerrar]', visor).addEventListener('click', () => visor.close());
+  $('[data-visor-ant]', visor).addEventListener('click', () => mostrar(indice - 1));
+  $('[data-visor-sig]', visor).addEventListener('click', () => mostrar(indice + 1));
+
+  visor.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') mostrar(indice - 1);
+    if (e.key === 'ArrowRight') mostrar(indice + 1);
+  });
+
+  // Tocar fuera de la imagen cierra el visor
+  visor.addEventListener('click', (e) => {
+    if (e.target === visor || e.target.classList.contains('visor__figura')) visor.close();
+  });
+
+  // Deslizar para cambiar de imagen
+  let inicioX = 0;
+  let inicioY = 0;
+  visor.addEventListener('touchstart', (e) => {
+    inicioX = e.changedTouches[0].clientX;
+    inicioY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  visor.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - inicioX;
+    const dy = e.changedTouches[0].clientY - inicioY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) mostrar(indice + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  visor.addEventListener('close', () => {
+    img.removeAttribute('src');
+    disparador?.focus();
+  });
+}
+
+/* ---------- Animación de entrada ---------- */
+function iniciarRevelado() {
+  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducido || !('IntersectionObserver' in window)) return;
+  // Solo se animan los elementos que aún no están en pantalla, para no parpadear.
+  const elementos = $$('.revelar').filter((el) => el.getBoundingClientRect().top > window.innerHeight);
+  elementos.forEach((el) => el.classList.add('revelar--espera'));
+  const observador = new IntersectionObserver((entradas, obs) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting) return;
+      entrada.target.classList.add('revelar--visible');
+      entrada.target.classList.remove('revelar--espera');
+      obs.unobserve(entrada.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  elementos.forEach((el) => observador.observe(el));
+}
+
+/* ---------- Inicio ---------- */
+iniciarNavegacion();
+iniciarIdioma();
+iniciarMapa();
+iniciarGaleria();
+iniciarRevelado();
+$$('[data-anio]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });

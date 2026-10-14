@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Favicon provisional (círculo con halo). Sustituir por una versión del logo real. -->
+  <defs>
+    <radialGradient id="h" cx="50%" cy="50%" r="50%">
+      <stop offset="55%" stop-color="#E3B866" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#E3B866" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#4F5A2E"/>
+  <circle cx="32" cy="32" r="26" fill="url(#h)"/>
+  <circle cx="32" cy="32" r="15" fill="#4F5A2E" stroke="#E3B866" stroke-width="3"/>
+</svg>

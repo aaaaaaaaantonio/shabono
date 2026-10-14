@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="t">
+  <title id="t">[LOGO SVG o PNG] — logo pendiente</title>
+  <!-- Marcador del logo. Sustituir por el logo real (SVG o PNG con fondo transparente). -->
+  <circle cx="60" cy="60" r="56" fill="none" stroke="#E3B866" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="60" y="56" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="600" fill="#E3B866">[LOGO]</text>
+  <text x="60" y="76" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="11" fill="#F2ECE1">pendiente</text>
+</svg>
