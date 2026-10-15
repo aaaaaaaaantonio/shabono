@@ -21,7 +21,7 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`). Cada texto necesita v
 | [DETALLE DEGUSTACIÓN: número de tiempos, precio USD, maridaje] | Menú | `menu.degustacionTexto` |
 | [NOTA SOBRE ALERGIAS] | Menú | `menu.alergias` |
 | [IMPUESTOS Y SERVICIO: indicar si los precios los incluyen] | Menú | `menu.impuestos` |
-| [DIRECCIÓN] | Visítanos y pie | `visitanos.direccion` |
+| [DIRECCIÓN: calle o punto de referencia] | Visítanos y pie | `visitanos.direccion`. La ficha de Google Maps solo da el código postal (7101, ya colocado); falta la calle o una referencia. |
 | [HORARIOS] | Visítanos | `visitanos.horarios` |
 | [MÉTODOS] (de pago) | Visítanos | `visitanos.pago` |
 | [CÓMO LLEGAR: EN AVIÓN] | Visítanos | `visitanos.avionTexto` (referencia a verificar: Aeropuerto Nacional Cacique Aramare, PYH; aerolíneas y frecuencias actuales) |
@@ -37,8 +37,8 @@ Se editan en `main.js`, objeto `CONFIG`.
 | Marcador | Uso |
 |---|---|
 | [TELÉFONO] | Número de WhatsApp en formato internacional (`+58 …`). Activa el botón de reserva `wa.me/NÚMERO` y el contacto del pie. Mientras falte, el botón abre WhatsApp con el mensaje escrito pero sin destinatario. |
-| [ENLACE MAPS] (enlace) | `mapsEnlace`: enlace «Compartir» de Google Maps para «Abrir en Google Maps». |
-| [ENLACE MAPS] (mapa insertado) | `mapsInsertar`: el valor `src` del código «Insertar un mapa». Activa el botón «Ver mapa». |
+| ~~[ENLACE MAPS] (enlace)~~ | Hecho: `https://maps.app.goo.gl/cwKJK5V7sSogdyap6` |
+| ~~[ENLACE MAPS] (mapa insertado)~~ | Hecho: mapa de la ficha «Shabono By Nelson mendez», se carga al pulsar «Ver mapa». |
 | [INSTAGRAM] | `instagram`: URL completa del perfil. |
 | [CORREO] | `correo`: correo de contacto (opcional; si no hay, se puede quitar del pie). |
 
@@ -70,10 +70,10 @@ Solo con datos verificados, con fuente enlazable. En `index.html`, sección `#re
 | Marcador | Dónde |
 |---|---|
 | [DOMINIO] | `index.html` (canonical, hreflang, Open Graph, JSON-LD), `robots.txt`, `sitemap.xml` |
-| [LATITUD] y [LONGITUD] | JSON-LD en `index.html` (se obtienen de Google Maps) |
+| [LATITUD] y [LONGITUD] | JSON-LD en `index.html`. En Google Maps (computadora), clic derecho sobre el punto del restaurante: la primera línea son las coordenadas y se copian al hacer clic. |
 | [RANGO DE PRECIOS] | JSON-LD (p. ej. `$$$`) |
 | [HORARIOS] en JSON-LD | Formato schema.org, p. ej. `Tu-Su 19:00-23:00` |
-| [TELÉFONO], [CORREO], [MÉTODOS], [ENLACE MAPS], [INSTAGRAM], [LOGO SVG o PNG] | También dentro del JSON-LD de `index.html` |
+| [TELÉFONO], [CORREO], [MÉTODOS], [DIRECCIÓN], [INSTAGRAM], [LOGO SVG o PNG] | También dentro del JSON-LD de `index.html` |
 | `noindex` | **Quitar** `<meta name="robots" content="noindex, nofollow">` de `index.html` al publicar la versión definitiva. Está puesto para que la demo no aparezca en Google. |
 
 ## 6. Textos redactados para la demo (aprobar con el cliente)

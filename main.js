@@ -20,11 +20,11 @@ const CONFIG = {
   telefono: '[TELÉFONO]',
 
   // Enlace para abrir la ubicación en Google Maps (botón «Compartir» > «Copiar enlace»).
-  mapsEnlace: '[ENLACE MAPS]',
+  mapsEnlace: 'https://maps.app.goo.gl/cwKJK5V7sSogdyap6',
 
   // URL del mapa insertado: en Google Maps, «Compartir» > «Insertar un mapa»,
   // copiar solo el valor de src="..." del código <iframe>.
-  mapsInsertar: '[ENLACE MAPS]',
+  mapsInsertar: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15881.652792172297!2d-67.6256393826172!3d5.653214200000012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e75ed002abfe685%3A0x69e628ae2429ece1!2sShabono%20By%20Nelson%20mendez!5e0!3m2!1ses-419!2sve!4v1792036351855!5m2!1ses-419!2sve',
 
   // Perfil de Instagram completo, p. ej. 'https://www.instagram.com/usuario/'
   instagram: '[INSTAGRAM]',
@@ -142,8 +142,8 @@ const TRADUCCIONES = {
       antetitulo: 'Visítanos',
       titulo: 'Te esperamos en Puerto Ayacucho',
       direccionTitulo: 'Dirección',
-      direccion: '[DIRECCIÓN]',
-      ciudad: 'Puerto Ayacucho, estado Amazonas, Venezuela',
+      direccion: '[DIRECCIÓN: calle o punto de referencia]',
+      ciudad: 'Puerto Ayacucho 7101, estado Amazonas, Venezuela',
       abrirMaps: 'Abrir en Google Maps',
       horariosTitulo: 'Horarios',
       horarios: '[HORARIOS]',
@@ -159,6 +159,7 @@ const TRADUCCIONES = {
       mapaPendiente: 'Mapa pendiente [ENLACE MAPS]',
       mapaNota: 'El mapa se carga solo si lo pides, para ahorrar datos.',
       mapaCargar: 'Ver mapa',
+      mapaCargando: 'Cargando mapa…',
       mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
     },
     reserva: {
@@ -289,8 +290,8 @@ const TRADUCCIONES = {
       antetitulo: 'Visit us',
       titulo: 'Find us in Puerto Ayacucho',
       direccionTitulo: 'Address',
-      direccion: '[DIRECCIÓN]',
-      ciudad: 'Puerto Ayacucho, Amazonas State, Venezuela',
+      direccion: '[DIRECCIÓN: calle o punto de referencia]',
+      ciudad: 'Puerto Ayacucho 7101, Amazonas State, Venezuela',
       abrirMaps: 'Open in Google Maps',
       horariosTitulo: 'Opening hours',
       horarios: '[HORARIOS · EN]',
@@ -306,6 +307,7 @@ const TRADUCCIONES = {
       mapaPendiente: 'Map pending [ENLACE MAPS]',
       mapaNota: 'The map only loads when you ask for it, to save data.',
       mapaCargar: 'Show map',
+      mapaCargando: 'Loading map…',
       mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
     },
     reserva: {
@@ -496,7 +498,10 @@ function actualizarMapa() {
   if (avisoPendiente) avisoPendiente.hidden = !pendiente;
   if (nota) nota.hidden = pendiente;
   const iframe = $('iframe', contenedor);
-  if (iframe) iframe.title = t('visitanos.mapaTitulo');
+  if (iframe) {
+    iframe.title = t('visitanos.mapaTitulo');
+    if (boton) boton.hidden = true; // ya cargado: el botón queda oculto tras el mapa
+  }
 }
 
 function iniciarMapa() {
@@ -509,9 +514,15 @@ function iniciarMapa() {
     iframe.src = CONFIG.mapsInsertar;
     iframe.title = t('visitanos.mapaTitulo');
     iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     iframe.allowFullscreen = true;
-    $('.mapa__fachada', contenedor)?.remove();
+    // Mientras carga (conexiones lentas) se ve «Cargando mapa…» debajo del mapa
+    const nota = $('[data-mapa-listo]', contenedor);
+    if (nota) {
+      nota.dataset.i18n = 'visitanos.mapaCargando';
+      nota.textContent = t('visitanos.mapaCargando');
+    }
+    boton.hidden = true;
     contenedor.appendChild(iframe);
     iframe.focus();
   });
