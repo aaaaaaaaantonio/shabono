@@ -50,11 +50,10 @@
     "url": "https://[DOMINIO]/",
     "image": "https://[DOMINIO]/img/og-imagen.jpg",
     "logo": "https://[DOMINIO]/img/[LOGO SVG o PNG]",
-    "telephone": "[TELÉFONO]",
-    "email": "[CORREO]",
+    "telephone": "+58-416-685-2153",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "[DIRECCIÓN]",
+      "streetAddress": "Av. La Raza, al lado de Protección Civil Amazonas",
       "addressLocality": "Puerto Ayacucho",
       "postalCode": "7101",
       "addressRegion": "Amazonas",
@@ -62,22 +61,21 @@
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "[LATITUD]",
-      "longitude": "[LONGITUD]"
+      "latitude": 5.653224172431118,
+      "longitude": -67.61533716709262
     },
     "hasMap": "https://maps.app.goo.gl/cwKJK5V7sSogdyap6",
     "openingHours": "[HORARIOS]",
     "servesCuisine": "Cocina de autor con ingredientes amazónicos",
     "priceRange": "[RANGO DE PRECIOS]",
-    "paymentAccepted": "[MÉTODOS]",
+    "paymentAccepted": "Bolívares y divisas",
     "acceptsReservations": true,
     "menu": "https://[DOMINIO]/#menu",
     "founder": {
       "@type": "Person",
       "name": "Nelson Méndez",
       "jobTitle": "Chef"
-    },
-    "sameAs": ["[INSTAGRAM]"]
+    }
   }
   </script>
 </head>
@@ -132,7 +130,7 @@
       <div class="portada__contenido contenedor">
         <p class="portada__lugar"><span class="punto-luz" aria-hidden="true"></span><span data-i18n="portada.lugar">Alta cocina de autor · Puerto Ayacucho, Amazonas</span></p>
         <h1 class="portada__titulo" id="portada-titulo">Shabono <span>by Nelson Méndez</span></h1>
-        <p class="portada__frase" data-i18n="portada.frase"><mark class="pendiente">[FRASE DE CONCEPTO]</mark></p>
+        <p class="portada__frase" data-i18n="portada.frase">Donde la tierra amazónica se convierte en alta cocina.</p>
         <div class="portada__acciones">
           <a class="btn btn--reserva btn--grande" href="#reserva" data-i18n="portada.reservar">Reservar</a>
           <a class="btn btn--contorno btn--grande" href="#menu" data-i18n="portada.verMenu">Ver menú</a>
@@ -152,16 +150,18 @@
           <p class="antetitulo" data-i18n="chef.antetitulo">El chef</p>
           <h2 class="titulo" id="chef-titulo">Nelson Méndez</h2>
           <p class="chef__rol" data-i18n="chef.rol">Chef y propietario · Chef venezolano con reconocimiento internacional</p>
-          <p data-i18n="chef.bio"><mark class="pendiente">[BIOGRAFÍA]</mark></p>
+          <p data-i18n="chef.bio">Chef venezolano con reconocimiento internacional, Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, donde cocina con ingredientes originarios del estado Amazonas.</p>
 
-          <div class="separador" aria-hidden="true"></div>
-
-          <figure class="cita">
-            <blockquote>
-              <p data-i18n="chef.cita"><mark class="pendiente">[CITA DEL CHEF]</mark></p>
-            </blockquote>
-            <figcaption>— Nelson Méndez</figcaption>
-          </figure>
+          <!-- Cita del chef: oculta mientras TRADUCCIONES.*.chef.cita esté vacía (main.js la muestra sola) -->
+          <div class="chef__cita" data-cita hidden>
+            <div class="separador" aria-hidden="true"></div>
+            <figure class="cita">
+              <blockquote>
+                <p data-i18n="chef.cita"></p>
+              </blockquote>
+              <figcaption>— Nelson Méndez</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
@@ -172,24 +172,24 @@
         <header class="cabecera revelar">
           <p class="antetitulo" data-i18n="concepto.antetitulo">El concepto</p>
           <h2 class="titulo" id="concepto-titulo" data-i18n="concepto.titulo">Cocina de autor con raíz amazónica</h2>
-          <p class="entradilla" data-i18n="concepto.intro"><mark class="pendiente">[TEXTO CONCEPTO]</mark></p>
+          <p class="entradilla" data-i18n="concepto.intro">En Shabono, cada plato parte de la tierra amazónica. Cocinamos con ingredientes originarios del estado Amazonas, cultivados y cuidados con esmero, y los llevamos a la mesa con técnica y mirada de autor.</p>
         </header>
 
         <ul class="pilares" role="list">
           <li class="pilar revelar">
             <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.ingredientesTitulo">Ingredientes amazónicos</h3>
-            <p data-i18n="concepto.ingredientesTexto"><mark class="pendiente">[TEXTO CONCEPTO: ingredientes amazónicos]</mark></p>
+            <p data-i18n="concepto.ingredientesTexto">Productos originarios del estado Amazonas son la base de nuestra cocina.</p>
           </li>
           <li class="pilar revelar">
             <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.origenTitulo">Origen</h3>
-            <p data-i18n="concepto.origenTexto"><mark class="pendiente">[TEXTO CONCEPTO: origen]</mark></p>
+            <p data-i18n="concepto.origenTexto">Cada ingrediente tiene un origen, y en cada plato queremos que se note.</p>
           </li>
           <li class="pilar revelar">
             <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.productoresTitulo">Productores locales</h3>
-            <p data-i18n="concepto.productoresTexto"><mark class="pendiente">[TEXTO CONCEPTO: productores locales]</mark></p>
+            <p data-i18n="concepto.productoresTexto">Trabajamos con quienes cultivan y cuidan estos ingredientes con la mayor dedicación.</p>
           </li>
         </ul>
       </div>
@@ -375,20 +375,23 @@
         </header>
 
         <div class="visitanos__rejilla">
-          <div class="mapa revelar" data-mapa>
-            <div class="mapa__fachada">
-              <span class="mapa__luces" aria-hidden="true"><span></span></span>
-              <p class="mapa__texto" data-mapa-pendiente data-i18n="visitanos.mapaPendiente">Mapa pendiente <mark class="pendiente">[ENLACE MAPS]</mark></p>
-              <p class="mapa__texto" data-mapa-listo hidden data-i18n="visitanos.mapaNota">El mapa se carga solo si lo pides, para ahorrar datos.</p>
-              <button class="btn btn--contorno" type="button" data-mapa-cargar hidden data-i18n="visitanos.mapaCargar">Ver mapa</button>
+          <!-- Mapa de Google: carga diferida (loading="lazy"), solo cuando el visitante se acerca a esta sección.
+               Debajo queda el aviso «Cargando mapa…» para conexiones lentas. -->
+          <div class="mapa revelar">
+            <div class="mapa__fachada" aria-hidden="true">
+              <span class="mapa__luces"><span></span></span>
+              <p class="mapa__texto" data-i18n="visitanos.mapaCargando">Cargando mapa…</p>
             </div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15881.652792172297!2d-67.6256393826172!3d5.653214200000012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e75ed002abfe685%3A0x69e628ae2429ece1!2sShabono%20By%20Nelson%20mendez!5e0!3m2!1ses-419!2sve!4v1792036351855!5m2!1ses-419!2sve"
+                    title="Mapa con la ubicación de Shabono en Puerto Ayacucho" data-i18n-attr="title:visitanos.mapaTitulo"
+                    loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
 
           <div class="datos">
             <div class="dato revelar">
               <h3 class="dato__titulo" data-i18n="visitanos.direccionTitulo">Dirección</h3>
               <address>
-                <span data-i18n="visitanos.direccion"><mark class="pendiente">[DIRECCIÓN: calle o punto de referencia]</mark></span><br>
+                <span data-i18n="visitanos.direccion">Av. La Raza, al lado de Protección Civil Amazonas</span><br>
                 <span data-i18n="visitanos.ciudad">Puerto Ayacucho 7101, estado Amazonas, Venezuela</span>
               </address>
               <p class="dato__enlace">
@@ -404,19 +407,15 @@
 
             <div class="dato revelar">
               <h3 class="dato__titulo" data-i18n="visitanos.pagoTitulo">Métodos de pago</h3>
-              <p data-i18n="visitanos.pago"><mark class="pendiente">[MÉTODOS]</mark></p>
+              <p data-i18n="visitanos.pago">Bolívares y divisas.</p>
             </div>
 
             <div class="dato revelar">
-              <h3 class="dato__titulo" data-i18n="visitanos.llegarTitulo">Cómo llegar a Puerto Ayacucho</h3>
-              <dl class="llegar">
-                <dt data-i18n="visitanos.avion">En avión</dt>
-                <dd data-i18n="visitanos.avionTexto"><mark class="pendiente">[CÓMO LLEGAR: EN AVIÓN]</mark></dd>
-                <dt data-i18n="visitanos.carretera">Por carretera</dt>
-                <dd data-i18n="visitanos.carreteraTexto"><mark class="pendiente">[CÓMO LLEGAR: POR CARRETERA]</mark></dd>
-                <dt data-i18n="visitanos.enCiudad">En la ciudad</dt>
-                <dd data-i18n="visitanos.enCiudadTexto"><mark class="pendiente">[CÓMO LLEGAR: DENTRO DE LA CIUDAD]</mark></dd>
-              </dl>
+              <h3 class="dato__titulo" data-i18n="visitanos.llegarTitulo">Cómo llegar</h3>
+              <p data-i18n="visitanos.llegarTexto">En carro, por la Av. La Raza: estamos al lado de Protección Civil Amazonas.</p>
+              <p class="dato__enlace">
+                <a class="enlace" href="https://www.google.com/maps/dir/?api=1&amp;destination=5.653224172431118%2C-67.61533716709262&amp;travelmode=driving" target="_blank" rel="noopener" data-i18n="visitanos.llegarBoton">Ver la ruta desde donde estás</a>
+              </p>
             </div>
           </div>
         </div>
@@ -470,29 +469,18 @@
         <h2 class="pie__titulo" data-i18n="pie.contacto">Contacto</h2>
         <ul class="pie__lista" role="list">
           <li><span data-i18n="pie.whatsapp">WhatsApp:</span> <a class="enlace" data-whatsapp-texto target="_blank" rel="noopener"><mark class="pendiente">[TELÉFONO]</mark></a></li>
-          <li><span data-i18n="pie.correo">Correo:</span> <a class="enlace" data-correo><mark class="pendiente">[CORREO]</mark></a></li>
         </ul>
       </div>
 
       <div class="pie__bloque">
         <h2 class="pie__titulo" data-i18n="pie.ubicacion">Ubicación</h2>
-        <p><span data-i18n="visitanos.direccion"><mark class="pendiente">[DIRECCIÓN: calle o punto de referencia]</mark></span><br>Puerto Ayacucho 7101, Amazonas</p>
+        <p><span data-i18n="visitanos.direccion">Av. La Raza, al lado de Protección Civil Amazonas</span><br>Puerto Ayacucho 7101, Amazonas</p>
         <p>
           <a class="enlace" data-enlace-maps target="_blank" rel="noopener" data-i18n="pie.verMaps">Ver en Google Maps</a>
           <mark class="pendiente" data-pendiente-maps>[ENLACE MAPS]</mark>
         </p>
       </div>
 
-      <div class="pie__bloque">
-        <h2 class="pie__titulo" data-i18n="pie.redes">Síguenos</h2>
-        <p class="pie__instagram">
-          <a class="enlace enlace--icono" data-instagram target="_blank" rel="noopener">
-            <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>
-            <span>Instagram</span>
-          </a>
-          <mark class="pendiente" data-pendiente-instagram>[INSTAGRAM]</mark>
-        </p>
-      </div>
 
       <div class="pie__bloque pie__bloque--idioma">
         <h2 class="pie__titulo" data-i18n="pie.idioma">Idioma</h2>

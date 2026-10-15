@@ -1,7 +1,7 @@
 /* ==========================================================================
    Shabono by Nelson Méndez — main.js
    Sin frameworks. Contiene:
-     1. CONFIG: datos de contacto (teléfono, mapa, Instagram, correo)
+     1. CONFIG: datos de contacto (WhatsApp y enlace de Google Maps)
      2. TRADUCCIONES: todos los textos del sitio en español e inglés
      3. Funciones del sitio (idioma, menú, galería, mapa, WhatsApp)
 
@@ -17,20 +17,13 @@
 const CONFIG = {
   // Número de WhatsApp en formato internacional, p. ej. '+58 412 000 0000'
   // (se usa tal cual para mostrarlo y sin espacios ni '+' para el enlace wa.me).
-  telefono: '[TELÉFONO]',
+  telefono: '+58 416-685-2153',
 
   // Enlace para abrir la ubicación en Google Maps (botón «Compartir» > «Copiar enlace»).
   mapsEnlace: 'https://maps.app.goo.gl/cwKJK5V7sSogdyap6',
 
-  // URL del mapa insertado: en Google Maps, «Compartir» > «Insertar un mapa»,
-  // copiar solo el valor de src="..." del código <iframe>.
-  mapsInsertar: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15881.652792172297!2d-67.6256393826172!3d5.653214200000012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e75ed002abfe685%3A0x69e628ae2429ece1!2sShabono%20By%20Nelson%20mendez!5e0!3m2!1ses-419!2sve!4v1792036351855!5m2!1ses-419!2sve',
-
-  // Perfil de Instagram completo, p. ej. 'https://www.instagram.com/usuario/'
-  instagram: '[INSTAGRAM]',
-
-  // Correo de contacto (opcional).
-  correo: '[CORREO]',
+  // El mapa insertado (código «Insertar un mapa» de Google) está directamente en index.html,
+  // sección Visítanos, porque se carga solo con loading="lazy".
 };
 
 /* --------------------------------------------------------------------------
@@ -67,7 +60,7 @@ const TRADUCCIONES = {
     },
     portada: {
       lugar: 'Alta cocina de autor · Puerto Ayacucho, Amazonas',
-      frase: '[FRASE DE CONCEPTO]',
+      frase: 'Donde la tierra amazónica se convierte en alta cocina.',
       reservar: 'Reservar',
       verMenu: 'Ver menú',
       imagenAlt: 'Roca de granito con cascada en el interior de Shabono, de noche',
@@ -75,20 +68,22 @@ const TRADUCCIONES = {
     chef: {
       antetitulo: 'El chef',
       rol: 'Chef y propietario · Chef venezolano con reconocimiento internacional',
-      bio: '[BIOGRAFÍA]',
-      cita: '[CITA DEL CHEF]',
+      // Biografía provisional, solo con datos confirmados. Sustituir por la biografía real.
+      bio: 'Chef venezolano con reconocimiento internacional, Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, donde cocina con ingredientes originarios del estado Amazonas.',
+      // Cita real del chef. Mientras esté vacía, el bloque de la cita no se muestra.
+      cita: '',
       fotoAlt: 'Retrato del chef Nelson Méndez',
     },
     concepto: {
       antetitulo: 'El concepto',
       titulo: 'Cocina de autor con raíz amazónica',
-      intro: '[TEXTO CONCEPTO]',
+      intro: 'En Shabono, cada plato parte de la tierra amazónica. Cocinamos con ingredientes originarios del estado Amazonas, cultivados y cuidados con esmero, y los llevamos a la mesa con técnica y mirada de autor.',
       ingredientesTitulo: 'Ingredientes amazónicos',
-      ingredientesTexto: '[TEXTO CONCEPTO: ingredientes amazónicos]',
+      ingredientesTexto: 'Productos originarios del estado Amazonas son la base de nuestra cocina.',
       origenTitulo: 'Origen',
-      origenTexto: '[TEXTO CONCEPTO: origen]',
+      origenTexto: 'Cada ingrediente tiene un origen, y en cada plato queremos que se note.',
       productoresTitulo: 'Productores locales',
-      productoresTexto: '[TEXTO CONCEPTO: productores locales]',
+      productoresTexto: 'Trabajamos con quienes cultivan y cuidan estos ingredientes con la mayor dedicación.',
     },
     menu: {
       antetitulo: 'Menú',
@@ -142,23 +137,16 @@ const TRADUCCIONES = {
       antetitulo: 'Visítanos',
       titulo: 'Te esperamos en Puerto Ayacucho',
       direccionTitulo: 'Dirección',
-      direccion: '[DIRECCIÓN: calle o punto de referencia]',
+      direccion: 'Av. La Raza, al lado de Protección Civil Amazonas',
       ciudad: 'Puerto Ayacucho 7101, estado Amazonas, Venezuela',
       abrirMaps: 'Abrir en Google Maps',
       horariosTitulo: 'Horarios',
       horarios: '[HORARIOS]',
       pagoTitulo: 'Métodos de pago',
-      pago: '[MÉTODOS]',
-      llegarTitulo: 'Cómo llegar a Puerto Ayacucho',
-      avion: 'En avión',
-      avionTexto: '[CÓMO LLEGAR: EN AVIÓN]',
-      carretera: 'Por carretera',
-      carreteraTexto: '[CÓMO LLEGAR: POR CARRETERA]',
-      enCiudad: 'En la ciudad',
-      enCiudadTexto: '[CÓMO LLEGAR: DENTRO DE LA CIUDAD]',
-      mapaPendiente: 'Mapa pendiente [ENLACE MAPS]',
-      mapaNota: 'El mapa se carga solo si lo pides, para ahorrar datos.',
-      mapaCargar: 'Ver mapa',
+      pago: 'Bolívares y divisas.',
+      llegarTitulo: 'Cómo llegar',
+      llegarTexto: 'En carro, por la Av. La Raza: estamos al lado de Protección Civil Amazonas.',
+      llegarBoton: 'Ver la ruta desde donde estás',
       mapaCargando: 'Cargando mapa…',
       mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
     },
@@ -179,10 +167,8 @@ const TRADUCCIONES = {
       lema: 'Alta cocina de autor en Puerto Ayacucho, Amazonas, Venezuela.',
       contacto: 'Contacto',
       whatsapp: 'WhatsApp:',
-      correo: 'Correo:',
       ubicacion: 'Ubicación',
       verMaps: 'Ver en Google Maps',
-      redes: 'Síguenos',
       idioma: 'Idioma',
       derechos: 'Todos los derechos reservados.',
     },
@@ -216,7 +202,7 @@ const TRADUCCIONES = {
     },
     portada: {
       lugar: 'Signature fine dining · Puerto Ayacucho, Amazonas',
-      frase: '[FRASE DE CONCEPTO · EN]',
+      frase: 'Where the land of the Amazon becomes fine dining.',
       reservar: 'Book a table',
       verMenu: 'View menu',
       imagenAlt: 'Granite rock with a waterfall inside Shabono, at night',
@@ -224,20 +210,20 @@ const TRADUCCIONES = {
     chef: {
       antetitulo: 'The chef',
       rol: 'Chef and owner · Internationally recognized Venezuelan chef',
-      bio: '[BIOGRAFÍA · EN]',
-      cita: '[CITA DEL CHEF · EN]',
+      bio: 'An internationally recognized Venezuelan chef, Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, a kitchen built on ingredients native to Amazonas State.',
+      cita: '',
       fotoAlt: 'Portrait of chef Nelson Méndez',
     },
     concepto: {
       antetitulo: 'Our concept',
       titulo: 'Signature cuisine with Amazonian roots',
-      intro: '[TEXTO CONCEPTO · EN]',
+      intro: 'At Shabono, every dish starts with the land of the Amazon. We cook with ingredients native to Amazonas State, grown and tended with care, and bring them to the table with technique and a signature point of view.',
       ingredientesTitulo: 'Amazonian ingredients',
-      ingredientesTexto: '[TEXTO CONCEPTO: ingredientes amazónicos · EN]',
+      ingredientesTexto: 'Products native to Amazonas State are the foundation of our cooking.',
       origenTitulo: 'Origin',
-      origenTexto: '[TEXTO CONCEPTO: origen · EN]',
+      origenTexto: 'Every ingredient has an origin, and we want you to taste it in every dish.',
       productoresTitulo: 'Local producers',
-      productoresTexto: '[TEXTO CONCEPTO: productores locales · EN]',
+      productoresTexto: 'We work with the people who grow and tend these ingredients with the utmost dedication.',
     },
     menu: {
       antetitulo: 'Menu',
@@ -290,23 +276,16 @@ const TRADUCCIONES = {
       antetitulo: 'Visit us',
       titulo: 'Find us in Puerto Ayacucho',
       direccionTitulo: 'Address',
-      direccion: '[DIRECCIÓN: calle o punto de referencia]',
+      direccion: 'Av. La Raza, next to Protección Civil Amazonas',
       ciudad: 'Puerto Ayacucho 7101, Amazonas State, Venezuela',
       abrirMaps: 'Open in Google Maps',
       horariosTitulo: 'Opening hours',
       horarios: '[HORARIOS · EN]',
       pagoTitulo: 'Payment methods',
-      pago: '[MÉTODOS · EN]',
-      llegarTitulo: 'Getting to Puerto Ayacucho',
-      avion: 'By air',
-      avionTexto: '[CÓMO LLEGAR: EN AVIÓN · EN]',
-      carretera: 'By road',
-      carreteraTexto: '[CÓMO LLEGAR: POR CARRETERA · EN]',
-      enCiudad: 'In town',
-      enCiudadTexto: '[CÓMO LLEGAR: DENTRO DE LA CIUDAD · EN]',
-      mapaPendiente: 'Map pending [ENLACE MAPS]',
-      mapaNota: 'The map only loads when you ask for it, to save data.',
-      mapaCargar: 'Show map',
+      pago: 'Bolívares and foreign currency.',
+      llegarTitulo: 'Getting here',
+      llegarTexto: 'By car, along Av. La Raza: we are next to Protección Civil Amazonas.',
+      llegarBoton: 'Get directions from where you are',
       mapaCargando: 'Loading map…',
       mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
     },
@@ -326,10 +305,8 @@ const TRADUCCIONES = {
       lema: 'Signature fine dining in Puerto Ayacucho, Amazonas, Venezuela.',
       contacto: 'Contact',
       whatsapp: 'WhatsApp:',
-      correo: 'Email:',
       ubicacion: 'Location',
       verMaps: 'View on Google Maps',
-      redes: 'Follow us',
       idioma: 'Language',
       derechos: 'All rights reserved.',
     },
@@ -422,7 +399,9 @@ function aplicarIdioma(idioma, { actualizarUrl = true } = {}) {
 
   actualizarMenuBoton();
   actualizarContacto();
-  actualizarMapa();
+
+  // La cita del chef solo se muestra cuando hay texto
+  $$('[data-cita]').forEach((el) => { el.hidden = !t('chef.cita'); });
 
   guardarIdioma(idiomaActual);
   if (actualizarUrl) {
@@ -444,7 +423,7 @@ function iniciarIdioma() {
   aplicarIdioma(idiomaInicial(), { actualizarUrl: false });
 }
 
-/* ---------- Contacto: WhatsApp, Maps, Instagram, correo ---------- */
+/* ---------- Contacto: WhatsApp y Google Maps ---------- */
 function enlaceWhatsApp() {
   const mensaje = encodeURIComponent(t('reserva.mensaje'));
   const numero = esPendiente(CONFIG.telefono) ? '' : CONFIG.telefono.replace(/\D/g, '');
@@ -474,59 +453,8 @@ function actualizarContacto() {
 
   $$('[data-enlace-maps]').forEach((a) => configurarEnlace(a, CONFIG.mapsEnlace, CONFIG.mapsEnlace, []));
   $$('[data-pendiente-maps]').forEach((m) => { m.hidden = !esPendiente(CONFIG.mapsEnlace); });
-
-  $$('[data-instagram]').forEach((a) => configurarEnlace(a, CONFIG.instagram, CONFIG.instagram, []));
-  $$('[data-pendiente-instagram]').forEach((m) => { m.hidden = !esPendiente(CONFIG.instagram); });
-
-  $$('[data-correo]').forEach((a) => {
-    const pendiente = esPendiente(CONFIG.correo);
-    a.innerHTML = pendiente ? marcarPendientes(CONFIG.correo || '[CORREO]') : escaparHTML(CONFIG.correo);
-    if (pendiente) a.removeAttribute('href');
-    else a.setAttribute('href', `mailto:${CONFIG.correo}`);
-  });
 }
 
-/* ---------- Mapa (se carga al tocar, para ahorrar datos) ---------- */
-function actualizarMapa() {
-  const contenedor = $('[data-mapa]');
-  if (!contenedor) return;
-  const pendiente = esPendiente(CONFIG.mapsInsertar);
-  const boton = $('[data-mapa-cargar]', contenedor);
-  const avisoPendiente = $('[data-mapa-pendiente]', contenedor);
-  const nota = $('[data-mapa-listo]', contenedor);
-  if (boton) boton.hidden = pendiente;
-  if (avisoPendiente) avisoPendiente.hidden = !pendiente;
-  if (nota) nota.hidden = pendiente;
-  const iframe = $('iframe', contenedor);
-  if (iframe) {
-    iframe.title = t('visitanos.mapaTitulo');
-    if (boton) boton.hidden = true; // ya cargado: el botón queda oculto tras el mapa
-  }
-}
-
-function iniciarMapa() {
-  const contenedor = $('[data-mapa]');
-  const boton = contenedor && $('[data-mapa-cargar]', contenedor);
-  if (!boton) return;
-  boton.addEventListener('click', () => {
-    if (esPendiente(CONFIG.mapsInsertar)) return;
-    const iframe = document.createElement('iframe');
-    iframe.src = CONFIG.mapsInsertar;
-    iframe.title = t('visitanos.mapaTitulo');
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    iframe.allowFullscreen = true;
-    // Mientras carga (conexiones lentas) se ve «Cargando mapa…» debajo del mapa
-    const nota = $('[data-mapa-listo]', contenedor);
-    if (nota) {
-      nota.dataset.i18n = 'visitanos.mapaCargando';
-      nota.textContent = t('visitanos.mapaCargando');
-    }
-    boton.hidden = true;
-    contenedor.appendChild(iframe);
-    iframe.focus();
-  });
-}
 
 /* ---------- Navegación ---------- */
 const nav = $('[data-nav]');
@@ -687,7 +615,6 @@ function iniciarRevelado() {
 /* ---------- Inicio ---------- */
 iniciarNavegacion();
 iniciarIdioma();
-iniciarMapa();
 iniciarGaleria();
 iniciarRevelado();
 $$('[data-anio]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });

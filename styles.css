@@ -939,15 +939,9 @@ html:has(.visor[open]) { overflow: hidden; }
 .dato__enlace { margin-top: .75rem; }
 .dato__enlace .enlace { font-weight: 600; }
 
-.llegar { display: grid; gap: .25rem 1rem; }
-.llegar dt { font-weight: 700; margin-top: .5rem; }
-.llegar dt:first-child { margin-top: 0; }
-
 @media (min-width: 56rem) {
   .visitanos__rejilla { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 4rem; align-items: start; }
   .mapa { position: sticky; top: calc(var(--nav-alto) + 1.5rem); aspect-ratio: 5 / 6; }
-  .llegar { grid-template-columns: max-content 1fr; }
-  .llegar dt { margin-top: 0; }
 }
 
 /* ==========================================================================
@@ -1063,7 +1057,7 @@ html:has(.visor[open]) { overflow: hidden; }
   .pie__marca { grid-column: 1 / -1; }
 }
 @media (min-width: 64rem) {
-  .pie__rejilla { grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); gap: 2rem; }
+  .pie__rejilla { grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 2rem; }
   .pie__marca { grid-column: auto; }
   .pie__base { padding-bottom: 1.5rem; }
 }
