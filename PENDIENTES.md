@@ -66,6 +66,7 @@ Solo con datos verificados, con fuente enlazable. En `index.html`, sección `#re
 
 - Titulares: «Cocina de autor con raíz amazónica», «La carta», «Shabono por dentro», «Te esperamos en Puerto Ayacucho», «Reserva tu mesa».
 - «Chef y propietario · Chef venezolano con reconocimiento internacional» (se repite con la biografía provisional).
-- «Una selección de nuestra carta. Precios en dólares estadounidenses (USD).»
+- «Una selección de nuestra carta. Precios en dólares estadounidenses (USD).» (confirmar que los 6 platos son una selección y que los precios se publican en USD).
+- Nombre «Menú degustación» (y el botón «Reservar degustación»).
 - Nombre de la ficha de Google Maps: aparece como «Shabono By Nelson mendez»; conviene corregirlo en el perfil del negocio a «Nelson Méndez».
 - Traducción al inglés de todos los textos.

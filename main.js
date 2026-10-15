@@ -3,7 +3,7 @@
    Sin frameworks. Contiene:
      1. CONFIG: datos de contacto (WhatsApp y enlace de Google Maps)
      2. TRADUCCIONES: todos los textos del sitio en español e inglés
-     3. Funciones del sitio (idioma, menú, galería, mapa, WhatsApp)
+     3. Funciones del sitio (idioma, menú, galería, WhatsApp y enlaces de Google Maps)
 
    Cualquier texto entre corchetes [ASÍ] es un dato pendiente de confirmar con
    el restaurante y se resalta automáticamente en la página. Al sustituirlo por
@@ -146,7 +146,7 @@ const TRADUCCIONES = {
       pago: 'Bolívares y divisas.',
       llegarTitulo: 'Cómo llegar',
       llegarTexto: 'En carro, por la Av. La Raza: estamos al lado de Protección Civil Amazonas.',
-      llegarBoton: 'Ver la ruta desde donde estás',
+      llegarBoton: 'Ver la ruta en Google Maps',
       mapaCargando: 'Cargando mapa…',
       mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
     },
@@ -210,7 +210,7 @@ const TRADUCCIONES = {
     chef: {
       antetitulo: 'The chef',
       rol: 'Chef and owner · Internationally recognized Venezuelan chef',
-      bio: 'An internationally recognized Venezuelan chef, Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, a kitchen built on ingredients native to Amazonas State.',
+      bio: 'An internationally recognized Venezuelan chef, Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, cooking with ingredients native to Amazonas State.',
       cita: '',
       fotoAlt: 'Portrait of chef Nelson Méndez',
     },
@@ -285,7 +285,7 @@ const TRADUCCIONES = {
       pago: 'Bolívares and foreign currency.',
       llegarTitulo: 'Getting here',
       llegarTexto: 'By car, along Av. La Raza: we are next to Protección Civil Amazonas.',
-      llegarBoton: 'Get directions from where you are',
+      llegarBoton: 'Get directions on Google Maps',
       mapaCargando: 'Loading map…',
       mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
     },

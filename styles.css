@@ -172,8 +172,7 @@ mark.pendiente {
 }
 .seccion--oscura mark.pendiente,
 .portada mark.pendiente,
-.pie mark.pendiente,
-.mapa mark.pendiente { background: rgb(227 184 102 / .16); color: var(--crema); } /* 4,9:1 */
+.pie mark.pendiente { background: rgb(227 184 102 / .16); color: var(--crema); } /* 4,9:1 */
 
 /* ---------- Botones ---------- */
 .btn {
@@ -213,7 +212,6 @@ mark.pendiente {
 }
 .enlace:hover { text-decoration-thickness: 2px; }
 .enlace:not([href]) { text-decoration: none; cursor: default; }
-.enlace--icono { display: inline-flex; align-items: center; gap: .5em; }
 
 /* ---------- Motivo: círculo con halo ---------- */
 .punto-luz {
@@ -1054,11 +1052,13 @@ html:has(.visor[open]) { overflow: hidden; }
 
 @media (min-width: 40rem) {
   .pie__rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pie__marca { grid-column: 1 / -1; }
+  .pie__marca,
+  .pie__bloque--idioma { grid-column: 1 / -1; }
 }
 @media (min-width: 64rem) {
   .pie__rejilla { grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 2rem; }
-  .pie__marca { grid-column: auto; }
+  .pie__marca,
+  .pie__bloque--idioma { grid-column: auto; }
   .pie__base { padding-bottom: 1.5rem; }
 }
 
