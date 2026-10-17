@@ -10,7 +10,7 @@ Es una **demo**. Todo dato no confirmado aparece **[entre corchetes]** y resalta
 index.html      Página (HTML semántico, Open Graph, JSON-LD)
 styles.css      Estilos (mobile-first, paleta en :root)
 main.js         Datos de contacto (CONFIG), textos ES/EN (TRADUCCIONES) y funciones
-img/            Imágenes WebP (de relleno, «Foto pendiente»)
+img/            Logo (SVG), favicon, foto del chef, plato destacado, galería e imagen para compartir
 fonts/          Playfair Display e Inter (woff2, solo latín, licencia OFL)
 _headers        Cabeceras de caché y seguridad para Cloudflare Pages
 robots.txt, sitemap.xml
@@ -24,14 +24,18 @@ Sin frameworks ni proceso de compilación.
 - **WhatsApp y enlace de Google Maps:** `main.js` → `CONFIG`.
 - **Mapa insertado y ruta «Cómo llegar»:** directamente en `index.html`, sección Visítanos (el `<iframe>` de Google y el enlace con las coordenadas).
 - **Cita del chef:** `TRADUCCIONES.es.chef.cita` y `TRADUCCIONES.en.chef.cita`. Mientras estén vacías, el bloque de la cita no se muestra.
-- **Imágenes:** sustituir los archivos de `img/` con el mismo nombre y tamaño (ver `PENDIENTES.md`).
+- **Platos destacados y carta completa:** los 6 destacados están en `TRADUCCIONES.*.menu.platos` (nombre, categoría y descripción; si la descripción está vacía, no se muestra). La carta completa está escrita en `index.html` (bloque `carta-completa`); allí se añaden o quitan platos.
+- **Menú degustación y avisos de alergias e impuestos:** están ocultos con el atributo `hidden` en `index.html`. Para mostrarlos, quitar `hidden` y completar los textos en `TRADUCCIONES`.
+- **Imágenes:** sustituir los archivos de `img/` con el mismo nombre (ver `PENDIENTES.md`).
+- **Logo:** `img/logo-claro.svg` (crema y dorado, para fondos oscuros), `img/logo-oscuro.svg` (para fondos claros) y `img/logo-nm.svg` (solo el monograma NM, en la barra de navegación). Están redibujados a partir de una imagen pequeña del logo; conviene sustituirlos por los archivos originales del diseñador.
+- **Portada:** ahora muestra el logo grande sin foto. Cuando llegue la foto de la roca con la cascada, en `index.html` hay un comentario en la portada con el bloque `<picture>` listo para pegar.
 - **Reconocimientos:** la sección está oculta con la clase `seccion--oculta`. Para mostrarla, quitar esa clase en `index.html`; el enlace del menú aparece solo.
 - **Idioma:** español por defecto. El inglés se activa con el selector ES/EN o con `?lang=en`, y se recuerda en el navegador.
 
 ## Rendimiento
 
-- Imágenes WebP con `loading="lazy"`. La foto de portada es la excepción: carga con prioridad alta porque es lo primero que se ve. Hay una versión vertical para móvil.
-- Galería con miniaturas de 600 px; la versión de 1200 px solo se descarga al ampliar.
+- Imágenes WebP con `loading="lazy"`. El logo de la portada es la excepción: carga con prioridad alta porque es lo primero que se ve.
+- Galería con miniaturas cuadradas (`NN-mini.webp`, máx. 600 px); la foto completa (`NN.webp`) solo se descarga al ampliar.
 - El mapa de Google usa carga diferida (`loading="lazy"`): solo se descarga cuando el visitante se acerca a la sección Visítanos. Mientras carga se ve «Cargando mapa…».
 - Dos familias tipográficas alojadas en el propio sitio (unos 125 KB en total), con `font-display: swap`. No hay videos ni librerías externas.
 

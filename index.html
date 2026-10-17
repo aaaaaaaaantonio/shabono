@@ -49,7 +49,7 @@
     "description": "Restaurante de alta cocina de autor del chef venezolano Nelson Méndez en Puerto Ayacucho, estado Amazonas, Venezuela.",
     "url": "https://[DOMINIO]/",
     "image": "https://[DOMINIO]/img/og-imagen.jpg",
-    "logo": "https://[DOMINIO]/img/[LOGO SVG o PNG]",
+    "logo": "https://[DOMINIO]/img/logo-oscuro.svg",
     "telephone": "+58-416-685-2153",
     "address": {
       "@type": "PostalAddress",
@@ -65,12 +65,15 @@
       "longitude": -67.61533716709262
     },
     "hasMap": "https://maps.app.goo.gl/cwKJK5V7sSogdyap6",
-    "openingHours": "[HORARIOS]",
+    "openingHours": "[DÍAS] 07:00-23:00",
     "servesCuisine": "Cocina de autor con ingredientes amazónicos",
     "priceRange": "[RANGO DE PRECIOS]",
     "paymentAccepted": "Bolívares y divisas",
     "acceptsReservations": true,
     "menu": "https://[DOMINIO]/#menu",
+    "sameAs": [
+      "https://www.instagram.com/shabonobynelsonmendez/"
+    ],
     "founder": {
       "@type": "Person",
       "name": "Nelson Méndez",
@@ -86,7 +89,7 @@
   <header class="nav" data-nav>
     <div class="nav__barra contenedor">
       <a class="nav__marca" href="#inicio" data-i18n-attr="aria-label:general.inicio" aria-label="Shabono by Nelson Méndez, ir al inicio">
-        <img class="nav__logo" src="img/logo-pendiente.svg" width="44" height="44" alt="[LOGO SVG o PNG]">
+        <img class="nav__logo" src="img/logo-nm.svg" width="95" height="40" alt="">
         <span class="nav__nombre">Shabono <small>by Nelson Méndez</small></span>
       </a>
 
@@ -129,19 +132,22 @@
 
     <!-- 2. PORTADA -->
     <section class="portada" id="inicio" aria-labelledby="portada-titulo">
+      <!-- Portada provisional sin foto: logo grande con un halo de luz. Cuando llegue la foto de la roca
+           con la cascada (img/portada.webp 1920×1200 y img/portada-movil.webp 900×1400), pega aquí:
       <picture class="portada__fondo">
         <source media="(min-width: 700px)" srcset="img/portada.webp" width="1920" height="1200">
-        <!-- La portada no lleva loading="lazy": es la primera imagen visible y debe cargar cuanto antes -->
         <img src="img/portada-movil.webp" width="900" height="1400" fetchpriority="high" decoding="async"
              alt="Roca de granito con cascada en el interior de Shabono, de noche"
              data-i18n-attr="alt:portada.imagenAlt">
       </picture>
+      -->
+      <div class="portada__halo" aria-hidden="true"></div>
       <div class="portada__velo" aria-hidden="true"></div>
 
       <div class="portada__contenido contenedor">
         <div class="portada__titular">
           <p class="portada__lado" data-i18n="portada.ladoIzq">Alta cocina de autor</p>
-          <h1 class="portada__titulo" id="portada-titulo">Shabono <span>by Nelson Méndez</span></h1>
+          <h1 class="portada__titulo" id="portada-titulo"><img class="portada__logo" src="img/logo-claro.svg" width="604" height="302" fetchpriority="high" alt="Shabono by Nelson Méndez"></h1>
           <p class="portada__lado" data-i18n="portada.ladoDer">Puerto Ayacucho · Amazonas</p>
         </div>
         <p class="portada__frase" data-i18n="portada.frase">Donde la tierra amazónica se convierte en alta cocina.</p>
@@ -156,14 +162,14 @@
     <section class="seccion seccion--oscura chef" id="chef" aria-labelledby="chef-titulo">
       <div class="contenedor chef__rejilla">
         <figure class="chef__foto marco-halo">
-          <img src="img/chef.webp" width="800" height="800" loading="lazy" decoding="async"
-               alt="Retrato del chef Nelson Méndez" data-i18n-attr="alt:chef.fotoAlt">
+          <img src="img/chef.webp" width="660" height="660" loading="lazy" decoding="async"
+               alt="El chef Nelson Méndez sonriente, con su chaqueta blanca de chef" data-i18n-attr="alt:chef.fotoAlt">
         </figure>
 
         <div class="chef__texto">
           <h2 class="titulo" id="chef-titulo">Nelson Méndez</h2>
           <p class="chef__rol" data-i18n="chef.rol">Chef y propietario · Chef venezolano con reconocimiento internacional</p>
-          <p data-i18n="chef.bio">Chef venezolano con reconocimiento internacional, Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, donde cocina con ingredientes originarios del estado Amazonas.</p>
+          <p data-i18n="chef.bio">Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, y dueño del Instituto Culinario de Investigación Amazonas. Cocina con ingredientes originarios del estado Amazonas.</p>
 
           <!-- Cita del chef: oculta mientras TRADUCCIONES.*.chef.cita esté vacía (main.js la muestra sola) -->
           <div class="chef__cita" data-cita hidden>
@@ -208,65 +214,259 @@
     <section class="seccion seccion--oscura menu" id="menu" aria-labelledby="menu-titulo">
       <div class="contenedor">
         <div class="menu__rejilla">
+          <div class="menu__principal">
           <div class="carta">
             <h2 class="titulo carta__titulo" id="menu-titulo" data-i18n="menu.titulo">La carta</h2>
             <ol class="platos" role="list">
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.0.nombre"><mark class="pendiente">[NOMBRE PLATO 1]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.0.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.0.nombre">Centro de lomito Shabono</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.0.categoria">Carnes</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.0.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 1]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.0.descripcion" data-opcional hidden></p>
             </li>
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.1.nombre"><mark class="pendiente">[NOMBRE PLATO 2]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.1.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.1.nombre">Pasta Shabono</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.1.categoria">Pastas</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.1.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 2]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.1.descripcion" data-opcional>Aderezo de pesto, queso mozzarella, queso parmesano, pan árabe y lechuga.</p>
             </li>
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.2.nombre"><mark class="pendiente">[NOMBRE PLATO 3]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.2.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.2.nombre">Pescado a la catara</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.2.categoria">Pescados y mariscos</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.2.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 3]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.2.descripcion" data-opcional hidden></p>
             </li>
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.3.nombre"><mark class="pendiente">[NOMBRE PLATO 4]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.3.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.3.nombre">Cubos de dorado rebozados</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.3.categoria">Pescados y mariscos</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.3.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 4]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.3.descripcion" data-opcional hidden></p>
             </li>
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.4.nombre"><mark class="pendiente">[NOMBRE PLATO 5]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.4.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.4.nombre">Ensalada Autana</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.4.categoria">Entradas</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.4.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 5]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.4.descripcion" data-opcional hidden></p>
             </li>
             <li class="plato">
               <div class="plato__fila">
-                <h3 class="plato__nombre" data-i18n="menu.platos.5.nombre"><mark class="pendiente">[NOMBRE PLATO 6]</mark></h3>
-                <p class="plato__precio" data-i18n="menu.platos.5.precio"><mark class="pendiente">[PRECIO USD]</mark></p>
+                <h3 class="plato__nombre" data-i18n="menu.platos.5.nombre">Ajicero</h3>
+                <p class="plato__tipo" data-i18n="menu.platos.5.categoria">Entradas</p>
               </div>
-              <p class="plato__desc" data-i18n="menu.platos.5.descripcion"><mark class="pendiente">[DESCRIPCIÓN PLATO 6]</mark></p>
+              <p class="plato__desc" data-i18n="menu.platos.5.descripcion" data-opcional hidden></p>
             </li>
             </ol>
           </div>
 
+          <!-- Carta completa, transcrita de la carta impresa del restaurante. Los nombres de los platos
+               se muestran en español en ambos idiomas; solo se traducen las categorías y los detalles. -->
+          <details class="carta-completa">
+            <summary class="btn btn--contorno" data-i18n="menu.cartaCompleta">Ver carta completa</summary>
+            <p class="carta-completa__nota" data-i18n="menu.cartaNota" data-opcional hidden></p>
+            <div class="carta-completa__columnas">
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.desayunos">Desayunos</h3>
+                <ul role="list" lang="es">
+                  <li>Criollo</li>
+                  <li>Americano</li>
+                  <li>Amazónico</li>
+                  <li>Omelette</li>
+                  <li>Pasteles</li>
+                  <li>Croissant</li>
+                  <li>Cachito</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.waffles">Waffles</h3>
+                <ul role="list" lang="es">
+                  <li>Dulces</li>
+                  <li>Salados</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.arepas">Arepas</h3>
+                <ul role="list" lang="es">
+                  <li>Shabono</li>
+                  <li>Reina pepiada</li>
+                  <li>Parriarepa</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.sandwiches">Sándwiches</h3>
+                <ul role="list" lang="es">
+                  <li>Shabono <span class="carta-completa__detalle" data-i18n="menu.detalles.sandwichShabono">Jamón serrano, tomate confitado y queso manchego.</span></li>
+                  <li>Rosbif</li>
+                  <li>Pernil</li>
+                  <li>Tradicional</li>
+                  <li>Club Husero</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.entradas">Entradas</h3>
+                <ul role="list" lang="es">
+                  <li>Ajicero</li>
+                  <li>Río Mar</li>
+                  <li>Sopa del día</li>
+                  <li>Tequeños</li>
+                  <li>Lumpias</li>
+                  <li>Croquetas de dorado</li>
+                  <li>Ceviche clásico</li>
+                  <li>Ceviche mixto</li>
+                  <li>Carpaccio</li>
+                  <li>César clásica</li>
+                  <li>César con pollo</li>
+                  <li>César con camarones</li>
+                  <li>Ensalada Shabono</li>
+                  <li>Ensalada Autana</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.pollo">Pollo</h3>
+                <ul role="list" lang="es">
+                  <li>Puerto Viejo</li>
+                  <li>Parmesana</li>
+                  <li>Al ajillo</li>
+                  <li>Milanesa</li>
+                  <li>Cordon bleu</li>
+                  <li>Suiza</li>
+                  <li>Napolitana</li>
+                  <li>Nuggets</li>
+                  <li>Bon Fan</li>
+                  <li>Parrilla mixta</li>
+                  <li>Espetada de pollo</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.carnes">Carnes</h3>
+                <ul role="list" lang="es">
+                  <li>Lomito americano</li>
+                  <li>Puerto Viejo</li>
+                  <li>A la suiza</li>
+                  <li>Lomito a la parmesana</li>
+                  <li>Medallones al Galten</li>
+                  <li>Centro de lomito Shabono</li>
+                  <li>Tomahawk</li>
+                  <li>Espetada de carne</li>
+                  <li>Espetada mixta</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.pescados">Pescados y mariscos</h3>
+                <ul role="list" lang="es">
+                  <li>Marinera</li>
+                  <li>Al ajillo</li>
+                  <li>Manier</li>
+                  <li>Puerto Viejo</li>
+                  <li>Cazuela</li>
+                  <li>A la catara</li>
+                  <li>Gratinado</li>
+                  <li>Cubos de dorado rebozados</li>
+                  <li>Cazuela de mariscos o pescado mixto</li>
+                  <li>Camarones rebozados</li>
+                  <li>Pulpo a la gallega o al ajillo</li>
+                  <li>Paella x2</li>
+                  <li>Arroz a la marinera</li>
+                  <li>Asopao de mariscos</li>
+                  <li>Cazuela de mariscos</li>
+                  <li>Gran frito de mariscos</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.pastas">Pastas</h3>
+                <ul role="list" lang="es">
+                  <li>Pesto</li>
+                  <li>Lomito</li>
+                  <li>Shabono <span class="carta-completa__detalle" data-i18n="menu.detalles.pastaShabono">Aderezo de pesto, queso mozzarella, queso parmesano, pan árabe y lechuga.</span></li>
+                  <li>Amatriciana</li>
+                  <li>Carbonara</li>
+                  <li>Con pollo</li>
+                  <li>Puttanesca</li>
+                  <li>Boloñesa</li>
+                  <li>Marinera</li>
+                  <li>Pasticho</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.cerdo">Cerdo</h3>
+                <ul role="list" lang="es">
+                  <li>Costillitas BBQ</li>
+                  <li>Pork belly</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.guarniciones">Guarniciones</h3>
+                <ul role="list" lang="es">
+                  <li>Arroz</li>
+                  <li>Ensaladas</li>
+                  <li>Tostón</li>
+                  <li>Papas fritas</li>
+                  <li>Tajadas</li>
+                  <li>Puré</li>
+                  <li>Papas rústicas</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.postres">Postres</h3>
+                <ul role="list" lang="es">
+                  <li>Tortas del día</li>
+                  <li>Helado</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.cafe">Café y té</h3>
+                <ul role="list" lang="es">
+                  <li>Café negro pequeño</li>
+                  <li>Café negro grande</li>
+                  <li>Café con leche pequeño</li>
+                  <li>Café con leche grande</li>
+                  <li>Té</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.bebidas">Bebidas</h3>
+                <ul role="list" lang="es">
+                  <li>Jugos naturales</li>
+                  <li>Batidos</li>
+                  <li>Merengadas</li>
+                  <li>Toddy</li>
+                  <li>Malta</li>
+                  <li>Refresco</li>
+                  <li>Frappé</li>
+                  <li>Jugos amazónicos</li>
+                  <li>Jugos verdes</li>
+                  <li>Agua</li>
+                </ul>
+              </div>
+              <div class="carta-completa__grupo">
+                <h3 data-i18n="menu.categorias.alcohol">Bebidas alcohólicas</h3>
+                <ul role="list" lang="es">
+                  <li>Cerveza</li>
+                  <li>Cócteles</li>
+                  <li>Whisky</li>
+                  <li>Vino</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+          </div>
+
           <div class="menu__lado">
-            <p class="entradilla" data-i18n="menu.intro">Una selección de nuestra carta. Precios en dólares estadounidenses (USD).</p>
+            <p class="entradilla" data-i18n="menu.intro">Una selección de platos de la casa. Más abajo encontrarás la carta completa.</p>
             <a class="btn btn--reserva" href="#reserva" data-i18n="nav.reservar">Reservar</a>
             <figure class="menu__foto">
-              <img src="img/menu-destacado.webp" width="1000" height="1250" loading="lazy" decoding="async"
-                   alt="Foto pendiente: plato destacado de Shabono" data-i18n-attr="alt:menu.fotoAlt">
+              <img src="img/menu-destacado.webp" width="561" height="701" loading="lazy" decoding="async"
+                   alt="Paella con cangrejo, pulpo, mejillones y camarones" data-i18n-attr="alt:menu.fotoAlt">
             </figure>
           </div>
         </div>
 
-        <div class="degustacion">
+        <!-- Menú degustación: oculto hasta que el restaurante confirme que lo ofrece (quitar «hidden» para mostrarlo) -->
+        <div class="degustacion" hidden>
           <div>
             <h3 class="degustacion__titulo" data-i18n="menu.degustacionTitulo">Menú degustación</h3>
             <p data-i18n="menu.degustacionTexto"><mark class="pendiente">[DETALLE DEGUSTACIÓN: número de tiempos, precio USD, maridaje]</mark></p>
@@ -274,7 +474,8 @@
           <a class="btn btn--reserva" href="#reserva" data-i18n="menu.degustacionBoton">Reservar degustación</a>
         </div>
 
-        <div class="menu__notas">
+        <!-- Avisos de alergias e impuestos: ocultos hasta tener el texto real (quitar «hidden» para mostrarlos) -->
+        <div class="menu__notas" hidden>
           <p data-i18n="menu.alergias">¿Alergias o restricciones alimentarias? Indícalo al hacer tu reserva. <mark class="pendiente">[NOTA SOBRE ALERGIAS]</mark></p>
           <p data-i18n="menu.impuestos"><mark class="pendiente">[IMPUESTOS Y SERVICIO: indicar si los precios los incluyen]</mark></p>
         </div>
@@ -289,62 +490,53 @@
           <p class="entradilla" data-i18n="galeria.intro">Toca una imagen para ampliarla.</p>
         </header>
 
-        <!-- Cada foto tiene dos tamaños: NN-600.webp (miniatura cuadrada) y NN-1200.webp (ampliada, 3:2).
-             Sin JavaScript, el enlace abre la imagen grande directamente. -->
+        <!-- Cada foto tiene dos archivos: NN-mini.webp (miniatura cuadrada, máx. 600 px) y NN.webp (ampliada,
+             proporción libre). Sin JavaScript, el enlace abre la imagen grande directamente. -->
         <ul class="galeria__rejilla" role="list" data-galeria>
-          <li><a class="galeria__item" href="img/galeria/01-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/01.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/01-600.webp" srcset="img/galeria/01-600.webp 600w, img/galeria/01-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 44rem, (min-width: 40rem) 66vw, 100vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 1 de 9" data-i18n-attr="alt:galeria.fotos.0">
+            <img src="img/galeria/01-mini.webp" width="560" height="560"
+                 loading="lazy" decoding="async" alt="Salón de Shabono con el letrero iluminado «Shabono by Nelson Méndez» y las mesas servidas" data-i18n-attr="alt:galeria.fotos.0">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/02-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/02.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/02-600.webp" srcset="img/galeria/02-600.webp 600w, img/galeria/02-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 2 de 9" data-i18n-attr="alt:galeria.fotos.1">
+            <img src="img/galeria/02-mini.webp" width="562" height="560"
+                 loading="lazy" decoding="async" alt="Filete de pescado empanizado con camarones en salsa, tostones y ensalada" data-i18n-attr="alt:galeria.fotos.1">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/03-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/03.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/03-600.webp" srcset="img/galeria/03-600.webp 600w, img/galeria/03-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 3 de 9" data-i18n-attr="alt:galeria.fotos.2">
+            <img src="img/galeria/03-mini.webp" width="555" height="555"
+                 loading="lazy" decoding="async" alt="Pasta con camarones, calamares y mejillones" data-i18n-attr="alt:galeria.fotos.2">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/04-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/04.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/04-600.webp" srcset="img/galeria/04-600.webp 600w, img/galeria/04-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 4 de 9" data-i18n-attr="alt:galeria.fotos.3">
+            <img src="img/galeria/04-mini.webp" width="572" height="572"
+                 loading="lazy" decoding="async" alt="Carne con hueso a la parrilla con puré de açaí y ensalada de tomate" data-i18n-attr="alt:galeria.fotos.3">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/05-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/05.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/05-600.webp" srcset="img/galeria/05-600.webp 600w, img/galeria/05-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 5 de 9" data-i18n-attr="alt:galeria.fotos.4">
+            <img src="img/galeria/05-mini.webp" width="402" height="402"
+                 loading="lazy" decoding="async" alt="Salón de eventos de Shabono con luces circulares en la pared" data-i18n-attr="alt:galeria.fotos.4">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/06-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/06.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/06-600.webp" srcset="img/galeria/06-600.webp 600w, img/galeria/06-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 6 de 9" data-i18n-attr="alt:galeria.fotos.5">
+            <img src="img/galeria/06-mini.webp" width="516" height="516"
+                 loading="lazy" decoding="async" alt="Pollo relleno empanizado con salsa, papas fritas y ensalada" data-i18n-attr="alt:galeria.fotos.5">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/07-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/07.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/07-600.webp" srcset="img/galeria/07-600.webp 600w, img/galeria/07-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 7 de 9" data-i18n-attr="alt:galeria.fotos.6">
+            <img src="img/galeria/07-mini.webp" width="556" height="556"
+                 loading="lazy" decoding="async" alt="Nelson Méndez junto a integrantes de una comunidad indígena de Amazonas" data-i18n-attr="alt:galeria.fotos.6">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/08-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/08.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/08-600.webp" srcset="img/galeria/08-600.webp 600w, img/galeria/08-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 8 de 9" data-i18n-attr="alt:galeria.fotos.7">
+            <img src="img/galeria/08-mini.webp" width="341" height="341"
+                 loading="lazy" decoding="async" alt="Mesa servida en el salón de eventos, bajo las luces circulares" data-i18n-attr="alt:galeria.fotos.7">
           </a></li>
-          <li><a class="galeria__item" href="img/galeria/09-1200.webp">
+          <li><a class="galeria__item" href="img/galeria/09.webp">
             <span class="sr" data-i18n="galeria.ampliar">Ampliar:</span>
-            <img src="img/galeria/09-600.webp" srcset="img/galeria/09-600.webp 600w, img/galeria/09-1200.webp 1200w"
-                 sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 33vw, 50vw" width="600" height="600"
-                 loading="lazy" decoding="async" alt="Foto pendiente de la galería, 9 de 9" data-i18n-attr="alt:galeria.fotos.8">
+            <img src="img/galeria/09-mini.webp" width="600" height="600"
+                 loading="lazy" decoding="async" alt="Medallones de carne con cebolla, ravioles gratinados y espinaca" data-i18n-attr="alt:galeria.fotos.8">
           </a></li>
         </ul>
       </div>
@@ -422,7 +614,7 @@
 
             <div class="dato">
               <h3 class="dato__titulo" data-i18n="visitanos.horariosTitulo">Horarios</h3>
-              <p data-i18n="visitanos.horarios"><mark class="pendiente">[HORARIOS]</mark></p>
+              <p data-i18n="visitanos.horarios">De 7:00 a.&nbsp;m. a 11:00 p.&nbsp;m.</p>
             </div>
 
             <div class="dato">
@@ -482,8 +674,7 @@
     <div class="separador" aria-hidden="true"></div>
     <div class="contenedor pie__rejilla">
       <div class="pie__marca">
-        <img src="img/logo-pendiente.svg" width="64" height="64" loading="lazy" alt="[LOGO SVG o PNG]">
-        <p class="pie__nombre">Shabono <small>by Nelson Méndez</small></p>
+        <img class="pie__logo" src="img/logo-claro.svg" width="604" height="302" loading="lazy" alt="Shabono by Nelson Méndez">
         <p data-i18n="pie.lema">Alta cocina de autor en Puerto Ayacucho, Amazonas, Venezuela.</p>
       </div>
 
@@ -491,6 +682,7 @@
         <h2 class="pie__titulo" data-i18n="pie.contacto">Contacto</h2>
         <ul class="pie__lista" role="list">
           <li><span data-i18n="pie.whatsapp">WhatsApp:</span> <a class="enlace" data-whatsapp-texto target="_blank" rel="noopener"><mark class="pendiente">[TELÉFONO]</mark></a></li>
+          <li>Instagram: <a class="enlace pie__instagram" href="https://www.instagram.com/shabonobynelsonmendez/" target="_blank" rel="noopener">@shabonobynelsonmendez</a></li>
         </ul>
       </div>
 
@@ -506,7 +698,7 @@
 
       <div class="pie__bloque">
         <h2 class="pie__titulo" data-i18n="visitanos.horariosTitulo">Horarios</h2>
-        <p data-i18n="visitanos.horarios"><mark class="pendiente">[HORARIOS]</mark></p>
+        <p data-i18n="visitanos.horarios">De 7:00 a.&nbsp;m. a 11:00 p.&nbsp;m.</p>
       </div>
 
       <div class="pie__bloque pie__bloque--idioma">

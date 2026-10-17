@@ -70,10 +70,10 @@ const TRADUCCIONES = {
     chef: {
       rol: 'Chef y propietario · Chef venezolano con reconocimiento internacional',
       // Biografía provisional, solo con datos confirmados. Sustituir por la biografía real.
-      bio: 'Chef venezolano con reconocimiento internacional, Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, donde cocina con ingredientes originarios del estado Amazonas.',
+      bio: 'Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, y dueño del Instituto Culinario de Investigación Amazonas. Cocina con ingredientes originarios del estado Amazonas.',
       // Cita real del chef. Mientras esté vacía, el bloque de la cita no se muestra.
       cita: '',
-      fotoAlt: 'Retrato del chef Nelson Méndez',
+      fotoAlt: 'El chef Nelson Méndez sonriente, con su chaqueta blanca de chef',
     },
     concepto: {
       titulo: 'Cocina de autor con raíz amazónica',
@@ -87,16 +87,30 @@ const TRADUCCIONES = {
     },
     menu: {
       titulo: 'La carta',
-      intro: 'Una selección de nuestra carta. Precios en dólares estadounidenses (USD).',
-      fotoAlt: 'Foto pendiente: plato destacado de Shabono',
+      intro: 'Una selección de platos de la casa. Más abajo encontrarás la carta completa.',
+      fotoAlt: 'Paella con cangrejo, pulpo, mejillones y camarones',
+      // Platos destacados. Si la descripción está vacía, no se muestra.
       platos: [
-        { nombre: '[NOMBRE PLATO 1]', descripcion: '[DESCRIPCIÓN PLATO 1]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 2]', descripcion: '[DESCRIPCIÓN PLATO 2]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 3]', descripcion: '[DESCRIPCIÓN PLATO 3]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 4]', descripcion: '[DESCRIPCIÓN PLATO 4]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 5]', descripcion: '[DESCRIPCIÓN PLATO 5]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 6]', descripcion: '[DESCRIPCIÓN PLATO 6]', precio: '[PRECIO USD]' },
+        { nombre: 'Centro de lomito Shabono', categoria: 'Carnes', descripcion: '' },
+        { nombre: 'Pasta Shabono', categoria: 'Pastas', descripcion: 'Aderezo de pesto, queso mozzarella, queso parmesano, pan árabe y lechuga.' },
+        { nombre: 'Pescado a la catara', categoria: 'Pescados y mariscos', descripcion: '' },
+        { nombre: 'Cubos de dorado rebozados', categoria: 'Pescados y mariscos', descripcion: '' },
+        { nombre: 'Ensalada Autana', categoria: 'Entradas', descripcion: '' },
+        { nombre: 'Ajicero', categoria: 'Entradas', descripcion: '' },
       ],
+      // Carta completa (los nombres de los platos están en index.html y no se traducen)
+      cartaCompleta: 'Ver carta completa',
+      cartaNota: '',
+      categorias: {
+        desayunos: 'Desayunos', waffles: 'Waffles', arepas: 'Arepas', sandwiches: 'Sándwiches',
+        entradas: 'Entradas', pollo: 'Pollo', carnes: 'Carnes', pescados: 'Pescados y mariscos',
+        pastas: 'Pastas', cerdo: 'Cerdo', guarniciones: 'Guarniciones', postres: 'Postres',
+        cafe: 'Café y té', bebidas: 'Bebidas', alcohol: 'Bebidas alcohólicas',
+      },
+      detalles: {
+        sandwichShabono: 'Jamón serrano, tomate confitado y queso manchego.',
+        pastaShabono: 'Aderezo de pesto, queso mozzarella, queso parmesano, pan árabe y lechuga.',
+      },
       degustacionTitulo: 'Menú degustación',
       degustacionTexto: '[DETALLE DEGUSTACIÓN: número de tiempos, precio USD, maridaje]',
       degustacionBoton: 'Reservar degustación',
@@ -107,17 +121,17 @@ const TRADUCCIONES = {
       titulo: 'Shabono por dentro',
       intro: 'Toca una imagen para ampliarla.',
       ampliar: 'Ampliar:',
-      // Texto alternativo de cada foto (describe lo que se ve cuando lleguen las fotos reales)
+      // Texto alternativo de cada foto, en el mismo orden que en index.html
       fotos: [
-        'Foto pendiente de la galería, 1 de 9',
-        'Foto pendiente de la galería, 2 de 9',
-        'Foto pendiente de la galería, 3 de 9',
-        'Foto pendiente de la galería, 4 de 9',
-        'Foto pendiente de la galería, 5 de 9',
-        'Foto pendiente de la galería, 6 de 9',
-        'Foto pendiente de la galería, 7 de 9',
-        'Foto pendiente de la galería, 8 de 9',
-        'Foto pendiente de la galería, 9 de 9',
+        'Salón de Shabono con el letrero iluminado «Shabono by Nelson Méndez» y las mesas servidas',
+        'Filete de pescado empanizado con camarones en salsa, tostones y ensalada',
+        'Pasta con camarones, calamares y mejillones',
+        'Carne con hueso a la parrilla con puré de açaí y ensalada de tomate',
+        'Salón de eventos de Shabono con luces circulares en la pared',
+        'Pollo relleno empanizado con salsa, papas fritas y ensalada',
+        'Nelson Méndez junto a integrantes de una comunidad indígena de Amazonas',
+        'Mesa servida en el salón de eventos, bajo las luces circulares',
+        'Medallones de carne con cebolla, ravioles gratinados y espinaca',
       ],
     },
     visor: {
@@ -138,7 +152,7 @@ const TRADUCCIONES = {
       ciudad: 'Puerto Ayacucho 7101, estado Amazonas, Venezuela',
       abrirMaps: 'Abrir en Google Maps',
       horariosTitulo: 'Horarios',
-      horarios: '[HORARIOS]',
+      horarios: 'De 7:00 a. m. a 11:00 p. m.',
       pagoTitulo: 'Métodos de pago',
       pago: 'Bolívares y divisas.',
       llegarTitulo: 'Cómo llegar',
@@ -207,9 +221,9 @@ const TRADUCCIONES = {
     },
     chef: {
       rol: 'Chef and owner · Internationally recognized Venezuelan chef',
-      bio: 'An internationally recognized Venezuelan chef, Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, cooking with ingredients native to Amazonas State.',
+      bio: 'Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, and the owner of the Instituto Culinario de Investigación Amazonas. The cooking at Shabono is built on ingredients native to Amazonas State.',
       cita: '',
-      fotoAlt: 'Portrait of chef Nelson Méndez',
+      fotoAlt: 'Chef Nelson Méndez smiling, wearing his white chef’s jacket',
     },
     concepto: {
       titulo: 'Signature cuisine with Amazonian roots',
@@ -223,16 +237,28 @@ const TRADUCCIONES = {
     },
     menu: {
       titulo: 'À la carte',
-      intro: 'A selection from our menu. Prices in US dollars (USD).',
-      fotoAlt: 'Photo pending: a featured dish at Shabono',
+      intro: 'A selection of house dishes. The full menu is further down.',
+      fotoAlt: 'Paella with crab, octopus, mussels and shrimp',
       platos: [
-        { nombre: '[NOMBRE PLATO 1 · EN]', descripcion: '[DESCRIPCIÓN PLATO 1 · EN]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 2 · EN]', descripcion: '[DESCRIPCIÓN PLATO 2 · EN]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 3 · EN]', descripcion: '[DESCRIPCIÓN PLATO 3 · EN]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 4 · EN]', descripcion: '[DESCRIPCIÓN PLATO 4 · EN]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 5 · EN]', descripcion: '[DESCRIPCIÓN PLATO 5 · EN]', precio: '[PRECIO USD]' },
-        { nombre: '[NOMBRE PLATO 6 · EN]', descripcion: '[DESCRIPCIÓN PLATO 6 · EN]', precio: '[PRECIO USD]' },
+        { nombre: 'Shabono center-cut tenderloin', categoria: 'Meat', descripcion: '' },
+        { nombre: 'Shabono pasta', categoria: 'Pasta', descripcion: 'Pesto dressing, mozzarella, parmesan, pita bread and lettuce.' },
+        { nombre: 'Fish a la catara', categoria: 'Fish & seafood', descripcion: '' },
+        { nombre: 'Battered dorado bites', categoria: 'Fish & seafood', descripcion: '' },
+        { nombre: 'Autana salad', categoria: 'Starters', descripcion: '' },
+        { nombre: 'Ajicero', categoria: 'Starters', descripcion: '' },
       ],
+      cartaCompleta: 'View the full menu',
+      cartaNota: 'Dish names are shown in Spanish, as on our printed menu.',
+      categorias: {
+        desayunos: 'Breakfast', waffles: 'Waffles', arepas: 'Arepas', sandwiches: 'Sandwiches',
+        entradas: 'Starters', pollo: 'Chicken', carnes: 'Meat', pescados: 'Fish & seafood',
+        pastas: 'Pasta', cerdo: 'Pork', guarniciones: 'Sides', postres: 'Desserts',
+        cafe: 'Coffee & tea', bebidas: 'Drinks', alcohol: 'Alcoholic drinks',
+      },
+      detalles: {
+        sandwichShabono: 'Serrano ham, confit tomato and manchego cheese.',
+        pastaShabono: 'Pesto dressing, mozzarella, parmesan, pita bread and lettuce.',
+      },
       degustacionTitulo: 'Tasting menu',
       degustacionTexto: '[DETALLE DEGUSTACIÓN · EN]',
       degustacionBoton: 'Book the tasting menu',
@@ -244,15 +270,15 @@ const TRADUCCIONES = {
       intro: 'Tap an image to enlarge it.',
       ampliar: 'Enlarge:',
       fotos: [
-        'Gallery photo pending, 1 of 9',
-        'Gallery photo pending, 2 of 9',
-        'Gallery photo pending, 3 of 9',
-        'Gallery photo pending, 4 of 9',
-        'Gallery photo pending, 5 of 9',
-        'Gallery photo pending, 6 of 9',
-        'Gallery photo pending, 7 of 9',
-        'Gallery photo pending, 8 of 9',
-        'Gallery photo pending, 9 of 9',
+        'Shabono’s dining room with the illuminated “Shabono by Nelson Méndez” sign and set tables',
+        'Breaded fish fillet with shrimp in sauce, tostones and salad',
+        'Pasta with shrimp, squid and mussels',
+        'Grilled bone-in steak with açaí purée and tomato salad',
+        'Shabono’s event room with circular lights on the wall',
+        'Breaded stuffed chicken with sauce, fries and salad',
+        'Nelson Méndez with members of an Indigenous community from Amazonas',
+        'A set table in the event room, under the circular lights',
+        'Beef medallions with onion, gratinéed ravioli and spinach',
       ],
     },
     visor: {
@@ -273,7 +299,7 @@ const TRADUCCIONES = {
       ciudad: 'Puerto Ayacucho 7101, Amazonas State, Venezuela',
       abrirMaps: 'Open in Google Maps',
       horariosTitulo: 'Opening hours',
-      horarios: '[HORARIOS · EN]',
+      horarios: '7:00 a.m. to 11:00 p.m.',
       pagoTitulo: 'Payment methods',
       pago: 'Bolívares and foreign currency.',
       llegarTitulo: 'Getting here',
@@ -392,8 +418,9 @@ function aplicarIdioma(idioma, { actualizarUrl = true } = {}) {
   actualizarMenuBoton();
   actualizarContacto();
 
-  // La cita del chef solo se muestra cuando hay texto
+  // La cita del chef y los textos opcionales (descripciones de platos, nota de la carta) solo se muestran cuando hay texto
   $$('[data-cita]').forEach((el) => { el.hidden = !t('chef.cita'); });
+  $$('[data-opcional]').forEach((el) => { el.hidden = !el.textContent.trim(); });
 
   guardarIdioma(idiomaActual);
   if (actualizarUrl) {
