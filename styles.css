@@ -1,3 +1,8 @@
+/* Hallmark · macrostructure: Split Studio · tone: luxury, nocturno · anchor hue: terracota sobre oliva
+ * theme: studied-DNA (source: https://amritpalace.com/ + https://www.graza.co/) · studied: yes · DNA-source: url + capturas
+ * paper: crema #F2ECE1 · ink: oliva oscuro #262B14 · accent: terracota #C2582B / dorado #E3B866
+ * display: Playfair Display (títulos de sección en mayúsculas) · body: Inter · nav: N9 · footer: Ft5 Statement
+ */
 /* ==========================================================================
    Shabono by Nelson Méndez — estilos
    Mobile-first. Sin frameworks.
@@ -47,7 +52,8 @@
   --terracota-boton: #B9522A;        /* fondo de botones, texto blanco 4,9:1 */
   --terracota-hondo: #A8461F;        /* hover de botones */
   --terracota-texto: #9C4421;        /* acentos de texto sobre crema 5,5:1 */
-  --granito-texto: #5E5C57;          /* texto secundario sobre crema 5,7:1 */
+  --tinta: #262B14;                  /* texto principal: oliva oscuro (ref. Graza) · 12,4:1 sobre crema, 5,1:1 sobre salvia */
+  --tinta-suave: #545A44;            /* texto secundario sobre crema · 6,1:1 */
   --crema-suave: color-mix(in srgb, var(--crema) 85%, transparent); /* texto secundario sobre oliva 5,1:1 */
   --blanco: #FFFFFF;                 /* solo texto de botones terracota */
 
@@ -105,7 +111,7 @@ body {
   overflow-x: clip;
   margin: 0;
   background: var(--crema);
-  color: var(--negro-logo);
+  color: var(--tinta);
   font-family: var(--fuente-texto);
   font-size: 1rem;
   line-height: 1.65;
@@ -150,7 +156,7 @@ button { font: inherit; color: inherit; }
 .nav :focus-visible,
 .pie :focus-visible,
 .visor :focus-visible { outline-color: var(--dorado-luz); }
-.seccion--salvia :focus-visible { outline-color: var(--negro-logo); }
+.seccion--salvia :focus-visible { outline-color: var(--tinta); }
 
 .sr {
   position: absolute !important;
@@ -206,8 +212,9 @@ mark.pendiente {
   gap: .6em;
   min-height: 48px;
   padding: .75em 1.6em;
+  position: relative;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 2px;
   font-family: var(--fuente-texto);
   font-size: 1rem;
   font-weight: 600;
@@ -219,9 +226,22 @@ mark.pendiente {
   transition: background-color var(--transicion), box-shadow var(--transicion), color var(--transicion), border-color var(--transicion);
 }
 .btn--grande { min-height: 54px; padding-inline: 2em; font-size: 1.0625rem; }
+/* Segundo borde desplazado (ref. Amrit Palace). Se acerca al botón al pasar el cursor. */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--anillo, currentColor);
+  border-radius: 3px;
+  pointer-events: none;
+  transition: transform var(--transicion), opacity var(--transicion);
+  opacity: .7;
+}
+.btn:hover::after { transform: scale(.985); opacity: 1; }
+.btn:focus-visible { outline-offset: 8px; }
 
-.btn--reserva { background: var(--terracota-boton); color: var(--blanco); }
-.btn--reserva:hover { background: var(--terracota-hondo); box-shadow: var(--halo); }
+.btn--reserva { --anillo: var(--terracota-boton); background: var(--terracota-boton); color: var(--blanco); }
+.btn--reserva:hover { --anillo: var(--dorado-luz); background: var(--terracota-hondo); box-shadow: var(--halo); }
 
 .btn--contorno { border-color: currentColor; background: transparent; color: var(--crema); }
 .btn--contorno:hover { background: var(--crema-a10); border-color: var(--dorado-luz); box-shadow: var(--halo); }
@@ -290,9 +310,9 @@ mark.pendiente {
 .reserva { padding-block: var(--seccion-espacio-l); }
 .galeria { padding-block: var(--seccion-espacio-s); }
 
-.seccion--clara { background: var(--crema); color: var(--negro-logo); }
+.seccion--clara { background: var(--crema); color: var(--tinta); }
 
-.seccion--salvia { background: var(--verde-salvia); color: var(--negro-logo); }
+.seccion--salvia { background: var(--verde-salvia); color: var(--tinta); }
 
 .seccion--oscura {
   background-color: var(--verde-oliva);
@@ -306,14 +326,22 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .cabecera { max-width: 42rem; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
 
 
-.titulo { font-size: clamp(2.1rem, 4.5vw + 1rem, 3.5rem); }
+.titulo {
+  font-size: clamp(1.9rem, 3.6vw + 1rem, 3.25rem);
+  font-weight: 400;
+  line-height: 1.04;           /* mínimo Hallmark para mayúsculas en varias líneas */
+  letter-spacing: -.015em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
 
 .entradilla {
   font-size: 1.0625rem;
-  color: var(--granito-texto);
+  color: var(--tinta-suave);
 }
 .seccion--oscura .entradilla { color: var(--crema-suave); }
-.seccion--salvia .entradilla { color: var(--negro-logo); }
+.seccion--salvia .entradilla { color: var(--tinta); }
 
 /* Una sola entrada orquestada: la portada al cargar. El resto de la página ya está ahí. */
 @media (prefers-reduced-motion: no-preference) {
@@ -405,10 +433,10 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 
 .nav__acciones { display: flex; align-items: center; gap: .75rem; }
 .nav__reservar { display: none; min-height: 42px; padding-block: .55em; }
-.nav__idioma { display: none; }
+.nav__acciones .nav__idioma { display: none; }
 @media (min-width: 40rem) {
   .nav__reservar { display: inline-flex; }
-  .nav__idioma { display: flex; }
+  .nav__acciones .nav__idioma { display: flex; }
   .nav__panel .idioma { display: none; } /* en tableta y escritorio el idioma está en la barra */
 }
 
@@ -627,13 +655,13 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .concepto__cabecera { margin-bottom: 0; }
 .concepto .entradilla { font-size: clamp(1.0625rem, .6vw + .9rem, 1.25rem); }
 /* Tres apartados como lista tipográfica, sin iconos ni tarjetas */
-.pilares { border-top: 1px solid var(--granito); }
+.pilares { border-top: 1px dashed var(--granito); }
 .pilar {
   padding: 1.5rem 0;
-  border-bottom: 1px solid var(--granito);
+  border-bottom: 1px dashed var(--granito);
 }
 .pilar h3 { margin-bottom: .4rem; font-size: clamp(1.4rem, 1vw + 1rem, 1.75rem); }
-.pilar p { max-width: 34rem; color: var(--granito-texto); }
+.pilar p { max-width: 34rem; color: var(--tinta-suave); }
 
 @media (min-width: 56rem) {
   .concepto__rejilla {
@@ -663,10 +691,10 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 }
 .carta__titulo { margin-bottom: 1.5rem; }
 .carta mark.pendiente { background: var(--negro-a25); }
-.platos { border-top: 1px solid var(--crema-a35); }
+.platos { border-top: 1px dashed var(--crema-a35); }
 .plato {
   padding: 1.1rem 0;
-  border-bottom: 1px solid var(--crema-a35);
+  border-bottom: 1px dashed var(--crema-a35);
 }
 .plato__fila {
   display: flex;
@@ -703,7 +731,7 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   border-radius: var(--radio);
   background: var(--negro-a20);
 }
-.degustacion__titulo { font-size: clamp(1.6rem, 2vw + 1rem, 2.1rem); }
+.degustacion__titulo { font-size: clamp(1.5rem, 1.6vw + 1rem, 2rem); font-weight: 400; line-height: 1.04; letter-spacing: -.01em; text-transform: uppercase; }
 .degustacion .btn { justify-self: start; }
 
 .menu__notas {
@@ -901,9 +929,9 @@ html:has(.visor[open]) { overflow: hidden; }
 .datos { display: grid; gap: 0; }
 .dato {
   padding: 1.5rem 0;
-  border-top: 1px solid var(--negro-a25);
+  border-top: 1px dashed var(--negro-a35);
 }
-.dato:last-child { border-bottom: 1px solid var(--negro-a25); }
+.dato:last-child { border-bottom: 1px dashed var(--negro-a35); }
 .dato__titulo {
   margin-bottom: .6rem;
   font-family: var(--fuente-texto);
@@ -938,16 +966,16 @@ html:has(.visor[open]) { overflow: hidden; }
   padding: 1em clamp(1rem, 4vw, 1.5em);
   font-size: clamp(1.0625rem, 3.2vw + .5rem, 1.1875rem);
   white-space: nowrap;
-  box-shadow: 0 0 0 6px var(--dorado-a15), 0 10px 30px -10px var(--terracota-a60);
+  box-shadow: 0 10px 30px -10px var(--terracota-a60);
 }
+.btn--whatsapp::after { inset: -7px; }
 .btn--whatsapp .icono { width: 1.5em; height: 1.5em; }
-.btn--whatsapp:hover { box-shadow: 0 0 0 6px var(--dorado-a35), var(--halo); }
 
 @media (min-width: 40rem) {
   .btn--whatsapp { padding-inline: 2.2em; }
 }
 
-.reserva__telefono { margin-top: 1.25rem; color: var(--granito-texto); }
+.reserva__telefono { margin-top: 1.25rem; color: var(--tinta-suave); }
 
 .politicas {
   display: grid;
@@ -957,7 +985,7 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .politica {
   padding: 1.75rem 1.5rem;
-  border: 1px solid var(--granito);
+  border: 1px dashed var(--granito);
   border-radius: var(--radio);
   background: var(--crema-suave);
 }
@@ -1007,6 +1035,8 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .pie__bloque { color: var(--crema-suave); }
 .pie__lista li + li { margin-top: .5rem; }
+[data-telefono],
+[data-whatsapp-texto] { white-space: nowrap; }
 .pie .idioma { margin-left: -.4rem; }
 /* Nombre gigante a todo el ancho (referencias: Graza y Amrit Palace) */
 .pie__gigante-caja { container-type: inline-size; }
@@ -1025,21 +1055,19 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .pie__base {
   padding: 1.5rem 0 calc(1.5rem + 5rem + env(safe-area-inset-bottom)); /* espacio para la barra móvil */
-  border-top: 1px solid var(--crema-a15);
+  border-top: 1px dashed var(--crema-a35);
   font-size: .875rem;
   color: var(--crema-suave);
 }
 
 @media (min-width: 40rem) {
   .pie__rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pie__marca,
-  .pie__bloque--idioma { grid-column: 1 / -1; }
+  .pie__marca { grid-column: 1 / -1; }
   .pie__base { padding-bottom: 1.5rem; }
 }
 @media (min-width: 64rem) {
-  .pie__rejilla { grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 2rem; }
-  .pie__marca,
-  .pie__bloque--idioma { grid-column: auto; }
+  .pie__rejilla { grid-template-columns: 1.3fr repeat(4, minmax(0, 1fr)); gap: 2rem; }
+  .pie__marca { grid-column: auto; }
 }
 
 /* ---------- Barra fija con dos accesos (teléfonos) ---------- */
@@ -1049,8 +1077,8 @@ html:has(.visor[open]) { overflow: hidden; }
   z-index: 40;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: .6rem;
-  padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom));
+  gap: 1rem;
+  padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom));
   background: var(--oliva-a95);
   box-shadow: 0 -1px 0 var(--dorado-a35), 0 -10px 30px -12px var(--negro-a50);
   color: var(--crema);
