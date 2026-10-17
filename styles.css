@@ -214,15 +214,6 @@ mark.pendiente {
 .enlace:not([href]) { text-decoration: none; cursor: default; }
 
 /* ---------- Motivo: círculo con halo ---------- */
-.punto-luz {
-  display: inline-block;
-  width: .55rem; height: .55rem;
-  border-radius: 50%;
-  background: var(--dorado-luz);
-  box-shadow: 0 0 0 3px var(--dorado-a25), 0 0 14px 3px var(--dorado-a50);
-  vertical-align: middle;
-}
-
 .separador {
   position: relative;
   height: 1.5rem;
@@ -507,13 +498,15 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   position: relative;
   isolation: isolate;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   min-height: 100svh;
-  padding: calc(var(--nav-alto) + 3rem) 0 clamp(4.5rem, 12vh, 7rem);
+  padding: calc(var(--nav-alto) + 3rem) 0 calc(6.5rem + env(safe-area-inset-bottom)); /* deja sitio a la barra móvil */
   overflow: hidden;
   background: var(--negro-logo);
   color: var(--crema);
+  text-align: center;
 }
 .portada__fondo img {
   position: absolute;
@@ -527,24 +520,33 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(180deg, rgb(28 27 25 / .7) 0%, rgb(28 27 25 / 0) 22%),
-    linear-gradient(0deg, var(--verde-oliva) 0%, rgb(79 90 46 / .85) 22%, rgb(28 27 25 / .25) 60%, rgb(28 27 25 / 0) 80%);
+    radial-gradient(ellipse 70% 55% at 50% 48%, rgb(28 27 25 / .45), rgb(28 27 25 / 0) 75%),
+    linear-gradient(180deg, rgb(28 27 25 / .7) 0%, rgb(28 27 25 / .2) 25%, rgb(28 27 25 / .2) 60%, var(--verde-oliva) 100%);
 }
 
-.portada__contenido { max-width: var(--contenedor); }
-.portada__lugar {
+.portada__contenido {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: .8rem;
-  margin-bottom: 1.25rem;
-  font-size: .8125rem;
+}
+/* Título centrado con etiquetas pequeñas a los lados (arriba y abajo en móvil) */
+.portada__titular {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.portada__lado {
+  margin: 0;
+  font-size: .75rem;
   font-weight: 600;
-  letter-spacing: .16em;
+  letter-spacing: .22em;
   text-transform: uppercase;
+  color: var(--crema);
 }
 .portada__titulo {
-  margin-bottom: 1.25rem;
-  font-size: clamp(3.4rem, 13vw, 7.5rem);
+  margin: 0;
+  font-size: clamp(3.6rem, 15vw, 8.5rem);
   font-weight: 500;
   line-height: .95;
   letter-spacing: -.01em;
@@ -561,20 +563,26 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 }
 .portada__frase {
   max-width: 34rem;
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem;
   font-size: clamp(1.0625rem, 1.2vw + .8rem, 1.375rem);
   color: var(--crema);
 }
-.portada__acciones { display: flex; flex-wrap: wrap; gap: .85rem; }
+.portada__acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .85rem; }
 
-@media (min-width: 44rem) {
-  .portada { align-items: center; padding-bottom: 6rem; }
-  .portada__velo {
-    background:
-      linear-gradient(180deg, rgb(28 27 25 / .65) 0%, rgb(28 27 25 / 0) 20%),
-      linear-gradient(90deg, rgb(28 27 25 / .7) 0%, rgb(28 27 25 / .25) 50%, rgb(28 27 25 / 0) 75%),
-      linear-gradient(0deg, var(--verde-oliva) 0%, rgb(79 90 46 / 0) 28%);
+@media (min-width: 64rem) {
+  .portada { padding-bottom: 6rem; }
+}
+/* Etiquetas a los lados del título solo cuando caben en una línea */
+@media (min-width: 80rem) {
+  .portada__lado { letter-spacing: .16em; white-space: nowrap; }
+  .portada__titular {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+    width: 100%;
   }
+  .portada__lado:first-child { justify-self: end; text-align: right; }
+  .portada__lado:last-child { justify-self: start; text-align: left; }
 }
 
 /* ==========================================================================
@@ -658,55 +666,49 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 /* ==========================================================================
    5. Menú
    ========================================================================== */
-.platos {
+.menu__rejilla {
   display: grid;
-  gap: 1.25rem;
-  counter-reset: none;
+  gap: 2.5rem;
+  align-items: start;
 }
-.plato {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 1.75rem 1.5rem 1.5rem;
-  overflow: hidden;
-  border: 1px solid rgb(242 236 225 / .16);
+/* La carta: lista sobre un bloque terracota, como las columnas del local */
+.carta {
+  padding: 2rem 1.5rem 1.5rem;
   border-radius: var(--radio);
-  background: rgb(28 27 25 / .14);
-  transition: border-color var(--transicion), background-color var(--transicion);
+  background: var(--terracota-hondo);
+  color: var(--crema);
+  box-shadow: 0 0 0 1px rgb(227 184 102 / .25), 0 30px 60px -30px rgb(0 0 0 / .55);
 }
-/* Halo circular que se enciende al pasar el cursor */
-.plato::before {
-  content: "";
-  position: absolute;
-  top: -3.5rem; right: -3.5rem;
-  width: 9rem; height: 9rem;
-  border-radius: 50%;
-  border: 1px solid var(--dorado-a50);
-  background: radial-gradient(circle, var(--dorado-a25), transparent 65%);
-  opacity: 0;
-  transform: scale(.7);
-  transition: opacity var(--transicion), transform var(--transicion);
-  pointer-events: none;
+.carta__titulo { margin-bottom: 1.5rem; }
+.carta mark.pendiente { background: rgb(28 27 25 / .28); }
+.platos { border-top: 1px solid rgb(242 236 225 / .35); }
+.plato {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgb(242 236 225 / .35);
 }
-.plato:hover { border-color: var(--dorado-a50); background-color: rgb(28 27 25 / .2); }
-.plato:hover::before { opacity: 1; transform: none; }
-
-.plato__num {
-  margin-bottom: .75rem;
-  font-family: var(--fuente-titulos);
-  font-size: 1.75rem;
-  font-variant-numeric: lining-nums;
-  line-height: 1;
-  color: var(--dorado-luz);
+.plato__fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
 }
-.plato__nombre { font-size: 1.4rem; margin-bottom: .6rem; }
-.plato__desc { flex: 1; color: var(--crema-suave); }
+.plato__nombre { margin: 0; font-size: 1.3rem; }
 .plato__precio {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px dashed rgb(242 236 225 / .25);
+  margin: 0;
   font-weight: 600;
   letter-spacing: .04em;
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.plato__desc { margin: .35rem 0 0; font-size: .9375rem; }
+
+.menu__lado .entradilla { margin-bottom: 1.5rem; }
+.menu__foto { margin: 2rem 0 0; }
+.menu__foto img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radio);
 }
 
 .degustacion {
@@ -731,11 +733,12 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 }
 .menu__notas p { margin-bottom: .5em; }
 
-@media (min-width: 40rem) {
-  .platos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 56rem) {
+  .menu__rejilla { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 3.5rem; }
+  .carta { padding: 2.75rem 2.5rem 2rem; }
+  .menu__lado { padding-top: 1rem; }
 }
 @media (min-width: 64rem) {
-  .platos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
   .degustacion { grid-template-columns: 1fr auto; padding: 2.5rem 3rem; gap: 3rem; }
 }
 
@@ -1043,8 +1046,23 @@ html:has(.visor[open]) { overflow: hidden; }
 .pie__bloque { color: var(--crema-suave); }
 .pie__lista li + li { margin-top: .5rem; }
 .pie .idioma { margin-left: -.4rem; }
+/* Nombre gigante a todo el ancho (referencias: Graza y Amrit Palace) */
+.pie__gigante-caja { container-type: inline-size; }
+.pie__gigante {
+  margin: 0 0 2rem;
+  font-family: var(--fuente-titulos);
+  font-size: 19vw;      /* respaldo */
+  font-size: 20.6cqi;   /* ocupa el ancho del contenedor */
+  font-weight: 500;
+  line-height: .9;
+  letter-spacing: -.01em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--dorado-luz);
+}
 .pie__base {
-  padding: 1.5rem 0 calc(1.5rem + 5rem + env(safe-area-inset-bottom)); /* espacio para el botón flotante */
+  padding: 1.5rem 0 calc(1.5rem + 5rem + env(safe-area-inset-bottom)); /* espacio para la barra móvil */
   border-top: 1px solid rgb(242 236 225 / .15);
   font-size: .875rem;
   color: var(--crema-suave);
@@ -1062,19 +1080,26 @@ html:has(.visor[open]) { overflow: hidden; }
   .pie__base { padding-bottom: 1.5rem; }
 }
 
-/* ---------- Botón flotante de reserva (móvil y tableta) ---------- */
-.reserva-flotante {
+/* ---------- Barra fija con dos accesos (móvil y tableta) ---------- */
+.barra-movil {
   position: fixed;
-  right: 1rem;
-  bottom: calc(1rem + env(safe-area-inset-bottom));
+  inset: auto 0 0;
   z-index: 40;
-  min-height: 52px;
-  padding-inline: 1.6em;
-  box-shadow: 0 0 0 4px rgb(227 184 102 / .35), 0 8px 24px -6px rgb(28 27 25 / .55);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .6rem;
+  padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom));
+  background: rgb(79 90 46 / .97);
+  box-shadow: 0 -1px 0 rgb(227 184 102 / .3), 0 -10px 30px -12px rgb(28 27 25 / .5);
+  color: var(--crema);
 }
-.menu-abierto .reserva-flotante { visibility: hidden; }
+@supports (backdrop-filter: blur(1px)) {
+  .barra-movil { background: rgb(79 90 46 / .9); backdrop-filter: blur(10px); }
+}
+.barra-movil .btn { min-height: 48px; padding-inline: 1em; }
+.menu-abierto .barra-movil { visibility: hidden; }
 @media (min-width: 64rem) {
-  .reserva-flotante { display: none; }
+  .barra-movil { display: none; }
 }
 
 /* ---------- Movimiento reducido ---------- */

@@ -38,6 +38,7 @@ Sustituir los archivos de `img/` manteniendo el **mismo nombre y tamaño**, en f
 | [LOGO SVG o PNG] | `img/logo-pendiente.svg` (cambiar también la ruta en `index.html`, 2 sitios) | SVG o PNG con fondo transparente |
 | [FOTO PORTADA: roca y cascada, de noche] | `img/portada.webp` (horizontal) y `img/portada-movil.webp` (vertical) | 1920×1200 y 900×1400 |
 | [FOTO CHEF] | `img/chef.webp` (se muestra en círculo) | 800×800 |
+| [FOTO PLATO DESTACADO] | `img/menu-destacado.webp` (junto a la carta) | 1000×1250 |
 | [FOTOS] galería (9) | `img/galeria/01-600.webp` … `09-600.webp` (miniatura) y `01-1200.webp` … `09-1200.webp` (ampliada) | 600×600 y 1200×800 |
 | Textos alternativos de la galería | `main.js` → `galeria.fotos` (ES y EN), describiendo cada foto | — |
 | [IMAGEN PARA COMPARTIR / OPEN GRAPH] | `img/og-imagen.jpg` (JPG para que WhatsApp la muestre) | 1200×630 |

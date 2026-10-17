@@ -47,6 +47,7 @@ const TRADUCCIONES = {
       menuAbrir: 'Abrir menú',
       menuCerrar: 'Cerrar menú',
       idioma: 'Idioma',
+      accesos: 'Accesos rápidos',
     },
     nav: {
       etiqueta: 'Principal',
@@ -59,7 +60,8 @@ const TRADUCCIONES = {
       reservar: 'Reservar',
     },
     portada: {
-      lugar: 'Alta cocina de autor · Puerto Ayacucho, Amazonas',
+      ladoIzq: 'Alta cocina de autor',
+      ladoDer: 'Puerto Ayacucho · Amazonas',
       frase: 'Donde la tierra amazónica se convierte en alta cocina.',
       reservar: 'Reservar',
       verMenu: 'Ver menú',
@@ -89,6 +91,7 @@ const TRADUCCIONES = {
       antetitulo: 'Menú',
       titulo: 'La carta',
       intro: 'Una selección de nuestra carta. Precios en dólares estadounidenses (USD).',
+      fotoAlt: 'Foto pendiente: plato destacado de Shabono',
       platos: [
         { nombre: '[NOMBRE PLATO 1]', descripcion: '[DESCRIPCIÓN PLATO 1]', precio: '[PRECIO USD]' },
         { nombre: '[NOMBRE PLATO 2]', descripcion: '[DESCRIPCIÓN PLATO 2]', precio: '[PRECIO USD]' },
@@ -189,6 +192,7 @@ const TRADUCCIONES = {
       menuAbrir: 'Open menu',
       menuCerrar: 'Close menu',
       idioma: 'Language',
+      accesos: 'Quick links',
     },
     nav: {
       etiqueta: 'Main',
@@ -201,7 +205,8 @@ const TRADUCCIONES = {
       reservar: 'Book a table',
     },
     portada: {
-      lugar: 'Signature fine dining · Puerto Ayacucho, Amazonas',
+      ladoIzq: 'Signature fine dining',
+      ladoDer: 'Puerto Ayacucho · Amazonas',
       frase: 'Where the land of the Amazon becomes fine dining.',
       reservar: 'Book a table',
       verMenu: 'View menu',
@@ -229,6 +234,7 @@ const TRADUCCIONES = {
       antetitulo: 'Menu',
       titulo: 'À la carte',
       intro: 'A selection from our menu. Prices in US dollars (USD).',
+      fotoAlt: 'Photo pending: a featured dish at Shabono',
       platos: [
         { nombre: '[NOMBRE PLATO 1 · EN]', descripcion: '[DESCRIPCIÓN PLATO 1 · EN]', precio: '[PRECIO USD]' },
         { nombre: '[NOMBRE PLATO 2 · EN]', descripcion: '[DESCRIPCIÓN PLATO 2 · EN]', precio: '[PRECIO USD]' },
