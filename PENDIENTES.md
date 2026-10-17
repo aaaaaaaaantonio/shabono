@@ -14,6 +14,10 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`), en español (`es`) y 
 - Horario: de 7:00 a. m. a 11:00 p. m.
 - Frase de portada, texto del concepto y sus tres apartados (redactados y aprobados).
 - Logo: versión clara (crema y dorado), versión oscura, monograma NM y favicon, redibujados a partir de la imagen del logo.
+- Firma «Nelson Mendez» que se escribe sola en la portada (en código, sin vídeo).
+- Carta completa en orden, con índice; en escritorio la columna derecha acompaña la lectura con fotos por categoría.
+- Panel de navegación con la foto del letrero, el horario, la dirección y el WhatsApp.
+- Dibujos de línea: río Orinoco (separador, mapa), anillo del chef, racimo de açaí, Cerro Autana (validado por el chef, según el cliente), línea de la mesa y trama tenue del tejido de los individuales en la tarjeta de la carta.
 - Foto del chef (chaqueta blanca), plato destacado (paella) y las 9 fotos de la galería. Se recortaron los comensales que aparecían al fondo.
 - Menú: 6 platos de la casa, sin precios, y carta completa desplegable transcrita de la carta impresa (ortografía corregida).
 - Biografía provisional con el dato de que el chef es dueño del Instituto Culinario de Investigación Amazonas.
@@ -41,13 +45,20 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`), en español (`es`) y 
 | Logo original del diseñador | `img/logo-claro.svg`, `img/logo-oscuro.svg`, `img/logo-nm.svg`, `img/favicon.svg` | Los actuales están redibujados desde una imagen de 325 px. Con el archivo original (SVG, AI, PDF o PNG grande) quedan perfectos. |
 | Fotos en alta resolución | `img/chef.webp`, `img/menu-destacado.webp`, `img/galeria/` | Las actuales vienen de Instagram (unos 550 px). En pantallas grandes se ven algo suaves. Para la versión final: mínimo 1200 px de ancho. |
 
-## 3. Permisos de imagen (antes de publicar)
+## 3. Animaciones y dibujos
+
+- Probar la firma animada en un **iPhone real (Safari)** y en un **Android económico**. Si en Safari la máscara no se repinta bien, la alternativa es mostrar la firma con un fundido.
+- Opcional: un vídeo corto, grabado con el teléfono, del chef firmando su nombre, para copiar el orden real de sus trazos (hoy el orden de la «s», la «d» y el centro de la «M» es una interpretación).
+- Pies de foto de la carta: hoy solo dicen la categoría. Si se confirma qué plato es cada foto (`img/carta/`), se puede añadir el nombre.
+- Segunda fase: raudales de Atures, palmas y otros dibujos generados en Higgsfield (con los prompts acordados) para convertirlos a línea dorada animada. Si alguno se inspira en el diseño de un pueblo concreto, indicarlo en la página (p. ej. «inspirado en la cestería ye'kwana») y evitar símbolos sagrados.
+
+## 4. Permisos de imagen (antes de publicar)
 
 - Autorización escrita de las personas que aparecen en la foto con la comunidad indígena (`img/galeria/07`), **en especial de los representantes de los menores**.
 - Confirmar que el restaurante autoriza el uso de las fotos tomadas de su Instagram.
 - Si se conocen el nombre de la comunidad y el evento, mejorar la descripción de esa foto en `galeria.fotos` (ES y EN).
 
-## 4. Reconocimientos (sección oculta)
+## 5. Reconocimientos (sección oculta)
 
 Solo con datos verificados, con fuente enlazable. En `index.html`, sección `#reconocimientos`:
 
@@ -56,7 +67,7 @@ Solo con datos verificados, con fuente enlazable. En `index.html`, sección `#re
 - Borrar [PENDIENTE DE VERIFICAR] una vez verificado cada elemento
 - Para mostrar la sección: quitar la clase `seccion--oculta`. El enlace del menú aparece solo.
 
-## 5. Publicación y SEO
+## 6. Publicación y SEO
 
 | Marcador | Dónde |
 |---|---|
@@ -65,7 +76,7 @@ Solo con datos verificados, con fuente enlazable. En `index.html`, sección `#re
 | [DÍAS] en JSON-LD | `openingHours`, formato schema.org: p. ej. `Mo-Su 07:00-23:00` si abre todos los días |
 | `noindex` | **Quitar** `<meta name="robots" content="noindex, nofollow">` de `index.html` al publicar la versión definitiva. Está puesto para que la demo no aparezca en Google. |
 
-## 6. Para revisar con el cliente
+## 7. Para revisar con el cliente
 
 - Titulares: «Alta cocina de autor» (portada), «Cocina de autor con raíz amazónica», «La carta», «Shabono por dentro», «Te esperamos en Puerto Ayacucho», «Reserva tu mesa».
 - Nombre exacto del instituto: en la chaqueta se lee «Instituto Culinario de Investigación Amazonas».

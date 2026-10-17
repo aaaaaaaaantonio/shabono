@@ -27,14 +27,24 @@ Sin frameworks ni proceso de compilación.
 - **Platos destacados y carta completa:** los 6 destacados están en `TRADUCCIONES.*.menu.platos` (nombre, categoría y descripción; si la descripción está vacía, no se muestra). La carta completa está escrita en `index.html` (bloque `carta-completa`); allí se añaden o quitan platos.
 - **Menú degustación y avisos de alergias e impuestos:** están ocultos con el atributo `hidden` en `index.html`. Para mostrarlos, quitar `hidden` y completar los textos en `TRADUCCIONES`.
 - **Imágenes:** sustituir los archivos de `img/` con el mismo nombre (ver `PENDIENTES.md`).
-- **Logo:** `img/logo-claro.svg` (crema y dorado, para fondos oscuros), `img/logo-oscuro.svg` (para fondos claros) y `img/logo-nm.svg` (solo el monograma NM, en la barra de navegación). Están redibujados a partir de una imagen pequeña del logo; conviene sustituirlos por los archivos originales del diseñador.
+- **Logo en la página:** las letras están en vector dentro de `index.html` (bloque `sprite` al principio del `<body>`) y la firma dorada es `img/firma.webp`. La barra, la portada y el pie reutilizan ese mismo logo. `img/logo-claro.svg`, `img/logo-oscuro.svg` y `img/logo-nm.svg` quedan para usos externos (redes, prensa). Todo está redibujado a partir de una imagen pequeña del logo; con el archivo original del diseñador se vería más nítido.
 - **Portada:** ahora muestra el logo grande sin foto. Cuando llegue la foto de la roca con la cascada, en `index.html` hay un comentario en la portada con el bloque `<picture>` listo para pegar.
+- **Fotos de la carta completa:** en escritorio, la columna derecha muestra `img/carta/pollo.webp`, `carnes.webp`, `pescados.webp` y `pastas.webp` (480×600) al leer esas categorías; en el teléfono, las de carnes y pastas aparecen entre la lista. Se relacionan con la categoría por el atributo `data-foto` / `data-categoria`. Solo se descargan al abrir la carta.
+- **Panel de navegación:** en escritorio muestra `img/panel-letrero.webp` (480×600), que se descarga la primera vez que se abre.
 - **Reconocimientos:** la sección está oculta con la clase `seccion--oculta`. Para mostrarla, quitar esa clase en `index.html`; el enlace del menú aparece solo.
 - **Idioma:** español por defecto. El inglés se activa con el selector ES/EN o con `?lang=en`, y se recuerda en el navegador.
 
+## Animaciones
+
+- **Firma que se escribe sola (portada):** una máscara SVG recorre la firma real en 6 trazos, en orden de escritura, y al final se encienden los anillos de luz. Dura unos 2,9 s; los botones se pueden usar desde el principio. Ocurre **una vez por visita** (se guarda en `sessionStorage`): para volver a verla, abrir la página en una pestaña nueva. Los tiempos de cada trazo están en el script que va justo después del `<h1>` en `index.html`.
+- **Dibujos que se trazan una sola vez al llegar** (atributo `data-trazo`): el anillo del chef, el racimo de açaí (concepto), el Cerro Autana y el río Orinoco del mapa (Visítanos), la línea de la mesa (Reserva) y la aparición escalonada de la galería. Para quitar uno, borrar su atributo `data-trazo`: se queda dibujado y quieto.
+- **Carta completa:** con la carta abierta en escritorio, la columna derecha queda fija, cambia de foto según la categoría y una línea dorada fina marca el avance de lectura (en Firefox se ve quieta).
+- Con «reducir movimiento» activado en el teléfono o el ordenador, o sin JavaScript, todo se ve completo y quieto.
+
 ## Rendimiento
 
-- Imágenes WebP con `loading="lazy"`. El logo de la portada es la excepción: carga con prioridad alta porque es lo primero que se ve.
+- Imágenes WebP con `loading="lazy"`. La firma del logo (`img/firma.webp`, 35 KB) es la excepción: se precarga con prioridad alta porque es lo primero que se ve.
+- Las animaciones no usan librerías ni vídeo: CSS, SVG y un único IntersectionObserver.
 - Galería con miniaturas cuadradas (`NN-mini.webp`, máx. 600 px); la foto completa (`NN.webp`) solo se descarga al ampliar.
 - El mapa de Google usa carga diferida (`loading="lazy"`): solo se descarga cuando el visitante se acerca a la sección Visítanos. Mientras carga se ve «Cargando mapa…».
 - Dos familias tipográficas alojadas en el propio sitio (unos 125 KB en total), con `font-display: swap`. No hay videos ni librerías externas.
@@ -43,6 +53,6 @@ Sin frameworks ni proceso de compilación.
 
 1. En Cloudflare: **Workers & Pages → Crear → Pages → Conectar con Git** y elegir este repositorio (o «Subir recursos» y arrastrar la carpeta).
 2. Configuración de compilación: framework **Ninguno**, comando de compilación **vacío**, directorio de salida **`/`**.
-3. Antes de la versión definitiva: sustituir `[DOMINIO]` y quitar la etiqueta `noindex` de `index.html` (ver `PENDIENTES.md`, apartado 4).
+3. Antes de la versión definitiva: sustituir `[DOMINIO]` y quitar la etiqueta `noindex` de `index.html` (ver `PENDIENTES.md`, apartado 6).
 
 Para probar en local: `python3 -m http.server` en esta carpeta y abrir `http://localhost:8000`.

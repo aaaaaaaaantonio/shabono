@@ -101,6 +101,7 @@ const TRADUCCIONES = {
       // Carta completa (los nombres de los platos están en index.html y no se traducen)
       cartaCompleta: 'Ver carta completa',
       cartaNota: '',
+      indice: 'Categorías de la carta',
       categorias: {
         desayunos: 'Desayunos', waffles: 'Waffles', arepas: 'Arepas', sandwiches: 'Sándwiches',
         entradas: 'Entradas', pollo: 'Pollo', carnes: 'Carnes', pescados: 'Pescados y mariscos',
@@ -159,6 +160,7 @@ const TRADUCCIONES = {
       llegarTexto: 'En carro, por la Av. La Raza: estamos al lado de Protección Civil Amazonas.',
       llegarBoton: 'Ver la ruta en Google Maps',
       mapaCargando: 'Cargando mapa…',
+      mapaRio: 'Río Orinoco',
       mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
     },
     reserva: {
@@ -248,6 +250,7 @@ const TRADUCCIONES = {
         { nombre: 'Ajicero', categoria: 'Starters', descripcion: '' },
       ],
       cartaCompleta: 'View the full menu',
+      indice: 'Menu categories',
       cartaNota: 'Dish names are shown in Spanish, as on our printed menu.',
       categorias: {
         desayunos: 'Breakfast', waffles: 'Waffles', arepas: 'Arepas', sandwiches: 'Sandwiches',
@@ -306,6 +309,7 @@ const TRADUCCIONES = {
       llegarTexto: 'By car, along Av. La Raza: we are next to Protección Civil Amazonas.',
       llegarBoton: 'Get directions on Google Maps',
       mapaCargando: 'Loading map…',
+      mapaRio: 'Orinoco River',
       mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
     },
     reserva: {
@@ -496,7 +500,21 @@ function abrirMenu(abrir) {
     const el = $(sel);
     if (el) el.inert = abrir;
   });
-  if (abrir) $('[data-menu] a')?.focus();
+  if (abrir) {
+    cargarFotoPanel();
+    $('[data-menu] a')?.focus();
+  }
+}
+
+/** La foto del letrero solo se descarga la primera vez que se abre el panel, y solo en escritorio. */
+function cargarFotoPanel() {
+  const foto = $('.nav__foto');
+  if (!foto || !foto.dataset.src || !window.matchMedia('(min-width: 56rem)').matches) return;
+  if (navigator.connection && navigator.connection.saveData) return;
+  foto.src = foto.dataset.src;
+  foto.removeAttribute('data-src');
+  const mostrar = () => foto.classList.add('is-cargada');
+  (foto.decode ? foto.decode() : Promise.resolve()).then(mostrar, mostrar);
 }
 
 function iniciarNavegacion() {
@@ -550,6 +568,95 @@ function iniciarNavegacion() {
     }, { rootMargin: '-45% 0px -50% 0px' });
     $$('main section[id]').forEach((s) => observador.observe(s));
   }
+}
+
+/* ---------- Dibujos que se trazan una sola vez al llegar ----------
+   Por defecto todo se ve dibujado. Solo se ponen en espera los elementos [data-trazo] que están por debajo
+   (o apenas asoman al pie) de la pantalla al cargar (así, entrar por un enlace a #chef no provoca parpadeos), y nunca con
+   «reducir movimiento». Un solo IntersectionObserver; nada se repite al volver a subir. */
+function iniciarTrazos() {
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // (El chef asoma al pie de la portada: se considera «por debajo» si apenas se ve su borde)
+  const pendientes = $$('[data-trazo]').filter((el) => el.getBoundingClientRect().top > window.innerHeight * 0.85);
+  if (!pendientes.length) return;
+  const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting) return;
+      entrada.target.classList.replace('trazo--espera', 'trazo--dibuja');
+      observador.unobserve(entrada.target);
+    });
+  }, { rootMargin: '0px 0px -20% 0px' });
+  pendientes.forEach((el) => {
+    el.classList.add('trazo--espera');
+    observador.observe(el);
+  });
+}
+
+/* ---------- Carta completa: fotos bajo demanda, categoría activa e índice ---------- */
+function iniciarCarta() {
+  const carta = $('.carta-completa');
+  if (!carta) return;
+  const fotos = $$('[data-foto]');
+  const pie = $('[data-carta-pie]');
+  const enlaces = $$('.carta-indice a');
+  const escritorio = window.matchMedia('(min-width: 56rem)');
+  const ahorroDatos = Boolean(navigator.connection && navigator.connection.saveData);
+  let temporizador = 0;
+
+  const cargar = (img) => {
+    if (img.dataset.src) {
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    }
+  };
+
+  const mostrarFoto = (clave) => {
+    const foto = fotos.find((f) => f.dataset.foto === clave);
+    if (!foto || !foto.getAttribute('src')) return; // categoría sin foto: se queda la anterior
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => {
+      const cambiar = () => {
+        fotos.forEach((f) => f.classList.toggle('is-activa', f === foto));
+        const conPie = clave !== 'inicio';
+        pie.hidden = !conPie;
+        if (conPie) {
+          pie.dataset.i18n = `menu.categorias.${clave}`;
+          pie.textContent = t(pie.dataset.i18n);
+        }
+      };
+      (foto.decode ? foto.decode() : Promise.resolve()).then(cambiar, cambiar);
+    }, clave === 'inicio' ? 0 : 200);
+  };
+
+  const marcar = (clave) => {
+    enlaces.forEach((a) => {
+      if (clave && a.getAttribute('href') === `#carta-${clave}`) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  };
+
+  // Las fotos solo se descargan al abrir la carta, y solo las que se van a ver en esta pantalla
+  carta.addEventListener('toggle', () => {
+    if (!carta.open) {
+      marcar(null);
+      mostrarFoto('inicio');
+      return;
+    }
+    if (ahorroDatos) return;
+    if (escritorio.matches) fotos.forEach(cargar);
+    else $$('.carta-completa__foto img', carta).forEach(cargar);
+  });
+
+  if (!('IntersectionObserver' in window)) return;
+  const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting || !carta.open) return;
+      const clave = entrada.target.dataset.categoria;
+      marcar(clave);
+      if (escritorio.matches) mostrarFoto(clave);
+    });
+  }, { rootMargin: '-35% 0px -60% 0px' });
+  $$('.carta-completa__grupo', carta).forEach((g) => observador.observe(g));
 }
 
 /* ---------- Galería y visor ---------- */
@@ -616,4 +723,6 @@ function iniciarGaleria() {
 iniciarNavegacion();
 iniciarIdioma();
 iniciarGaleria();
+iniciarCarta();
+iniciarTrazos();
 $$('[data-anio]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });

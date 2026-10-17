@@ -78,6 +78,8 @@
   --negro-a97: color-mix(in srgb, var(--negro-logo) 97%, transparent);
   --oliva-a90: color-mix(in srgb, var(--verde-oliva) 90%, transparent);
   --oliva-a95: color-mix(in srgb, var(--verde-oliva) 95%, transparent);
+  --oliva-a60: color-mix(in srgb, var(--verde-oliva) 60%, transparent);
+  --crema-a6: color-mix(in srgb, var(--crema) 6%, transparent);
   --terracota-a60: color-mix(in srgb, var(--terracota-boton) 60%, transparent);
   --halo: 0 0 0 1px var(--dorado-a50), 0 0 22px 3px var(--dorado-a25), 0 0 60px 10px var(--dorado-a10);
 
@@ -93,6 +95,9 @@
   --seccion-espacio: clamp(4.5rem, 10vw, 8rem);
   --seccion-espacio-l: clamp(5.5rem, 13vw, 10.5rem);
   --ease-salida: cubic-bezier(.2, .7, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);       /* entradas y trazos que se dibujan */
+  --ease-in: cubic-bezier(.7, 0, .84, 0);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);   /* fundidos entre fotos */
   --transicion: .35s var(--ease-salida);
 }
 
@@ -157,6 +162,10 @@ button { font: inherit; color: inherit; }
 .pie :focus-visible,
 .visor :focus-visible { outline-color: var(--dorado-luz); }
 .seccion--salvia :focus-visible { outline-color: var(--tinta); }
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* Logo reutilizado (letras en crema + firma dorada) */
+.logo { display: block; overflow: visible; fill: var(--crema); }
 
 .sr {
   position: absolute !important;
@@ -257,29 +266,28 @@ mark.pendiente {
 .enlace:hover { text-decoration-thickness: 2px; }
 .enlace:not([href]) { text-decoration: none; cursor: default; }
 
-/* ---------- Motivo: círculo con halo ---------- */
-.separador {
-  position: relative;
-  height: 1.5rem;
-  margin: 2.25rem 0;
+/* ---------- Motivo: el río Orinoco (meandro, definido en el sprite de index.html) ---------- */
+.meandro__centro { stop-color: var(--blanco); }
+.meandro__borde { stop-color: var(--blanco); stop-opacity: 0; }
+.separador { max-width: 36rem; margin: 2.25rem auto; }
+.separador svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--dorado-luz);
+  stroke-width: 1.25;
+  stroke-linecap: round;
 }
-.separador::before {
-  content: "";
-  position: absolute;
-  inset: 50% 0 auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--dorado-a50) 30%, var(--dorado-a50) 70%, transparent);
-}
-.separador::after {
-  content: "";
-  position: absolute;
-  top: 50%; left: 50%;
-  width: .9rem; height: .9rem;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--verde-oliva);
-  border: 1px solid var(--dorado-luz);
-  box-shadow: 0 0 12px 3px var(--dorado-a25);
+
+/* ---------- Dibujos que se trazan una sola vez al llegar (main.js: iniciarTrazos) ----------
+   Por defecto todo está dibujado. main.js solo pone en espera lo que está por debajo de la pantalla al cargar,
+   y nunca con «reducir movimiento». Los trazos usan pathLength="1". */
+.trazo--espera .linea { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.trazo--dibuja .linea {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.2s var(--ease-out) calc(var(--i, 0) * 120ms);
 }
 
 .marco-halo {
@@ -294,15 +302,28 @@ mark.pendiente {
   border-radius: 50%;
   box-shadow: 0 0 0 1px var(--dorado-a50), 0 0 40px 8px var(--dorado-a25), 0 0 120px 30px var(--dorado-a10);
 }
-.marco-halo::before,
 .marco-halo::after {
   content: "";
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
 }
-.marco-halo::before { inset: -14px; border: 1px solid var(--dorado-a50); }
-.marco-halo::after  { inset: -34px; border: 1px solid var(--dorado-a15); }
+.marco-halo::after { inset: -34px; border: 1px solid var(--dorado-a15); }
+/* Anillo de luz que se dibuja en el sentido del reloj al llegar a la sección */
+.marco-halo__anillo {
+  position: absolute;
+  inset: -14px;
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  overflow: visible;
+  rotate: -90deg;
+  fill: none;
+  stroke: var(--dorado-a50);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.marco-halo.trazo--espera::after { opacity: 0; }
+.marco-halo.trazo--dibuja::after { opacity: 1; transition: opacity .6s var(--ease-out) .7s; }
 
 /* ---------- Secciones ---------- */
 .seccion { padding-block: var(--seccion-espacio); }
@@ -343,12 +364,13 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .seccion--oscura .entradilla { color: var(--crema-suave); }
 .seccion--salvia .entradilla { color: var(--tinta); }
 
-/* Una sola entrada orquestada: la portada al cargar. El resto de la página ya está ahí. */
-@media (prefers-reduced-motion: no-preference) {
-  .portada__contenido > * { animation: entrada .9s var(--ease-salida) both; }
-  .portada__contenido > :nth-child(2) { animation-delay: .12s; }
-  .portada__contenido > :nth-child(3) { animation-delay: .24s; }
-}
+/* Entrada de la portada: solo en la primera carga de la visita (html.firma-anima, ver <head>).
+   El logo tiene su propia animación (la firma se escribe sola); aquí entran los textos y los botones. */
+.firma-anima .portada__lado,
+.firma-anima .portada__frase,
+.firma-anima .portada__acciones { animation: entrada .5s var(--ease-out) .25s both; }
+.firma-anima .portada__frase { animation-delay: .33s; }
+.firma-anima .portada__acciones { animation-delay: .41s; }
 @keyframes entrada {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: none; }
@@ -460,8 +482,54 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .nav__panel {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
+  min-height: 100%;
   padding-block: clamp(2rem, 6vh, 4rem) calc(2rem + env(safe-area-inset-bottom));
+}
+.nav__columna { display: flex; flex-direction: column; gap: 2rem; }
+
+/* Datos prácticos del panel: al final en el teléfono; con la foto del letrero en escritorio */
+.nav__info { margin-top: auto; }
+.nav__foto { display: none; }
+.nav__datos { border-top: 1px dashed var(--crema-a35); }
+.nav__datos > div { padding: .85rem 0; border-bottom: 1px dashed var(--crema-a35); }
+.nav__datos dt {
+  margin-bottom: .2rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--crema-suave);
+}
+.nav__datos dd { margin: 0; }
+
+@media (min-width: 56rem) {
+  .nav__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(2.5rem, 5vw, 5rem);
+    align-items: center;
+    align-content: center;
+  }
+  .nav__info {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 2rem;
+    align-items: end;
+    margin-top: 0;
+  }
+  .nav__foto {
+    display: block;
+    width: 100%;
+    max-height: calc(100svh - var(--nav-alto) - 10rem);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radio);
+    background: var(--negro-a20);
+    opacity: 0;
+    transition: opacity .3s var(--ease-out);
+  }
+  .nav__foto.is-cargada { opacity: 1; }
 }
 .nav__enlaces { list-style: none; }
 .nav__enlaces a {
@@ -577,6 +645,20 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   width: min(80vw, 34rem);
   height: auto;
 }
+/* Firma: máscara de trazos gruesos (blanco = se ve) y brillo final, como el letrero iluminado */
+.firma__trazos {
+  fill: none;
+  stroke: var(--blanco);
+  stroke-width: 4.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.firma__relleno { fill: var(--blanco); }
+.firma__brillo { opacity: .22; }
+.firma-anima .firma__trazos { opacity: 0; }
+/* Seguro: si el script de la firma no llega a ejecutarse, la firma aparece entera a los 4,5 s */
+.firma-anima .firma__relleno { opacity: 0; animation: firma-seguro .4s var(--ease-out) 4.5s forwards; }
+@keyframes firma-seguro { to { opacity: 1; } }
 /* Halo: dos anillos de luz detrás del logo (eco de las luces circulares del local) */
 .portada__titulo::before,
 .portada__titulo::after {
@@ -596,6 +678,13 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .portada__titulo::after {
   width: min(84vw, 31rem);
   border: 1px solid var(--dorado-a15);
+}
+/* Los anillos se encienden al terminar la firma, como las lámparas circulares del salón */
+.firma-anima .portada__titulo::before,
+.firma-anima .portada__titulo::after { animation: anillos .5s var(--ease-out) 2.4s both; }
+@keyframes anillos {
+  from { opacity: 0; scale: .97; }
+  to { opacity: 1; scale: 1; }
 }
 .portada__frase {
   max-width: 34rem;
@@ -683,6 +772,24 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 }
 .pilar h3 { margin-bottom: .4rem; font-size: clamp(1.4rem, 1vw + 1rem, 1.75rem); }
 .pilar p { max-width: 34rem; color: var(--tinta-suave); }
+/* Racimo de açaí colgando de la última línea de los pilares */
+.concepto__acai {
+  display: block;
+  width: auto;
+  height: 150px;
+  margin: -1px 0 0 auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--oliva-a60);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (min-width: 56rem) { .concepto__acai { height: 220px; margin-right: 2rem; } }
+.concepto__acai.trazo--dibuja .tallo { transition-duration: .4s; transition-delay: 0s; }
+.concepto__acai.trazo--dibuja .raquila { transition-duration: .6s; transition-delay: calc(.35s + var(--i) * 40ms); }
+.concepto__acai.trazo--espera .frutos { opacity: 0; }
+.concepto__acai.trazo--dibuja .frutos { opacity: 1; transition: opacity .4s var(--ease-out) 1.1s; }
 
 @media (min-width: 56rem) {
   .concepto__rejilla {
@@ -709,6 +816,18 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   background: var(--terracota-hondo);
   color: var(--crema);
   box-shadow: 0 0 0 1px var(--dorado-a25), 0 30px 60px -30px var(--negro-a50);
+}
+.carta { position: relative; isolation: isolate; }
+.carta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(45deg, var(--crema-a6) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(-45deg, var(--crema-a6) 0 2px, transparent 2px 9px);
 }
 .carta__titulo { margin-bottom: 1.5rem; }
 .carta mark.pendiente { background: var(--negro-a25); }
@@ -737,11 +856,30 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 
 .menu__lado .entradilla { margin-bottom: 1.5rem; }
 .menu__foto { margin: 2rem 0 0; }
-.menu__foto img {
-  width: 100%;
+/* Ventana de fotos: la paella por defecto; con la carta abierta, la foto de la categoría que se lee */
+.menu__foto-ventana {
+  position: relative;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: var(--radio);
+  background: var(--negro-a20);
+}
+.menu__foto-img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .3s var(--ease-in-out);
+}
+.menu__foto-img.is-activa { opacity: 1; transition-duration: .4s; }
+.menu__foto-pie {
+  margin-top: .75rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--crema-suave);
 }
 
 /* Carta completa desplegable */
@@ -756,20 +894,66 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 }
 .carta-completa[open] summary::before { content: "−"; }
 .carta-completa__nota { margin: 1.5rem 0 0; font-size: .9375rem; color: var(--crema-suave); }
-.carta-completa__columnas {
-  margin-top: 2rem;
+/* Índice de categorías: arriba de la lista en teléfono; en la columna derecha en escritorio */
+.carta-indice { margin-top: 1.75rem; }
+.carta-indice ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .15rem 1.1rem;
+}
+.carta-indice a {
+  display: inline-block;
+  padding: .4rem 0;
+  font-size: .875rem;
+  text-decoration: none;
+  color: var(--crema-suave);
+}
+.carta-indice a:hover { color: var(--crema); text-decoration: underline; text-underline-offset: .25em; }
+.carta-indice a[aria-current="true"] { color: var(--crema); font-weight: 600; }
+.carta-indice a[aria-current="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin-right: .45rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--dorado-luz);
+}
+.carta-indice--lado { display: none; }
+
+/* Lista: una categoría debajo de otra, en el orden de la carta impresa */
+.carta-completa__lista {
+  margin-top: 1.5rem;
   padding-top: 2rem;
   border-top: 1px dashed var(--crema-a35);
-  columns: 1;
-  column-gap: 3rem;
 }
 .carta-completa__grupo {
-  break-inside: avoid;
   margin-bottom: 2rem;
+  scroll-margin-top: calc(var(--nav-alto) + 1rem);
 }
+.carta-completa__grupo h3 { scroll-margin-top: calc(var(--nav-alto) + 1rem); }
+.carta-completa__grupo li { break-inside: avoid; }
+/* Fotos intercaladas en la lista (solo teléfono y tableta) */
+.carta-completa__foto { margin: 0 0 2rem; }
+.carta-completa__foto img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radio);
+  background: var(--negro-a20);
+}
+.carta-completa__foto figcaption {
+  margin-top: .6rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--crema-suave);
+}
+.carta-completa__foto:not(:has(img[src])) { display: none; }
 .carta-completa__grupo h3 {
   margin-bottom: .6rem;
-  font-size: 1.3rem;
+  font-size: 1.5rem;  /* texto grande: el dorado sobre oliva (3,99:1) cumple a partir de 24 px */
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: .02em;
@@ -784,8 +968,50 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   font-size: .875rem;
   color: var(--crema-suave);
 }
-@media (min-width: 22rem) { .carta-completa__columnas { columns: 2; column-gap: 1.5rem; } }
-@media (min-width: 40rem) { .carta-completa__columnas { column-gap: 3rem; } }
+@media (min-width: 40rem) {
+  .carta-completa__grupo ul { columns: 2; column-gap: 2.5rem; }
+}
+
+/* Escritorio con la carta abierta: la columna derecha acompaña la lectura */
+@media (min-width: 56rem) {
+  .carta-completa__foto { display: none; }
+  .carta-completa__lista { position: relative; }
+  /* Hilo del río: avance de lectura entre las dos columnas (quieto y completo si no hay soporte) */
+  .carta-completa__lista::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    right: -1.75rem;
+    width: 1px;
+    background: var(--dorado-a50);
+    transform-origin: top;
+  }
+}
+@media (min-width: 56rem) and (min-height: 40rem) {
+  .menu__rejilla:has(.carta-completa[open]) .menu__lado {
+    position: sticky;
+    top: calc(var(--nav-alto) + 1.5rem);
+  }
+  .menu__rejilla:has(.carta-completa[open]) .menu__intro { display: none; }
+  .menu__rejilla:has(.carta-completa[open]) .menu__foto-ventana { aspect-ratio: auto; height: 40svh; }
+}
+@media (min-width: 56rem) and (min-height: 50rem) {
+  .carta-indice--movil { display: none; }
+  .menu__rejilla:has(.carta-completa[open]) .carta-indice--lado { display: block; }
+}
+@media (min-width: 56rem) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .carta-completa__lista::after {
+      animation: hilo linear both;
+      animation-timeline: view();
+      animation-range: contain;
+    }
+  }
+}
+@keyframes hilo {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
 
 .degustacion {
   display: grid;
@@ -834,6 +1060,11 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   overflow: hidden;
   border-radius: 10px;
   background: var(--granito);
+}
+.galeria__rejilla.trazo--espera .galeria__item { opacity: 0; transform: translateY(12px); }
+.galeria__rejilla.trazo--dibuja .galeria__item {
+  transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 60ms);
 }
 .galeria__item img {
   width: 100%; height: 100%;
@@ -944,6 +1175,26 @@ html:has(.visor[open]) { overflow: hidden; }
 /* ==========================================================================
    8. Visítanos
    ========================================================================== */
+.visitanos .cabecera {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: none;
+}
+.visitanos .cabecera .titulo { max-width: 42rem; }
+.visitanos__autana {
+  flex: none;
+  width: clamp(5.5rem, 16vw, 11rem);
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--tinta);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.visitanos__autana.trazo--dibuja .linea { transition-duration: .9s; transition-delay: calc(var(--i) * 150ms); }
 .visitanos__rejilla { display: grid; gap: 2.5rem; }
 
 .mapa {
@@ -959,17 +1210,43 @@ html:has(.visor[open]) { overflow: hidden; }
 .mapa__fachada {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem;
   text-align: center;
 }
-/* Círculos iluminados, como los de la pared del local */
+/* Evocación (no un mapa): el Orinoco y el punto de Puerto Ayacucho en su orilla este */
+.mapa__rio {
+  position: absolute;
+  top: 6%;
+  left: 40%;
+  height: 76%;
+  width: auto;
+  translate: -50% 0;
+  overflow: visible;
+  fill: none;
+  stroke: var(--dorado-a50);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+.mapa__rotulo {
+  position: absolute;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--crema-suave);
+}
+.mapa__rotulo--rio { top: 16%; right: calc(60% + 1rem); }
+.mapa__rotulo--ciudad { top: 44%; left: calc(40% + 5.25rem); right: .75rem; translate: 0 -50%; text-align: left; color: var(--crema); }
+.mapa__texto { position: absolute; inset: auto 1.5rem 1.5rem; margin: 0; color: var(--crema-suave); }
+@media (max-width: 24rem) { .mapa__rotulo { letter-spacing: .08em; } }
+.mapa__fachada.trazo--espera .mapa__luces { opacity: 0; }
+.mapa__fachada.trazo--dibuja .mapa__luces { opacity: 1; transition: opacity .3s var(--ease-out) 1.2s; }
+/* Círculos iluminados, como los de la pared del local: marcan Puerto Ayacucho */
 .mapa__luces {
-  position: relative;
-  width: 6.5rem; height: 6.5rem;
+  position: absolute;
+  top: 44%;
+  left: calc(40% + 1rem);
+  translate: 0 -50%;
+  width: 3.5rem; height: 3.5rem;
   border-radius: 50%;
   border: 1px solid var(--dorado-a50);
   box-shadow: 0 0 40px 6px var(--dorado-a25), inset 0 0 30px var(--dorado-a10);
@@ -980,13 +1257,12 @@ html:has(.visor[open]) { overflow: hidden; }
   position: absolute;
   border-radius: 50%;
 }
-.mapa__luces::before { inset: -1.25rem; border: 1px solid var(--dorado-a15); }
+.mapa__luces::before { inset: -.75rem; border: 1px solid var(--dorado-a15); }
 .mapa__luces span {
   inset: 38%;
   background: var(--dorado-luz);
   box-shadow: 0 0 18px 6px var(--dorado-a50);
 }
-.mapa__texto { max-width: 20rem; margin: 0; }
 
 @media (min-width: 40rem) {
   .mapa { aspect-ratio: 4 / 3; }
@@ -1026,6 +1302,16 @@ html:has(.visor[open]) { overflow: hidden; }
   text-align: center;
 }
 .reserva__llamada .entradilla { margin-bottom: 2rem; }
+/* La mesa: una línea que se abre desde el centro, el río que llega en calma */
+.reserva__linea {
+  display: block;
+  width: 6rem;
+  height: 1px;
+  margin: 1.5rem auto;
+  background: var(--arcilla);
+}
+.reserva__linea.trazo--espera { transform: scaleX(0); }
+.reserva__linea.trazo--dibuja { transform: none; transition: transform .7s var(--ease-out); }
 
 .btn--whatsapp {
   min-height: 64px;
@@ -1070,7 +1356,7 @@ html:has(.visor[open]) { overflow: hidden; }
   background: var(--verde-oliva);
   color: var(--crema);
 }
-.pie .separador { margin: 0 auto 3rem; max-width: var(--contenedor); }
+.pie .separador { margin: 0 auto 3rem; }
 .pie__rejilla {
   display: grid;
   gap: 2.5rem;

@@ -8,5 +8,16 @@
     "footer": "Ft5 Statement",
     "enrichment": "none (fotos pendientes)",
     "brief": "Shabono by Nelson Méndez · alta cocina de autor, Puerto Ayacucho"
+  },
+  {
+    "date": "2026-10-17",
+    "macrostructure": "Split Studio",
+    "theme": "studied-DNA",
+    "source": "https://amritpalace.com/ + https://www.graza.co/",
+    "nav": "N9 Edge-aligned minimal (con panel: foto + datos prácticos)",
+    "footer": "Ft5 Statement",
+    "enrichment": "SVG a mano, nivel B (firma animada, meandro del Orinoco, açaí, Cerro Autana)",
+    "motion": "firma una vez por sesión; trazos de un solo disparo con IntersectionObserver; galería escalonada (pedido del cliente); sin paralaje",
+    "brief": "Shabono by Nelson Méndez · ritmo de desplazamiento y motivos amazónicos"
   }
 ]
