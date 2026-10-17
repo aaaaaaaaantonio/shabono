@@ -94,6 +94,7 @@
   --seccion-espacio-s: clamp(3.5rem, 7vw, 5.5rem);
   --seccion-espacio: clamp(4.5rem, 10vw, 8rem);
   --seccion-espacio-l: clamp(5.5rem, 13vw, 10.5rem);
+  --banda: clamp(7.5rem, 14vw, 11rem);  /* transición entre secciones: degradado + petroglifo */
   --ease-salida: cubic-bezier(.2, .7, .2, 1);
   --ease-out: cubic-bezier(.16, 1, .3, 1);       /* entradas y trazos que se dibujan */
   --ease-in: cubic-bezier(.7, 0, .84, 0);
@@ -339,6 +340,40 @@ mark.pendiente {
   background-color: var(--verde-oliva);
   color: var(--crema);
 }
+
+/* Transiciones entre secciones: degradado de dos tonos en el margen superior, donde no hay texto.
+   (Si se muestra Reconocimientos, revisar los colores de partida de Visítanos.) */
+.seccion { position: relative; }
+.concepto, .menu, .galeria, .visitanos { padding-top: var(--banda); }
+.concepto  { background: linear-gradient(var(--verde-oliva), var(--crema) var(--banda)); }
+.menu      { background: linear-gradient(var(--crema), var(--verde-oliva) var(--banda)); }
+.galeria   { background: linear-gradient(var(--verde-oliva), var(--crema) var(--banda)); }
+.visitanos { background: linear-gradient(var(--crema), var(--verde-salvia) var(--banda)); }
+.reserva   { background: linear-gradient(var(--verde-salvia), var(--crema) var(--seccion-espacio-l)); }
+
+/* Petroglifos (inspirados en los del Cerro Pintado): uno en cada transición, del lado oscuro del degradado */
+.petroglifo {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--banda);
+  pointer-events: none;
+}
+.petroglifo svg {
+  position: absolute;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--dorado-luz);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.petroglifo--serpiente svg { top: 10%; right: 0; width: min(70%, 22rem); }
+.petroglifo--lagarto svg   { top: 46%; left: 0; width: min(36%, 10rem); }
+.petroglifo--ave svg       { top: 8%; right: 0; width: min(36%, 10rem); }
+.petroglifo--humano svg    { top: 12%; left: 0; width: auto; height: 74%; stroke: var(--tinta-suave); }
+.petroglifo--ciempies svg  { top: 55%; left: 0; width: min(48%, 13rem); }
+.petroglifo.trazo--dibuja .linea { transition-duration: 1s; transition-delay: calc(var(--i) * 180ms); }
 
 /* Sección oculta hasta tener datos (p. ej. Reconocimientos) */
 .seccion--oculta { display: none !important; }
@@ -776,7 +811,7 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 .concepto__acai {
   display: block;
   width: auto;
-  height: 150px;
+  height: 230px;
   margin: -1px 0 0 auto;
   overflow: visible;
   fill: none;
@@ -785,7 +820,7 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-@media (min-width: 56rem) { .concepto__acai { height: 220px; margin-right: 2rem; } }
+@media (min-width: 56rem) { .concepto__acai { height: 340px; margin-right: 2rem; } }
 .concepto__acai.trazo--dibuja .tallo { transition-duration: .4s; transition-delay: 0s; }
 .concepto__acai.trazo--dibuja .raquila { transition-duration: .6s; transition-delay: calc(.35s + var(--i) * 40ms); }
 .concepto__acai.trazo--espera .frutos { opacity: 0; }
@@ -1183,18 +1218,46 @@ html:has(.visor[open]) { overflow: hidden; }
   max-width: none;
 }
 .visitanos .cabecera .titulo { max-width: 42rem; }
-.visitanos__autana {
+.visitanos__mapa {
+  position: relative;
   flex: none;
-  width: clamp(5.5rem, 16vw, 11rem);
-  height: auto;
-  overflow: visible;
-  fill: none;
-  stroke: var(--tinta);
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  width: clamp(10rem, 30vw, 21rem);
 }
-.visitanos__autana.trazo--dibuja .linea { transition-duration: .9s; transition-delay: calc(var(--i) * 150ms); }
+.visitanos__mapa svg { display: block; width: 100%; height: auto; overflow: visible; }
+.mapa-vzla__pais { fill: none; stroke: var(--tinta); stroke-width: 1.25; stroke-linejoin: round; }
+/* Guayana Esequiba: rayada y con borde discontinuo, como zona en reclamación */
+.mapa-vzla__esequibo {
+  fill: url(#rayado-esequibo);
+  stroke: var(--tinta);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}
+#rayado-esequibo line { stroke: var(--tinta-suave); stroke-width: .8; }
+.mapa-vzla__punto { fill: var(--terracota-texto); }
+.mapa-vzla__halo { fill: none; stroke: var(--terracota-texto); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.visitanos__mapa-rotulo {
+  position: absolute;
+  translate: 1rem -50%;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--tinta);
+}
+.visitanos__mapa.trazo--espera :is(.mapa-vzla__esequibo, .mapa-vzla__punto, .mapa-vzla__halo, .visitanos__mapa-rotulo) { opacity: 0; }
+.visitanos__mapa.trazo--dibuja .linea { transition-duration: 1.6s; }
+.visitanos__mapa.trazo--dibuja :is(.mapa-vzla__esequibo, .mapa-vzla__punto, .mapa-vzla__halo, .visitanos__mapa-rotulo) {
+  opacity: 1;
+  transition: opacity .5s var(--ease-out) 1.3s;
+}
+.visitanos__mapa.trazo--dibuja .mapa-vzla__halo { transition-delay: 1.6s; }
+.visitanos__mapa.trazo--dibuja .visitanos__mapa-rotulo { transition-delay: 1.75s; }
+@media (max-width: 40rem) {
+  .visitanos .cabecera { flex-direction: column; align-items: flex-start; }
+  .visitanos__mapa { width: min(100%, 19rem); }
+}
 .visitanos__rejilla { display: grid; gap: 2.5rem; }
 
 .mapa {
@@ -1303,6 +1366,20 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .reserva__llamada .entradilla { margin-bottom: 2rem; }
 /* La mesa: una línea que se abre desde el centro, el río que llega en calma */
+/* Cerro Autana: el paisaje antes de llegar a la mesa */
+.reserva__autana {
+  display: block;
+  width: min(100%, 38rem);
+  height: auto;
+  margin: 0 auto 2.5rem;
+  overflow: visible;
+  fill: none;
+  stroke: var(--tinta-suave);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.reserva__autana.trazo--dibuja .linea { transition-duration: 1.1s; transition-delay: calc(var(--i) * 160ms); }
 .reserva__linea {
   display: block;
   width: 6rem;
@@ -1352,10 +1429,12 @@ html:has(.visor[open]) { overflow: hidden; }
    10. Pie de página
    ========================================================================== */
 .pie {
-  padding-top: 1rem;
-  background: var(--verde-oliva);
+  position: relative;
+  padding-top: var(--banda);
+  background: linear-gradient(var(--crema), var(--verde-oliva) var(--banda));
   color: var(--crema);
 }
+.pie__credito { margin-top: .4rem; }
 .pie .separador { margin: 0 auto 3rem; }
 .pie__rejilla {
   display: grid;

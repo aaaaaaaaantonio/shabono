@@ -19,5 +19,15 @@
     "enrichment": "SVG a mano, nivel B (firma animada, meandro del Orinoco, açaí, Cerro Autana)",
     "motion": "firma una vez por sesión; trazos de un solo disparo con IntersectionObserver; galería escalonada (pedido del cliente); sin paralaje",
     "brief": "Shabono by Nelson Méndez · ritmo de desplazamiento y motivos amazónicos"
+  },
+  {
+    "date": "2026-10-17",
+    "macrostructure": "Split Studio",
+    "theme": "studied-DNA",
+    "nav": "N9",
+    "footer": "Ft5 Statement",
+    "enrichment": "SVG a mano: petroglifos (Cerro Pintado, con crédito), mapa de Venezuela (Natural Earth), Autana desde referencia",
+    "transitions": "degradado de dos tonos en el margen superior de cada sección (--banda)",
+    "brief": "Shabono · dibujos más grandes, mapa, petroglifos y degradados"
   }
 ]

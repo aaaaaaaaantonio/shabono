@@ -37,7 +37,9 @@ Sin frameworks ni proceso de compilación.
 ## Animaciones
 
 - **Firma que se escribe sola (portada):** una máscara SVG recorre la firma real en 6 trazos, en orden de escritura, y al final se encienden los anillos de luz. Dura unos 2,9 s; los botones se pueden usar desde el principio. Ocurre **una vez por visita** (se guarda en `sessionStorage`): para volver a verla, abrir la página en una pestaña nueva. Los tiempos de cada trazo están en el script que va justo después del `<h1>` en `index.html`.
-- **Dibujos que se trazan una sola vez al llegar** (atributo `data-trazo`): el anillo del chef, el racimo de açaí (concepto), el Cerro Autana y el río Orinoco del mapa (Visítanos), la línea de la mesa (Reserva) y la aparición escalonada de la galería. Para quitar uno, borrar su atributo `data-trazo`: se queda dibujado y quieto.
+- **Dibujos que se trazan una sola vez al llegar** (atributo `data-trazo`): el anillo del chef, el racimo de açaí (concepto), el mapa de Venezuela con Puerto Ayacucho y el río Orinoco del mapa de Google mientras carga (Visítanos), el Cerro Autana y la línea de la mesa (Reserva), los petroglifos y la aparición escalonada de la galería. Para quitar uno, borrar su atributo `data-trazo`: se queda dibujado y quieto.
+- **Transiciones entre secciones:** degradado de dos tonos en el margen superior de cada sección (variable `--banda` en `styles.css`), sin texto encima. En cada transición hay un petroglifo (bloques `petroglifo` en `index.html`), dibujos propios inspirados en los del Cerro Pintado; el crédito está en el pie.
+- **Mapa de Venezuela:** contorno de Natural Earth (dominio público), simplificado; la Guayana Esequiba va rayada como zona en reclamación.
 - **Carta completa:** con la carta abierta en escritorio, la columna derecha queda fija, cambia de foto según la categoría y una línea dorada fina marca el avance de lectura (en Firefox se ve quieta).
 - Con «reducir movimiento» activado en el teléfono o el ordenador, o sin JavaScript, todo se ve completo y quieto.
 

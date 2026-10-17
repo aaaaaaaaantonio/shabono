@@ -17,7 +17,9 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`), en español (`es`) y 
 - Firma «Nelson Mendez» que se escribe sola en la portada (en código, sin vídeo).
 - Carta completa en orden, con índice; en escritorio la columna derecha acompaña la lectura con fotos por categoría.
 - Panel de navegación con la foto del letrero, el horario, la dirección y el WhatsApp.
-- Dibujos de línea: río Orinoco (separador, mapa), anillo del chef, racimo de açaí, Cerro Autana (validado por el chef, según el cliente), línea de la mesa y trama tenue del tejido de los individuales en la tarjeta de la carta.
+- Dibujos de línea: río Orinoco (separador, mapa), anillo del chef, racimo de açaí, Cerro Autana redibujado a partir de una foto de referencia (validado por el chef, según el cliente), línea de la mesa y trama tenue del tejido de los individuales en la tarjeta de la carta.
+- Mapa de Venezuela con Puerto Ayacucho y la Guayana Esequiba rayada como zona en reclamación (decisión del cliente).
+- Degradados entre secciones y cinco petroglifos (serpiente, lagarto, ave, figura humana y ciempiés) inspirados en los del Cerro Pintado, con crédito en el pie.
 - Foto del chef (chaqueta blanca), plato destacado (paella) y las 9 fotos de la galería. Se recortaron los comensales que aparecían al fondo.
 - Menú: 6 platos de la casa, sin precios, y carta completa desplegable transcrita de la carta impresa (ortografía corregida).
 - Biografía provisional con el dato de que el chef es dueño del Instituto Culinario de Investigación Amazonas.
@@ -50,6 +52,7 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`), en español (`es`) y 
 - Probar la firma animada en un **iPhone real (Safari)** y en un **Android económico**. Si en Safari la máscara no se repinta bien, la alternativa es mostrar la firma con un fundido.
 - Opcional: un vídeo corto, grabado con el teléfono, del chef firmando su nombre, para copiar el orden real de sus trazos (hoy el orden de la «s», la «d» y el centro de la «M» es una interpretación).
 - Pies de foto de la carta: hoy solo dicen la categoría. Si se confirma qué plato es cada foto (`img/carta/`), se puede añadir el nombre.
+- Petroglifos: son interpretaciones propias de figuras del Cerro Pintado, no copias de fotos. Conviene que el chef los vea; si algún motivo no debe usarse, se quita borrando su bloque `petroglifo`.
 - Segunda fase: raudales de Atures, palmas y otros dibujos generados en Higgsfield (con los prompts acordados) para convertirlos a línea dorada animada. Si alguno se inspira en el diseño de un pueblo concreto, indicarlo en la página (p. ej. «inspirado en la cestería ye'kwana») y evitar símbolos sagrados.
 
 ## 4. Permisos de imagen (antes de publicar)
