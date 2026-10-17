@@ -68,7 +68,6 @@ const TRADUCCIONES = {
       imagenAlt: 'Roca de granito con cascada en el interior de Shabono, de noche',
     },
     chef: {
-      antetitulo: 'El chef',
       rol: 'Chef y propietario · Chef venezolano con reconocimiento internacional',
       // Biografía provisional, solo con datos confirmados. Sustituir por la biografía real.
       bio: 'Chef venezolano con reconocimiento internacional, Nelson Méndez es chef y propietario de Shabono, en Puerto Ayacucho, donde cocina con ingredientes originarios del estado Amazonas.',
@@ -77,7 +76,6 @@ const TRADUCCIONES = {
       fotoAlt: 'Retrato del chef Nelson Méndez',
     },
     concepto: {
-      antetitulo: 'El concepto',
       titulo: 'Cocina de autor con raíz amazónica',
       intro: 'En Shabono, cada plato parte de la tierra amazónica. Cocinamos con ingredientes originarios del estado Amazonas, cultivados y cuidados con esmero, y los llevamos a la mesa con técnica y mirada de autor.',
       ingredientesTitulo: 'Ingredientes amazónicos',
@@ -88,7 +86,6 @@ const TRADUCCIONES = {
       productoresTexto: 'Trabajamos con quienes cultivan y cuidan estos ingredientes con la mayor dedicación.',
     },
     menu: {
-      antetitulo: 'Menú',
       titulo: 'La carta',
       intro: 'Una selección de nuestra carta. Precios en dólares estadounidenses (USD).',
       fotoAlt: 'Foto pendiente: plato destacado de Shabono',
@@ -107,7 +104,6 @@ const TRADUCCIONES = {
       impuestos: '[IMPUESTOS Y SERVICIO: indicar si los precios los incluyen]',
     },
     galeria: {
-      antetitulo: 'Galería',
       titulo: 'Shabono por dentro',
       intro: 'Toca una imagen para ampliarla.',
       ampliar: 'Ampliar:',
@@ -131,13 +127,11 @@ const TRADUCCIONES = {
       siguiente: 'Imagen siguiente',
     },
     reconocimientos: {
-      antetitulo: 'Reconocimientos',
       titulo: 'Premios y prensa',
       premios: 'Premios',
       prensa: 'Prensa',
     },
     visitanos: {
-      antetitulo: 'Visítanos',
       titulo: 'Te esperamos en Puerto Ayacucho',
       direccionTitulo: 'Dirección',
       direccion: 'Av. La Raza, al lado de Protección Civil Amazonas',
@@ -154,7 +148,6 @@ const TRADUCCIONES = {
       mapaTitulo: 'Mapa con la ubicación de Shabono en Puerto Ayacucho',
     },
     reserva: {
-      antetitulo: 'Reservas',
       titulo: 'Reserva tu mesa',
       texto: 'Escríbenos por WhatsApp con la fecha y el número de personas.',
       boton: 'Reservar por WhatsApp',
@@ -213,14 +206,12 @@ const TRADUCCIONES = {
       imagenAlt: 'Granite rock with a waterfall inside Shabono, at night',
     },
     chef: {
-      antetitulo: 'The chef',
       rol: 'Chef and owner · Internationally recognized Venezuelan chef',
       bio: 'An internationally recognized Venezuelan chef, Nelson Méndez is the chef and owner of Shabono in Puerto Ayacucho, cooking with ingredients native to Amazonas State.',
       cita: '',
       fotoAlt: 'Portrait of chef Nelson Méndez',
     },
     concepto: {
-      antetitulo: 'Our concept',
       titulo: 'Signature cuisine with Amazonian roots',
       intro: 'At Shabono, every dish starts with the land of the Amazon. We cook with ingredients native to Amazonas State, grown and tended with care, and bring them to the table with technique and a signature point of view.',
       ingredientesTitulo: 'Amazonian ingredients',
@@ -231,7 +222,6 @@ const TRADUCCIONES = {
       productoresTexto: 'We work with the people who grow and tend these ingredients with the utmost dedication.',
     },
     menu: {
-      antetitulo: 'Menu',
       titulo: 'À la carte',
       intro: 'A selection from our menu. Prices in US dollars (USD).',
       fotoAlt: 'Photo pending: a featured dish at Shabono',
@@ -250,7 +240,6 @@ const TRADUCCIONES = {
       impuestos: '[IMPUESTOS Y SERVICIO · EN]',
     },
     galeria: {
-      antetitulo: 'Gallery',
       titulo: 'Inside Shabono',
       intro: 'Tap an image to enlarge it.',
       ampliar: 'Enlarge:',
@@ -273,13 +262,11 @@ const TRADUCCIONES = {
       siguiente: 'Next image',
     },
     reconocimientos: {
-      antetitulo: 'Recognition',
       titulo: 'Awards and press',
       premios: 'Awards',
       prensa: 'Press',
     },
     visitanos: {
-      antetitulo: 'Visit us',
       titulo: 'Find us in Puerto Ayacucho',
       direccionTitulo: 'Address',
       direccion: 'Av. La Raza, next to Protección Civil Amazonas',
@@ -296,7 +283,6 @@ const TRADUCCIONES = {
       mapaTitulo: 'Map showing the location of Shabono in Puerto Ayacucho',
     },
     reserva: {
-      antetitulo: 'Reservations',
       titulo: 'Book your table',
       texto: 'Message us on WhatsApp with the date and the number of guests.',
       boton: 'Book via WhatsApp',
@@ -600,27 +586,9 @@ function iniciarGaleria() {
   });
 }
 
-/* ---------- Animación de entrada ---------- */
-function iniciarRevelado() {
-  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reducido || !('IntersectionObserver' in window)) return;
-  // Solo se animan los elementos que aún no están en pantalla, para no parpadear.
-  const elementos = $$('.revelar').filter((el) => el.getBoundingClientRect().top > window.innerHeight);
-  elementos.forEach((el) => el.classList.add('revelar--espera'));
-  const observador = new IntersectionObserver((entradas, obs) => {
-    entradas.forEach((entrada) => {
-      if (!entrada.isIntersecting) return;
-      entrada.target.classList.add('revelar--visible');
-      entrada.target.classList.remove('revelar--espera');
-      obs.unobserve(entrada.target);
-    });
-  }, { rootMargin: '0px 0px -8% 0px' });
-  elementos.forEach((el) => observador.observe(el));
-}
 
 /* ---------- Inicio ---------- */
 iniciarNavegacion();
 iniciarIdioma();
 iniciarGaleria();
-iniciarRevelado();
 $$('[data-anio]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
