@@ -44,8 +44,8 @@ const TRADUCCIONES = {
     general: {
       saltar: 'Saltar al contenido',
       inicio: 'Shabono by Nelson Méndez, ir al inicio',
-      menuAbrir: 'Abrir menú',
-      menuCerrar: 'Cerrar menú',
+      menuAbrir: 'Abrir navegación',
+      menuCerrar: 'Cerrar navegación',
       idioma: 'Idioma',
       accesos: 'Accesos rápidos',
     },
@@ -182,8 +182,8 @@ const TRADUCCIONES = {
     general: {
       saltar: 'Skip to content',
       inicio: 'Shabono by Nelson Méndez, back to top',
-      menuAbrir: 'Open menu',
-      menuCerrar: 'Close menu',
+      menuAbrir: 'Open navigation',
+      menuCerrar: 'Close navigation',
       idioma: 'Language',
       accesos: 'Quick links',
     },
@@ -451,7 +451,6 @@ function actualizarContacto() {
 /* ---------- Navegación ---------- */
 const nav = $('[data-nav]');
 const menuBoton = $('[data-menu-boton]');
-const escritorio = window.matchMedia('(min-width: 64rem)');
 
 function actualizarMenuBoton() {
   if (!menuBoton) return;
@@ -479,7 +478,7 @@ function iniciarNavegacion() {
   menuBoton?.addEventListener('click', () => abrirMenu(menuBoton.getAttribute('aria-expanded') !== 'true'));
 
   $$('[data-menu] a').forEach((a) => a.addEventListener('click', () => {
-    if (!escritorio.matches) abrirMenu(false);
+    abrirMenu(false);
   }));
 
   document.addEventListener('keydown', (e) => {
@@ -489,7 +488,6 @@ function iniciarNavegacion() {
     }
   });
 
-  escritorio.addEventListener('change', (e) => { if (e.matches) abrirMenu(false); });
 
   // Fondo sólido al bajar
   let pendienteFrame = false;

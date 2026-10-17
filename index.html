@@ -90,12 +90,22 @@
         <span class="nav__nombre">Shabono <small>by Nelson Méndez</small></span>
       </a>
 
-      <button class="nav__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal"
-              data-menu-boton data-i18n-attr="aria-label:general.menuAbrir" aria-label="Abrir menú">
-        <span aria-hidden="true"></span>
-      </button>
+      <div class="nav__acciones">
+        <div class="idioma nav__idioma" role="group" data-i18n-attr="aria-label:general.idioma" aria-label="Idioma">
+          <button type="button" class="idioma__btn" data-lang="es" lang="es" aria-pressed="true">ES</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" class="idioma__btn" data-lang="en" lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="btn btn--reserva nav__reservar" href="#reserva" data-i18n="nav.reservar">Reservar</a>
+        <button class="nav__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal"
+                data-menu-boton data-i18n-attr="aria-label:general.menuAbrir" aria-label="Abrir navegación">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
 
+      <!-- Navegación «al borde» (Hallmark N9): los enlaces viven en un panel a pantalla completa -->
       <nav class="nav__menu" id="menu-principal" data-menu data-i18n-attr="aria-label:nav.etiqueta" aria-label="Principal">
+        <div class="nav__panel contenedor">
         <ul class="nav__enlaces">
           <li><a href="#chef" data-i18n="nav.chef">El chef</a></li>
           <li><a href="#concepto" data-i18n="nav.concepto">El concepto</a></li>
@@ -109,7 +119,8 @@
           <span aria-hidden="true">/</span>
           <button type="button" class="idioma__btn" data-lang="en" lang="en" aria-pressed="false">EN</button>
         </div>
-        <a class="btn btn--reserva nav__reservar" href="#reserva" data-i18n="nav.reservar">Reservar</a>
+        <a class="btn btn--reserva nav__reservar-panel" href="#reserva" data-i18n="nav.reservar">Reservar</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -170,25 +181,22 @@
 
     <!-- 4. EL CONCEPTO -->
     <section class="seccion seccion--clara concepto" id="concepto" aria-labelledby="concepto-titulo">
-      <div class="contenedor">
-        <header class="cabecera">
+      <div class="contenedor concepto__rejilla">
+        <header class="cabecera concepto__cabecera">
           <h2 class="titulo" id="concepto-titulo" data-i18n="concepto.titulo">Cocina de autor con raíz amazónica</h2>
           <p class="entradilla" data-i18n="concepto.intro">En Shabono, cada plato parte de la tierra amazónica. Cocinamos con ingredientes originarios del estado Amazonas, cultivados y cuidados con esmero, y los llevamos a la mesa con técnica y mirada de autor.</p>
         </header>
 
         <ul class="pilares" role="list">
           <li class="pilar">
-            <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.ingredientesTitulo">Ingredientes amazónicos</h3>
             <p data-i18n="concepto.ingredientesTexto">Productos originarios del estado Amazonas son la base de nuestra cocina.</p>
           </li>
           <li class="pilar">
-            <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.origenTitulo">Origen</h3>
             <p data-i18n="concepto.origenTexto">Cada ingrediente tiene un origen, y en cada plato queremos que se note.</p>
           </li>
           <li class="pilar">
-            <span class="pilar__circulo" aria-hidden="true"></span>
             <h3 data-i18n="concepto.productoresTitulo">Productores locales</h3>
             <p data-i18n="concepto.productoresTexto">Trabajamos con quienes cultivan y cuidan estos ingredientes con la mayor dedicación.</p>
           </li>
