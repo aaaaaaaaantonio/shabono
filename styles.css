@@ -517,8 +517,9 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
   background: var(--oliva-a95);
   box-shadow: 0 1px 0 var(--dorado-a25);
 }
+/* Sin desenfoque con el panel abierto: backdrop-filter haría de la barra el marco del panel fijo y lo dejaría a 0 px de alto */
 @supports (backdrop-filter: blur(1px)) {
-  .nav--solida { background: var(--oliva-a95); backdrop-filter: blur(10px); }
+  .nav--solida:not(.nav--abierta) { background: var(--oliva-a95); backdrop-filter: blur(10px); }
 }
 
 .nav__barra {
