@@ -1,6 +1,7 @@
-/* Hallmark · macrostructure: Split Studio · tone: luxury, nocturno · anchor hue: terracota sobre oliva
+/* Hallmark · macrostructure: Split Studio · genre: atmospheric · tone: mediterráneo cálido con noche en oliva · anchor hue: terracota sobre cal
  * theme: studied-DNA (source: https://amritpalace.com/ + https://www.graza.co/) · studied: yes · DNA-source: url + capturas
- * paper: crema #F2ECE1 · ink: oliva oscuro #262B14 · accent: terracota #C2582B / dorado #E3B866
+ * paper: cal #FBF7EF · arena #EFE4D0 · salvia clara #E3E8D6 · night: oliva #4F5A2E (portada, chef y pie) · ink: oliva oscuro #262B14
+ * accent: terracota #C2582B (texto #9C4421) / dorado #E3B866 · motion: trazos que se dibujan al llegar y firma en bucle (estáticos con reduced-motion)
  * display: Playfair Display (títulos de sección en mayúsculas) · body: Inter · nav: N9 · footer: Ft5 Statement
  */
 /* ==========================================================================
@@ -238,7 +239,7 @@ mark.pendiente {
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--transicion), box-shadow var(--transicion), color var(--transicion), border-color var(--transicion);
+  transition: background-color var(--transicion), box-shadow var(--transicion), color var(--transicion), border-color var(--transicion), translate .12s var(--ease-out);
 }
 .btn--grande { min-height: 54px; padding-inline: 2em; font-size: 1.0625rem; }
 /* Segundo borde desplazado (ref. Amrit Palace). Se acerca al botón al pasar el cursor. */
@@ -262,6 +263,11 @@ mark.pendiente {
 .btn--contorno:hover { background: var(--crema-a10); border-color: var(--dorado-luz); box-shadow: var(--halo); }
 .seccion--clara .btn--contorno { color: var(--tinta); }
 .seccion--clara .btn--contorno:hover { background: var(--negro-a20); border-color: var(--terracota); }
+/* Al pulsar, el botón baja un punto y el segundo borde se ciñe; desactivado, se apaga sin halo */
+.btn:active { translate: 0 1px; }
+.btn:active::after { transform: scale(.97); opacity: 1; }
+.btn:is(:disabled, [aria-disabled="true"]) { opacity: .5; cursor: not-allowed; box-shadow: none; translate: none; }
+.btn:is(:disabled, [aria-disabled="true"])::after { transform: none; opacity: .35; }
 
 .icono { width: 1.25em; height: 1.25em; fill: currentColor; flex: none; }
 
@@ -426,7 +432,7 @@ mark.pendiente {
 .petroglifo-costado { display: none; }
 @media (min-width: 110rem) {
   .petroglifo-costado {
-    --hueco: calc((100vw - var(--contenedor)) / 2);
+    --hueco: calc((100% - var(--contenedor)) / 2);
     display: block;
     position: absolute;
     top: 30%;
@@ -1575,7 +1581,8 @@ html:has(.visor[open]) { overflow: hidden; }
   padding-bottom: 3rem;
 }
 .pie__logo { width: 11rem; height: auto; margin-bottom: 1.25rem; }
-.pie__instagram { overflow-wrap: anywhere; }
+.pie__lista li { display: flex; flex-wrap: wrap; column-gap: .3em; }
+.pie__instagram { white-space: nowrap; }  /* el usuario nunca se parte; si no cabe junto a la etiqueta, baja entero */
 .pie__marca p:last-child { color: var(--crema-suave); max-width: 22rem; }
 .pie__titulo {
   margin-bottom: .9rem;
@@ -1619,7 +1626,11 @@ html:has(.visor[open]) { overflow: hidden; }
   .pie__base { padding-bottom: 1.5rem; }
 }
 @media (min-width: 64rem) {
-  .pie__rejilla { grid-template-columns: 1.3fr repeat(4, minmax(0, 1fr)); gap: 2rem; }
+  .pie__rejilla { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem; }
+}
+/* Marca y cuatro bloques en una fila solo cuando el usuario de Instagram y «Ver en Google Maps» caben enteros */
+@media (min-width: 80rem) {
+  .pie__rejilla { grid-template-columns: minmax(0, 1.3fr) minmax(12.5rem, 1.15fr) repeat(3, minmax(0, 1fr)); }
   .pie__marca { grid-column: auto; }
 }
 
