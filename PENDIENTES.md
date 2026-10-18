@@ -15,7 +15,7 @@ Los textos se editan en `main.js` (objeto `TRADUCCIONES`), en español (`es`) y 
 - Frase de portada, texto del concepto y sus tres apartados (redactados y aprobados).
 - Logo: versión clara (crema y dorado), versión oscura, monograma NM y favicon, redibujados a partir de la imagen del logo.
 - Firma «Nelson Mendez» que se escribe sola en la portada (en código, sin vídeo), repetida cada 5 s mientras se ve la portada y con botón de pausa.
-- Río Orinoco con su trazado real en el pie y dentro del mapa de Venezuela.
+- Línea del río del pie con los meandros reales del Orinoco, que se dibuja sola; ciempiés más largo; procesión de figuras en Visítanos.
 - Carta completa en orden, con índice; en escritorio la columna derecha acompaña la lectura con fotos por categoría.
 - Panel de navegación con la foto del letrero, el horario, la dirección y el WhatsApp.
 - Dibujos de línea: río Orinoco (separador, mapa), anillo del chef, racimo de açaí, Cerro Autana redibujado a partir de una foto de referencia (validado por el chef, según el cliente), línea de la mesa y trama tenue del tejido de los individuales en la tarjeta de la carta.

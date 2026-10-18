@@ -278,6 +278,8 @@ mark.pendiente {
 .meandro__centro { stop-color: var(--blanco); }
 .meandro__borde { stop-color: var(--blanco); stop-opacity: 0; }
 .separador { max-width: 36rem; margin: 2.25rem auto; }
+.separador--pie { max-width: min(100% - 2.5rem, 52rem); }
+.separador.trazo--dibuja .linea { transition-duration: 2.4s; }
 .separador svg {
   display: block;
   width: 100%;
@@ -292,9 +294,10 @@ mark.pendiente {
    Por defecto todo está dibujado. main.js solo pone en espera lo que está por debajo de la pantalla al cargar,
    y nunca con «reducir movimiento». Los trazos usan pathLength="1"; como el grosor no escala
    (vector-effect), main.js ajusta la longitud del trazo a la escala de cada dibujo (--trazo). */
-.trazo--espera .linea { stroke-dasharray: var(--trazo, 1); stroke-dashoffset: var(--trazo, 1); }
+/* Hueco doble y desfase un poco mayor que el trazo: así el extremo redondeado no asoma como un punto antes de dibujarse */
+.trazo--espera .linea { stroke-dasharray: var(--trazo, 1) calc(var(--trazo, 1) * 2); stroke-dashoffset: calc(var(--trazo, 1) * 1.05); }
 .trazo--dibuja .linea {
-  stroke-dasharray: var(--trazo, 1);
+  stroke-dasharray: var(--trazo, 1) calc(var(--trazo, 1) * 2);
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1.2s var(--ease-out) calc(var(--i, 0) * 120ms);
 }
@@ -396,9 +399,27 @@ mark.pendiente {
 .petroglifo--ave svg       { top: 10%; left: 0; width: min(42%, 15rem); }
 .petroglifo--cuadrupedo svg { top: 2%; right: 0; width: auto; height: 96%; }
 .petroglifo--orante svg    { top: 6%; right: 0; width: auto; height: 86%; }
-.petroglifo--humano svg    { top: 6%; left: 50%; translate: -50% 0; width: auto; height: 88%; }
+/* Procesión: de la izquierda hasta el centro, donde está el hombre; aparecen una a una */
+.procesion {
+  position: absolute;
+  inset: 6% calc(50% - 1.9rem) 8% 0;  /* termina con la figura central centrada */
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.procesion .procesion__f { position: static; width: auto; height: 74%; }
+.procesion .procesion__f--alta { height: 86%; }
+.procesion .procesion__f--media { height: 70%; }
+.procesion .procesion__f--nino { height: 50%; }
+.procesion .procesion__f--centro { height: 100%; }
+.procesion .procesion__f--espejo { scale: -1 1; }
+.petroglifo.petroglifo--procesion.trazo--dibuja .linea { transition-duration: .8s; transition-delay: calc(var(--f) * 380ms + var(--i) * 110ms); }
+@media (max-width: 40rem) {
+  .procesion { inset: 8% calc(50% - 1.5rem) 8% 0; }
+  .procesion .procesion__f--extra { display: none; }
+}
 .petroglifo--sol svg       { top: 10%; left: 0; width: auto; height: 78%; }
-.petroglifo--ciempies svg  { top: 30%; left: 50%; translate: -50% 0; width: min(62%, 19rem); stroke: var(--dorado-luz); }
+.petroglifo--ciempies svg  { top: 30%; left: 50%; translate: -50% 0; width: min(92%, 46rem); stroke: var(--dorado-luz); }
 .petroglifo.trazo--dibuja .linea { transition-duration: 1s; transition-delay: calc(var(--i) * 180ms); }
 
 /* Petroglifos en los costados: solo en pantallas muy anchas, centrados en el margen libre */
@@ -1334,9 +1355,6 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .visitanos__mapa svg { display: block; width: 100%; height: auto; overflow: visible; }
 .mapa-vzla__pais { fill: none; stroke: var(--tinta); stroke-width: 1.25; stroke-linejoin: round; }
-/* El Orinoco en arcilla: el color de sus aguas */
-.mapa-vzla__rio { fill: none; stroke: var(--arcilla); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.visitanos__mapa.trazo--dibuja .mapa-vzla__rio { transition-delay: 1.1s; }
 /* Guayana Esequiba: rayada y con borde discontinuo, como zona en reclamación */
 .mapa-vzla__esequibo {
   fill: url(#rayado-esequibo);
@@ -1551,23 +1569,6 @@ html:has(.visor[open]) { overflow: hidden; }
 .pie { color: var(--crema); }  /* fondo y transición: ver «Transiciones entre secciones» */
 .pie__credito { margin-top: .4rem; }
 .pie .separador { margin: 0 auto 3rem; }
-.pie__rio { width: clamp(7rem, 16vw, 10.5rem); margin: 0 auto 2.5rem; }
-.pie__rio svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  fill: none;
-  stroke: var(--dorado-luz);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.pie__rio-punto { fill: var(--dorado-luz); stroke: none; }
-.pie__rio-halo { stroke: var(--dorado-a50); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.pie__rio.trazo--dibuja .linea { transition-duration: 2s; }
-.pie__rio.trazo--espera :is(.pie__rio-punto, .pie__rio-halo) { opacity: 0; }
-.pie__rio.trazo--dibuja :is(.pie__rio-punto, .pie__rio-halo) { opacity: 1; transition: opacity .5s var(--ease-out) 1.6s; }
 .pie__rejilla {
   display: grid;
   gap: 2.5rem;

@@ -42,8 +42,9 @@ Sin frameworks ni proceso de compilación.
 - **Transiciones entre secciones:** cada sección se funde con la anterior en su margen superior y con la siguiente en el inferior (variables `--fondo`, `--desde` y `--hacia` de cada sección en `styles.css`), sin texto encima.
 - **Petroglifos:** 13 dibujos propios inspirados en los del Cerro Pintado (crédito en el pie): en las transiciones (bloques `petroglifo`), junto al açaí (una figura que intenta alcanzar los frutos) y, en pantallas muy anchas, en los costados (bloques `petroglifo-costado`).
 - **Pantallas grandes:** desde unos 1760 px el contenido se ensancha y la letra crece un poco.
-- **Mapa de Venezuela:** contorno y río Orinoco de Natural Earth (dominio público), simplificados; la Guayana Esequiba va rayada como zona en reclamación. Va centrado sobre la columna de datos de Visítanos.
-- **Río Orinoco en el pie:** su trazado real, desde el nacimiento hasta el delta, con el punto de Puerto Ayacucho; se dibuja una vez al llegar.
+- **Mapa de Venezuela:** contorno de Natural Earth (dominio público), simplificado; la Guayana Esequiba va rayada como zona en reclamación. Va centrado sobre la columna de datos de Visítanos.
+- **Línea del río (pie y mapa mientras carga):** los meandros reales del Orinoco (Natural Earth), de su nacimiento al delta, puestos en horizontal y suavizados (`#meandro` en el sprite de `index.html`). En el pie se dibuja sola al llegar.
+- **Procesión de Visítanos:** seis figuras humanas que aparecen una a una desde la izquierda hasta el hombre del centro (en el teléfono, cuatro).
 - **Carta completa:** con la carta abierta en escritorio, la columna derecha queda fija, cambia de foto según la categoría y una línea dorada fina marca el avance de lectura (en Firefox se ve quieta).
 - Con «reducir movimiento» activado en el teléfono o el ordenador, o sin JavaScript, todo se ve completo y quieto.
 
