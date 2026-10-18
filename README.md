@@ -36,13 +36,14 @@ Sin frameworks ni proceso de compilación.
 
 ## Animaciones
 
-- **Firma que se escribe sola (portada):** una máscara SVG recorre la firma real en 6 trazos, en orden de escritura, y al final se encienden los anillos de luz. Dura unos 2,9 s; los botones se pueden usar desde el principio. Ocurre **una vez por visita** (se guarda en `sessionStorage`): para volver a verla, abrir la página en una pestaña nueva. Los tiempos de cada trazo están en el script que va justo después del `<h1>` en `index.html`.
+- **Firma que se escribe sola (portada):** una máscara SVG recorre la firma real en 6 trazos, en orden de escritura. La primera vez entran también las letras y se encienden los anillos de luz. Se vuelve a escribir **cada 5 segundos** mientras la portada está a la vista y cada vez que se regresa a ella; se detiene fuera de la vista o en otra pestaña. Un botón pequeño bajo el logo permite pausarla (lo pide la norma de accesibilidad para animaciones que se repiten). Los tiempos están en el script que va justo después del `<h1>` en `index.html` (`CICLO = 5000`).
 - **Dibujos que se trazan una sola vez al llegar** (atributo `data-trazo`): el anillo del chef, el racimo de açaí (concepto), el mapa de Venezuela con Puerto Ayacucho y el río Orinoco del mapa de Google mientras carga (Visítanos), el Cerro Autana y la línea de la mesa (Reserva), los petroglifos y la aparición escalonada de la galería. Para quitar uno, borrar su atributo `data-trazo`: se queda dibujado y quieto.
 - **Colores:** paleta clara «mediterránea» (cal, arena y salvia claro: `--cal`, `--arena`, `--salvia-clara`), con la noche en oliva solo en la portada, el chef y el pie.
 - **Transiciones entre secciones:** cada sección se funde con la anterior en su margen superior y con la siguiente en el inferior (variables `--fondo`, `--desde` y `--hacia` de cada sección en `styles.css`), sin texto encima.
 - **Petroglifos:** 13 dibujos propios inspirados en los del Cerro Pintado (crédito en el pie): en las transiciones (bloques `petroglifo`), junto al açaí (una figura que intenta alcanzar los frutos) y, en pantallas muy anchas, en los costados (bloques `petroglifo-costado`).
 - **Pantallas grandes:** desde unos 1760 px el contenido se ensancha y la letra crece un poco.
-- **Mapa de Venezuela:** contorno de Natural Earth (dominio público), simplificado; la Guayana Esequiba va rayada como zona en reclamación.
+- **Mapa de Venezuela:** contorno y río Orinoco de Natural Earth (dominio público), simplificados; la Guayana Esequiba va rayada como zona en reclamación. Va centrado sobre la columna de datos de Visítanos.
+- **Río Orinoco en el pie:** su trazado real, desde el nacimiento hasta el delta, con el punto de Puerto Ayacucho; se dibuja una vez al llegar.
 - **Carta completa:** con la carta abierta en escritorio, la columna derecha queda fija, cambia de foto según la categoría y una línea dorada fina marca el avance de lectura (en Firefox se ve quieta).
 - Con «reducir movimiento» activado en el teléfono o el ordenador, o sin JavaScript, todo se ve completo y quieto.
 

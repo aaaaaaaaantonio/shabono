@@ -65,6 +65,7 @@ const TRADUCCIONES = {
       frase: 'Donde la tierra amazónica se convierte en alta cocina.',
       reservar: 'Reservar',
       verMenu: 'Ver menú',
+      firmaPausa: 'Pausar la animación de la firma',
       imagenAlt: 'Roca de granito con cascada en el interior de Shabono, de noche',
     },
     chef: {
@@ -220,6 +221,7 @@ const TRADUCCIONES = {
       frase: 'Where the land of the Amazon becomes fine dining.',
       reservar: 'Book a table',
       verMenu: 'View menu',
+      firmaPausa: 'Pause the signature animation',
       imagenAlt: 'Granite rock with a waterfall inside Shabono, at night',
     },
     chef: {

@@ -4,12 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <script>
-    // JS activo y, solo en la primera carga de la visita (y sin «reducir movimiento»), la firma se escribe sola
+    // JS activo y, sin «reducir movimiento», la firma se escribe sola (y se repite mientras se ve la portada)
     (function (raiz) {
       raiz.classList.replace('no-js', 'js');
-      try {
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('shabono-firma')) raiz.classList.add('firma-anima');
-      } catch (e) { /* sin sessionStorage: logo quieto */ }
+      if (window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches) raiz.classList.add('firma-anima');
     })(document.documentElement);
   </script>
 
@@ -228,29 +226,84 @@
               <use class="firma__tinta" href="#logo-firma" mask="url(#firma-mascara)"/>
             </svg>
           </h1>
+          <button class="firma__pausa" type="button" aria-pressed="false" data-firma-pausa hidden
+                  data-i18n-attr="aria-label:portada.firmaPausa" aria-label="Pausar la animación de la firma">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path class="firma__pausa-pausa" d="M9 6.5v11M15 6.5v11"/>
+              <path class="firma__pausa-seguir" d="M8.5 6v12l9.5-6z"/>
+            </svg>
+          </button>
           <script>
-            // La firma se escribe sola (solo con html.firma-anima). Va aquí, sin esperar a main.js, para que no parpadee.
+            // La firma se escribe sola (solo con html.firma-anima): al cargar, cada 5 s mientras la portada está a la vista
+            // y cada vez que se vuelve a ella. Va aquí, sin esperar a main.js, para que no parpadee.
             // Datos: inicio y duración de cada trazo (s) y fotogramas [progreso del tiempo, fracción escrita].
             (function () {
               var svg = document.querySelector('[data-firma]');
+              var boton = document.querySelector('[data-firma-pausa]');
               if (!document.documentElement.classList.contains('firma-anima') || !svg || !svg.animate) return;
-              try { sessionStorage.setItem('shabono-firma', '1'); } catch (e) { /* se repetirá en la próxima carga */ }
               var D = {"w":4.4,"fin":2.5,"t":[[0.45,0.214,[[0.0,0.0],[0.043,0.033],[0.087,0.072],[0.13,0.12],[0.174,0.169],[0.217,0.216],[0.261,0.249],[0.304,0.289],[0.348,0.336],[0.391,0.386],[0.435,0.43],[0.478,0.453],[0.522,0.504],[0.565,0.553],[0.609,0.593],[0.652,0.641],[0.696,0.691],[0.739,0.737],[0.783,0.764],[0.826,0.811],[0.87,0.862],[0.913,0.912],[0.957,0.961],[1.0,1.0]]],[0.734,0.349,[[0.0,0.0],[0.043,0.036],[0.087,0.083],[0.13,0.129],[0.174,0.176],[0.217,0.232],[0.261,0.277],[0.304,0.332],[0.348,0.381],[0.391,0.431],[0.435,0.479],[0.478,0.509],[0.522,0.562],[0.565,0.603],[0.609,0.651],[0.652,0.693],[0.696,0.729],[0.739,0.769],[0.783,0.799],[0.826,0.837],[0.87,0.868],[0.913,0.917],[0.957,0.952],[1.0,1.0]]],[1.284,0.274,[[0.0,0.0],[0.043,0.036],[0.087,0.081],[0.13,0.134],[0.174,0.187],[0.217,0.228],[0.261,0.269],[0.304,0.314],[0.348,0.352],[0.391,0.394],[0.435,0.42],[0.478,0.469],[0.522,0.515],[0.565,0.547],[0.609,0.597],[0.652,0.624],[0.696,0.67],[0.739,0.721],[0.783,0.772],[0.826,0.802],[0.87,0.856],[0.913,0.91],[0.957,0.959],[1.0,1.0]]],[1.628,0.235,[[0.0,0.0],[0.043,0.036],[0.087,0.073],[0.13,0.117],[0.174,0.162],[0.217,0.183],[0.261,0.228],[0.304,0.264],[0.348,0.303],[0.391,0.323],[0.435,0.381],[0.478,0.415],[0.522,0.453],[0.565,0.514],[0.609,0.546],[0.652,0.599],[0.696,0.635],[0.739,0.695],[0.783,0.757],[0.826,0.793],[0.87,0.851],[0.913,0.905],[0.957,0.948],[1.0,1.0]]],[1.933,0.109,[[0.0,0.0],[0.043,0.037],[0.087,0.074],[0.13,0.098],[0.174,0.14],[0.217,0.193],[0.261,0.235],[0.304,0.267],[0.348,0.318],[0.391,0.379],[0.435,0.438],[0.478,0.482],[0.522,0.512],[0.565,0.547],[0.609,0.602],[0.652,0.64],[0.696,0.663],[0.739,0.7],[0.783,0.745],[0.826,0.799],[0.87,0.856],[0.913,0.913],[0.957,0.971],[1.0,1.0]]],[2.182,0.318,[[0.0,0.0],[0.043,0.038],[0.087,0.081],[0.13,0.126],[0.174,0.168],[0.217,0.21],[0.261,0.257],[0.304,0.304],[0.348,0.35],[0.391,0.395],[0.435,0.442],[0.478,0.485],[0.522,0.527],[0.565,0.574],[0.609,0.621],[0.652,0.667],[0.696,0.711],[0.739,0.757],[0.783,0.803],[0.826,0.841],[0.87,0.88],[0.913,0.918],[0.957,0.963],[1.0,1.0]]]]};
+              var CICLO = 5000;
               var SALIDA = 'cubic-bezier(.16, 1, .3, 1)';
               var q = function (sel) { return svg.querySelector(sel); };
-              var anima = function (el, kf, op) { op.fill = 'both'; return el.animate(kf, op); };
-              anima(q('.logo__marca'), [{ opacity: 0, transform: 'translateY(-3px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: SALIDA });
-              anima(q('.logo__nm-arriba'), [{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, delay: 60, easing: SALIDA });
-              anima(q('.logo__nm-abajo'), [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, delay: 60, easing: SALIDA });
-              svg.querySelectorAll('.firma__trazos path').forEach(function (el, i) {
-                var t = D.t[i], L = el.getTotalLength();
-                el.style.strokeDasharray = L + 'px ' + (L + 2 * D.w) + 'px';
-                anima(el, t[2].map(function (k) { return { offset: k[0], strokeDashoffset: (L + D.w) * (1 - k[1]) + 'px' }; }),
-                  { duration: t[1] * 1000, delay: t[0] * 1000, easing: 'linear' });
-              });
-              q('.firma__trazos').style.opacity = 1;
-              anima(q('.firma__relleno'), [{ opacity: 0 }, { opacity: 1 }], { duration: 350, delay: D.fin * 1000, easing: SALIDA });
-              anima(q('.firma__brillo'), [{ opacity: 0 }, { opacity: .6, offset: .3 }, { opacity: .22 }], { duration: 1100, delay: (D.fin - .05) * 1000, easing: 'cubic-bezier(.65, 0, .35, 1)' });
+              var trazos = svg.querySelectorAll('.firma__trazos path');
+              var activas = [];
+              var temporizador = 0;
+              var pausada = false;
+              var enVista = true;
+              var anima = function (el, kf, op, relleno) {
+                op.fill = relleno || 'both';
+                var a = el.animate(kf, op);
+                activas.push(a);
+                return a;
+              };
+              // Sin animaciones activas, la firma se ve completa (el seguro de CSS deja el relleno visible)
+              var detener = function () {
+                clearTimeout(temporizador);
+                activas.forEach(function (a) { a.cancel(); });
+                activas = [];
+              };
+              var escribir = function () {
+                detener();
+                trazos.forEach(function (el, i) {
+                  var t = D.t[i], L = el.getTotalLength();
+                  el.style.strokeDasharray = L + 'px ' + (L + 2 * D.w) + 'px';
+                  anima(el, t[2].map(function (k) { return { offset: k[0], strokeDashoffset: (L + D.w) * (1 - k[1]) + 'px' }; }),
+                    { duration: t[1] * 1000, delay: t[0] * 1000, easing: 'linear' });
+                });
+                q('.firma__trazos').style.opacity = 1;
+                anima(q('.firma__relleno'), [{ opacity: 0 }, { opacity: 1 }], { duration: 350, delay: D.fin * 1000, easing: SALIDA });
+                anima(q('.firma__brillo'), [{ opacity: 0 }, { opacity: .6, offset: .3 }, { opacity: .22 }], { duration: 1100, delay: (D.fin - .05) * 1000, easing: 'cubic-bezier(.65, 0, .35, 1)' });
+                // Al final del ciclo la tinta se desvanece para volver a escribirse
+                anima(q('.firma__tinta'), [{ opacity: 1 }, { opacity: 0 }], { duration: 400, delay: CICLO - 450, easing: 'ease-in' }, 'forwards');
+                anima(q('.firma__brillo'), [{ opacity: .22 }, { opacity: 0 }], { duration: 400, delay: CICLO - 450, easing: 'ease-in' }, 'forwards');
+                temporizador = setTimeout(function () { if (!pausada && enVista && !document.hidden) escribir(); else detener(); }, CICLO);
+              };
+              // Primera vez: además entran las letras (los anillos se encienden por CSS)
+              var entrada = function (el, y, retraso) {
+                el.animate([{ opacity: 0, transform: 'translateY(' + y + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 500, delay: retraso, easing: SALIDA, fill: 'both' });
+              };
+              entrada(q('.logo__marca'), -3, 0);
+              entrada(q('.logo__nm-arriba'), -6, 60);
+              entrada(q('.logo__nm-abajo'), 6, 60);
+              escribir();
+              // Se detiene fuera de la vista o en otra pestaña, y vuelve a escribirse al regresar
+              var reanudar = function () { if (!pausada && enVista && !document.hidden) escribir(); else detener(); };
+              if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (e) {
+                  var antes = enVista;
+                  enVista = e[0].isIntersecting;
+                  if (enVista !== antes) reanudar();
+                }, { threshold: .35 }).observe(svg);
+              }
+              document.addEventListener('visibilitychange', reanudar);
+              if (boton) {
+                boton.hidden = false;
+                boton.addEventListener('click', function () {
+                  pausada = !pausada;
+                  boton.setAttribute('aria-pressed', String(pausada));
+                  reanudar();
+                });
+              }
             })();
           </script>
           <p class="portada__lado" data-i18n="portada.ladoDer">Puerto Ayacucho · Amazonas</p>
@@ -841,6 +894,7 @@
                 </pattern>
               </defs>
               <path class="mapa-vzla__esequibo" d="M339.2 188.8 321.8 168.9 328.7 161.4 328.1 155.1 326.8 151.3 328.3 148.4 333.8 147.4 335.6 145.9 339.8 146.5 348.5 141.7 349.6 140.1 350.4 136.5 348.5 135.7 343.4 135.9 342.1 134.5 342.8 131.5 339.7 125.6 342.7 122.6 345.3 118.2 348.8 117.7 354.4 113.3 358.2 111.6 360.1 107.9 363.2 106.4 363.6 104.8 358.6 98.2 363.4 103.0 365.7 103.9 366.1 102.8 368.1 103.3 380.6 111.1 391.0 120.2 395.9 125.4 400.0 131.3 399.9 139.1 397.2 144.4 396.3 153.6 394.8 156.7 396.9 155.0 397.5 150.3 400.0 146.5 397.2 155.1 396.2 167.2 399.9 191.6 396.2 203.8 390.8 239.0 388.6 259.3 389.7 279.6 387.6 295.1 379.8 292.4 371.6 283.6 368.1 282.3 368.0 279.8 365.7 278.2 365.7 268.1 362.1 265.7 359.3 256.8 359.9 248.7 363.6 239.0 363.0 232.5 367.7 229.5 371.2 223.1 366.2 215.2 367.0 211.1 363.5 208.5 355.1 206.9 358.2 201.3 359.4 192.0 357.0 190.4 355.3 187.9 352.6 187.3 350.1 188.9 339.2 188.8Z"/>
+              <path class="linea mapa-vzla__rio" style="--i: 6" pathLength="1" vector-effect="non-scaling-stroke" d="M266.8 265.4 264.7 265.2 262.0 267.1 259.5 267.6 257.8 270.7 256.5 271.4 251.1 271.5 248.2 269.6 243.4 268.6 241.6 267.3 238.5 268.6 231.5 265.2 224.2 263.7 221.1 261.4 219.3 261.2 220.1 256.9 219.3 254.3 217.8 251.8 214.9 250.6 212.2 245.6 210.1 244.3 203.2 244.6 201.3 243.7 199.9 244.6 197.9 243.9 197.2 244.4 197.4 247.6 196.6 248.1 188.0 246.9 183.3 243.1 182.0 238.7 180.0 237.2 177.2 232.6 171.2 228.4 170.5 226.6 171.4 223.8 170.4 222.8 160.4 222.8 157.5 220.9 153.9 220.6 150.1 217.2 149.4 214.1 149.7 209.7 147.5 206.9 149.7 192.6 148.8 191.0 148.6 185.1 153.6 181.2 154.5 179.3 153.6 176.5 154.2 173.1 159.7 167.8 159.5 166.2 157.8 164.1 157.9 162.7 160.0 160.7 162.0 160.4 163.5 157.4 167.3 154.8 167.6 150.0 169.9 146.1 169.4 144.2 170.1 142.5 168.8 139.5 169.0 137.6 176.6 133.2 181.4 131.4 187.9 122.9 191.6 123.0 194.4 121.7 199.0 122.0 204.1 117.4 208.7 115.5 212.8 116.9 217.3 116.5 222.0 117.6 229.1 122.3 234.5 119.3 238.3 118.8 238.7 117.3 236.8 115.1 237.2 113.5 242.2 112.9 244.0 110.9 245.4 111.2 248.3 114.0 252.4 113.9 254.7 112.6 256.7 109.6 260.6 108.8 265.8 109.0 267.7 107.1 269.6 107.3 273.8 104.6 279.1 104.7 280.2 105.8 281.7 105.7 284.3 103.2 287.2 102.5 291.2 99.2 293.6 99.2 296.7 97.1 299.7 96.7 301.7 94.9 306.5 97.5 309.8 96.4 314.8 96.8 318.5 94.9 319.4 93.0 329.4 87.5"/>
               <path class="linea mapa-vzla__pais" pathLength="1" vector-effect="non-scaling-stroke" d="M255.7 28.4 256.6 31.9 253.9 35.0 250.2 35.1 247.3 33.0 245.7 33.5 240.8 32.4 242.3 30.5 245.9 29.6 248.6 31.8 250.9 31.9 251.5 30.1 254.5 27.4 255.7 28.4ZM336.0 87.4 330.7 90.2 330.4 87.4 334.5 84.2 336.3 86.2 336.0 87.4ZM358.6 98.2 363.6 104.8 363.2 106.4 360.1 107.9 358.2 111.6 354.4 113.3 348.8 117.7 345.3 118.2 342.7 122.6 339.7 125.6 342.8 131.5 342.1 134.5 343.4 135.9 348.5 135.7 350.4 136.5 349.6 140.1 348.5 141.7 339.8 146.5 335.6 145.9 333.8 147.4 328.3 148.4 326.8 151.3 328.1 155.1 328.7 161.4 321.8 168.9 339.2 188.8 341.0 189.9 342.8 194.4 342.3 197.2 339.2 200.4 334.7 202.8 332.1 206.9 329.5 207.7 324.7 207.4 322.3 209.7 319.3 210.5 317.3 213.6 301.3 218.7 294.3 217.1 289.0 220.2 286.3 220.9 284.8 230.2 282.3 232.3 279.3 232.3 269.4 222.9 264.3 224.2 260.9 223.0 251.1 223.3 246.4 217.9 236.2 217.6 232.2 213.9 230.5 213.9 229.7 215.1 233.7 221.0 245.6 232.5 245.7 242.9 250.6 253.8 251.4 257.3 250.4 261.9 253.7 263.3 268.1 264.3 267.9 269.5 266.1 271.8 263.2 272.2 255.8 276.1 251.5 277.4 248.5 285.8 246.1 288.2 243.4 290.2 238.6 290.3 232.0 295.7 229.7 295.6 224.1 298.3 215.1 306.1 212.1 310.9 209.9 311.0 210.7 306.8 209.6 304.6 207.4 303.3 205.5 303.2 203.0 304.2 196.3 308.4 189.8 309.3 186.4 307.4 174.4 296.5 174.2 292.9 165.3 268.1 165.4 265.0 155.8 256.8 154.4 254.0 150.5 252.9 148.0 254.0 148.6 251.3 161.5 239.7 162.7 237.2 157.6 229.7 154.8 227.6 153.3 225.0 150.0 216.0 149.1 209.0 148.1 207.6 149.4 190.7 148.8 187.0 149.9 184.1 152.4 182.2 153.8 179.2 154.1 175.1 155.6 171.7 158.3 169.1 159.3 166.5 158.1 162.3 155.8 160.7 148.0 159.4 145.8 160.7 131.5 163.0 124.4 163.0 119.0 161.9 114.9 162.2 110.2 164.5 107.7 163.2 105.8 163.9 86.9 141.4 80.1 140.9 70.6 137.7 63.2 140.3 60.2 140.5 46.9 139.3 39.7 140.4 36.6 139.3 34.4 137.5 31.1 130.2 26.1 128.9 24.1 126.0 24.8 114.0 27.1 110.7 27.0 109.0 25.5 102.8 18.9 96.1 15.3 83.1 10.9 82.4 9.6 79.5 8.3 79.0 4.6 80.8 0.8 81.5 0.0 80.8 9.7 64.7 13.3 45.7 18.2 36.4 24.8 28.8 30.1 26.6 37.8 13.9 49.2 10.9 55.0 8.6 50.5 12.5 40.2 14.9 37.9 16.5 38.1 20.7 41.2 26.7 46.3 31.5 43.9 32.0 45.1 36.4 47.5 39.3 47.6 41.2 45.7 46.9 37.9 56.1 33.7 63.9 36.9 68.7 37.3 71.0 43.1 77.0 42.6 79.3 45.2 84.1 49.1 84.7 57.1 81.7 61.3 76.6 62.2 66.9 61.4 63.5 56.6 55.1 53.2 51.8 50.3 44.5 48.9 37.9 51.2 36.4 51.0 32.9 56.5 31.9 68.4 26.3 75.8 24.8 84.2 21.8 87.8 17.9 89.2 17.5 93.5 19.9 95.6 19.1 96.5 17.2 95.4 13.7 85.3 15.0 82.8 7.9 85.0 2.2 90.3 0.0 94.2 3.4 96.8 13.6 98.2 16.6 100.4 18.9 111.0 17.9 122.0 20.2 133.5 27.5 136.8 35.1 135.5 37.1 136.2 40.3 137.9 43.6 140.4 45.6 147.6 46.2 171.4 42.4 191.3 41.9 195.1 43.4 195.5 46.2 201.9 52.0 207.2 52.8 221.3 57.1 228.8 56.3 246.6 46.6 256.1 46.8 258.8 45.3 255.3 43.8 247.4 43.3 245.0 44.3 243.6 41.8 255.0 41.0 265.2 41.5 273.4 39.8 279.9 39.8 286.5 38.7 298.8 40.0 308.6 38.9 307.4 40.5 299.1 41.8 295.2 44.2 286.8 43.7 280.9 44.6 282.7 45.2 282.7 47.6 284.3 48.2 286.9 51.1 287.6 53.6 285.5 57.5 287.9 57.0 289.3 55.8 289.3 53.1 290.6 53.6 296.7 64.8 297.8 64.6 299.4 62.2 301.3 63.8 301.2 59.5 303.3 59.6 307.8 62.5 312.5 68.9 311.6 64.0 315.5 63.9 316.4 61.8 323.9 68.9 331.9 71.0 337.8 76.3 336.5 78.9 333.0 80.2 331.6 81.9 328.9 90.3 325.6 96.8 315.6 96.9 324.1 102.0 327.0 99.9 331.2 99.8 337.6 97.1 346.1 98.3 349.9 96.1 354.5 96.4 358.6 98.2Z"/>
               <circle class="mapa-vzla__halo" cx="154.5" cy="176.6" r="11"/>
               <circle class="mapa-vzla__punto" cx="154.5" cy="176.6" r="4.5"/>
@@ -975,7 +1029,14 @@
         <path class="linea" style="--i: 2" pathLength="1" vector-effect="non-scaling-stroke" d="M28 18V42M41 18V42M54 18V42M67 18V42M80 18V42M93 18V42M106 18V42M119 18V42M132 18V42M145 18V42M158 18V42M171 18V42M184 18V42"/>
       </svg>
     </div>
-    <div class="separador" aria-hidden="true"><svg viewBox="0 0 600 47" focusable="false"><use href="#meandro"/></svg></div>
+    <!-- El río Orinoco (trazado real, Natural Earth) con Puerto Ayacucho en su orilla: se dibuja una vez al llegar -->
+    <div class="pie__rio" aria-hidden="true" data-trazo>
+      <svg viewBox="-12 -12 324 327.5" focusable="false">
+        <path class="linea" pathLength="1" vector-effect="non-scaling-stroke" d="M196.7 293.4 193.3 293.2 188.8 296.3 184.7 297.1 181.9 302.2 179.7 303.3 170.8 303.5 166.1 300.3 158.2 298.7 155.2 296.6 150.0 298.7 138.5 293.2 126.5 290.6 121.4 286.9 118.4 286.5 119.7 279.4 118.3 275.1 115.9 271.0 111.1 269.0 106.8 260.8 103.3 258.6 91.8 259.1 88.6 257.6 86.4 259.1 83.2 257.9 82.0 258.7 82.3 264.0 81.0 264.8 66.7 262.9 59.1 256.7 56.8 249.4 53.6 246.9 48.9 239.4 39.0 232.4 37.9 229.5 39.5 224.8 37.8 223.1 21.3 223.2 16.4 220.0 10.5 219.6 4.3 213.9 3.1 208.8 3.6 201.6 0.0 197.0 3.6 173.3 2.1 170.8 1.8 161.0 10.1 154.6 11.6 151.4 10.0 146.8 11.1 141.1 20.1 132.5 19.8 129.8 17.0 126.4 17.2 124.0 20.5 120.8 23.9 120.2 26.3 115.3 32.7 111.0 33.1 103.0 37.0 96.6 36.1 93.5 37.3 90.7 35.2 85.8 35.5 82.7 47.9 75.3 55.9 72.4 66.7 58.3 72.6 58.5 77.3 56.3 84.9 56.9 93.4 49.3 100.9 46.2 107.6 48.4 115.1 47.8 122.8 49.6 134.6 57.4 143.5 52.4 149.8 51.6 150.4 49.2 147.3 45.5 147.9 42.9 156.1 41.8 159.2 38.6 161.5 39.0 166.2 43.7 173.0 43.6 176.8 41.4 180.1 36.4 186.5 35.1 195.1 35.5 198.3 32.3 201.4 32.7 208.3 28.2 217.1 28.4 218.9 30.1 221.4 30.0 225.6 25.9 230.3 24.8 237.0 19.3 241.1 19.3 246.0 15.9 251.1 15.2 254.3 12.2 262.3 16.5 267.7 14.6 275.9 15.3 282.1 12.2 283.6 9.1 300.0 0.0"/>
+        <circle class="pie__rio-halo" cx="11.5" cy="147.0" r="24"/>
+        <circle class="pie__rio-punto" cx="11.5" cy="147.0" r="10"/>
+      </svg>
+    </div>
     <div class="contenedor pie__rejilla">
       <div class="pie__marca">
         <svg class="pie__logo logo" viewBox="11.8 3.3 301.7 150.8" width="604" height="302" role="img" aria-label="Shabono by Nelson Méndez">

@@ -396,9 +396,9 @@ mark.pendiente {
 .petroglifo--ave svg       { top: 10%; left: 0; width: min(42%, 15rem); }
 .petroglifo--cuadrupedo svg { top: 2%; right: 0; width: auto; height: 96%; }
 .petroglifo--orante svg    { top: 6%; right: 0; width: auto; height: 86%; }
-.petroglifo--humano svg    { top: 6%; left: 0; width: auto; height: 88%; }
+.petroglifo--humano svg    { top: 6%; left: 50%; translate: -50% 0; width: auto; height: 88%; }
 .petroglifo--sol svg       { top: 10%; left: 0; width: auto; height: 78%; }
-.petroglifo--ciempies svg  { top: 38%; left: 0; width: min(62%, 19rem); stroke: var(--dorado-luz); }
+.petroglifo--ciempies svg  { top: 30%; left: 50%; translate: -50% 0; width: min(62%, 19rem); stroke: var(--dorado-luz); }
 .petroglifo.trazo--dibuja .linea { transition-duration: 1s; transition-delay: calc(var(--i) * 180ms); }
 
 /* Petroglifos en los costados: solo en pantallas muy anchas, centrados en el margen libre */
@@ -758,6 +758,29 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
 /* Seguro: si el script de la firma no llega a ejecutarse, la firma aparece entera a los 4,5 s */
 .firma-anima .firma__relleno { opacity: 0; animation: firma-seguro .4s var(--ease-out) 4.5s forwards; }
 @keyframes firma-seguro { to { opacity: 1; } }
+/* Pausa de la firma (la animación se repite: la norma de accesibilidad pide poder detenerla) */
+.firma__pausa {
+  order: 1;  /* en el teléfono, debajo de «Puerto Ayacucho · Amazonas» */
+  justify-self: center;
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -.75rem;
+  padding: 0;
+  border: 1px solid var(--crema-a35);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--crema-suave);
+  cursor: pointer;
+  transition: color var(--transicion), border-color var(--transicion);
+}
+.firma__pausa:hover { color: var(--crema); border-color: var(--dorado-luz); }
+.firma__pausa svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.firma__pausa-seguir { display: none; fill: currentColor; stroke: none; }
+.firma__pausa[aria-pressed="true"] .firma__pausa-pausa { display: none; }
+.firma__pausa[aria-pressed="true"] .firma__pausa-seguir { display: inline; }
 /* Halo: dos anillos de luz detrás del logo (eco de las luces circulares del local) */
 .portada__titulo::before,
 .portada__titulo::after {
@@ -806,7 +829,8 @@ body:has(#reconocimientos.seccion--oculta) [data-seccion="reconocimientos"] { di
     width: 100%;
   }
   .portada__lado:first-child { justify-self: end; text-align: right; }
-  .portada__lado:last-child { justify-self: start; text-align: left; }
+  .portada__lado:last-child { grid-column: 3; grid-row: 1; justify-self: start; text-align: left; }
+  .firma__pausa { grid-row: 2; }
 }
 
 /* ==========================================================================
@@ -1297,19 +1321,22 @@ html:has(.visor[open]) { overflow: hidden; }
    ========================================================================== */
 .visitanos .cabecera {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 2rem;
   max-width: none;
 }
 .visitanos .cabecera .titulo { max-width: 42rem; }
 .visitanos__mapa {
   position: relative;
   flex: none;
-  width: clamp(10rem, 30vw, 21rem);
+  align-self: center;
+  width: min(100%, 24rem);
 }
 .visitanos__mapa svg { display: block; width: 100%; height: auto; overflow: visible; }
 .mapa-vzla__pais { fill: none; stroke: var(--tinta); stroke-width: 1.25; stroke-linejoin: round; }
+/* El Orinoco en arcilla: el color de sus aguas */
+.mapa-vzla__rio { fill: none; stroke: var(--arcilla); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.visitanos__mapa.trazo--dibuja .mapa-vzla__rio { transition-delay: 1.1s; }
 /* Guayana Esequiba: rayada y con borde discontinuo, como zona en reclamación */
 .mapa-vzla__esequibo {
   fill: url(#rayado-esequibo);
@@ -1341,9 +1368,15 @@ html:has(.visor[open]) { overflow: hidden; }
 }
 .visitanos__mapa.trazo--dibuja .mapa-vzla__halo { transition-delay: 1.6s; }
 .visitanos__mapa.trazo--dibuja .visitanos__mapa-rotulo { transition-delay: 1.75s; }
-@media (max-width: 40rem) {
-  .visitanos .cabecera { flex-direction: column; align-items: flex-start; }
-  .visitanos__mapa { width: min(100%, 19rem); }
+/* Escritorio: misma rejilla que el mapa de Google y los datos, para que el mapa quede centrado sobre los datos */
+@media (min-width: 56rem) {
+  .visitanos .cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: 4rem;
+    align-items: end;
+  }
+  .visitanos__mapa { justify-self: center; width: min(100%, 27rem); }
 }
 .visitanos__rejilla { display: grid; gap: 2.5rem; }
 
@@ -1518,6 +1551,23 @@ html:has(.visor[open]) { overflow: hidden; }
 .pie { color: var(--crema); }  /* fondo y transición: ver «Transiciones entre secciones» */
 .pie__credito { margin-top: .4rem; }
 .pie .separador { margin: 0 auto 3rem; }
+.pie__rio { width: clamp(7rem, 16vw, 10.5rem); margin: 0 auto 2.5rem; }
+.pie__rio svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--dorado-luz);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pie__rio-punto { fill: var(--dorado-luz); stroke: none; }
+.pie__rio-halo { stroke: var(--dorado-a50); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.pie__rio.trazo--dibuja .linea { transition-duration: 2s; }
+.pie__rio.trazo--espera :is(.pie__rio-punto, .pie__rio-halo) { opacity: 0; }
+.pie__rio.trazo--dibuja :is(.pie__rio-punto, .pie__rio-halo) { opacity: 1; transition: opacity .5s var(--ease-out) 1.6s; }
 .pie__rejilla {
   display: grid;
   gap: 2.5rem;
