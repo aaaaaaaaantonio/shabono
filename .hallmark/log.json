@@ -29,5 +29,15 @@
     "enrichment": "SVG a mano: petroglifos (Cerro Pintado, con crédito), mapa de Venezuela (Natural Earth), Autana desde referencia",
     "transitions": "degradado de dos tonos en el margen superior de cada sección (--banda)",
     "brief": "Shabono · dibujos más grandes, mapa, petroglifos y degradados"
+  },
+  {
+    "date": "2026-10-18",
+    "macrostructure": "Split Studio",
+    "theme": "studied-DNA + paleta clara mediterránea (cal, arena, salvia claro; oliva solo en noche)",
+    "nav": "N9",
+    "footer": "Ft5 Statement",
+    "enrichment": "13 petroglifos SVG a mano (Cerro Pintado, con crédito); costados en pantallas anchas",
+    "transitions": "fundido de dos degradados de dos tonos que se encuentran a mitad de color",
+    "brief": "Shabono · más ligera, menos vacío, petroglifos más grandes, pantallas de 27\""
   }
 ]

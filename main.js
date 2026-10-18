@@ -589,6 +589,13 @@ function iniciarTrazos() {
     });
   }, { rootMargin: '0px 0px -20% 0px' });
   pendientes.forEach((el) => {
+    // Con vector-effect="non-scaling-stroke" el guion se mide en la pantalla: se escala con el dibujo.
+    // Al terminar se quita el guion, para que un cambio de tamaño de ventana no corte el trazo.
+    $$('.linea', el).forEach((linea) => {
+      const m = linea.getScreenCTM && linea.getScreenCTM();
+      if (m) linea.style.setProperty('--trazo', Math.max(Math.hypot(m.a, m.b), 0.01).toFixed(3));
+      linea.addEventListener('transitionend', () => { linea.style.strokeDasharray = 'none'; }, { once: true });
+    });
     el.classList.add('trazo--espera');
     observador.observe(el);
   });
