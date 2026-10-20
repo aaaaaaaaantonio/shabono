@@ -47,7 +47,7 @@
       '<p class="filtros__cuenta" style="margin-bottom:var(--espacio-s)">' + esc(nota) + '</p>' +
       '<div class="cifras">' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('banknote') + 'Ingresos</span>' + ui.dineroDe(t.ingresos) +
-        '<p class="cifra-tarjeta__nota">En Bs.: ' + f.bs(t.ingresosBs.bs) + ' · En divisas: ' + f.eur(t.ingresosDivisas.eur) + '</p></div>' +
+        '<p class="cifra-tarjeta__nota"><span class="nowrap">En bolívares: ' + f.bs(t.ingresosBs.bs) + '</span> · <span class="nowrap">En divisas: ' + f.eur(t.ingresosDivisas.eur) + '</span></p></div>' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('receipt') + 'Gastos pagados</span>' + ui.dineroDe(t.gastos) +
         '<p class="cifra-tarjeta__nota">' + t.gastos.n + (t.gastos.n === 1 ? ' pago registrado' : ' pagos registrados') + '</p></div>' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('calculator') + 'Resultado</span>' + ui.dineroDe(t.resultado) +
@@ -431,7 +431,8 @@
     }
     function pintar() {
       var x = monto();
-      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m !== cu.dinero.moneda ? ' con la tasa del ' + f.fecha(tv().fecha) + ' (' + f.tasaTexto(tv().valor) + ').' : '.');
+      var tp = tv();
+      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m === 'EUR' ? ' · equivale a ' + f.bs(x.n * tp.valor) : ' · equivale a ' + f.eur(x.n / tp.valor)) + ' con la tasa del ' + f.fecha(tp.fecha) + '.';
     }
     form.addEventListener('change', pintar);
     pintar();

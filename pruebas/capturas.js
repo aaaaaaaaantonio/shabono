@@ -7,7 +7,7 @@ const salida = path.join(__dirname, 'capturas');
 fs.mkdirSync(salida, { recursive: true });
 const PLAN = [
   [320, 'admin', 'inicio'], [320, 'admin', 'compras/precios'], [768, 'admin', 'inicio'], [768, 'chef', 'inventario'], [768, 'admin', 'carta'],
-  [1024, 'admin', 'finanzas/por-pagar'], [2560, 'admin', 'inventario'], [375, 'equipo', 'inicio'], [375, 'admin', 'finanzas']
+  [1024, 'admin', 'finanzas/por-pagar'], [1024, 'admin', 'inventario'], [1440, 'admin', 'inicio'], [2560, 'admin', 'inventario'], [375, 'equipo', 'inicio'], [375, 'admin', 'finanzas'], [375, 'admin', 'inventario']
 ];
 const DIALOGOS = [
   [375, 'admin', 'inventario', '[data-accion="detalle"][data-id="crema"]', 'tel-dlg-producto'],

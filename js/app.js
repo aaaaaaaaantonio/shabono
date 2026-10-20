@@ -189,7 +189,7 @@
     var t = SB.calc.tasaActual(e);
     var vieja = t.fecha !== hoy;
     return '<button type="button" class="tasa tasa--' + variante + '" data-tasa data-foco="tasa-' + variante + '">' +
-      '<span class="tasa__texto">' + ui.icono('refresh-cw', 'icono--16') + 'Tasa BCV · ' + f.tasaTexto(t.valor) + ' · ' + f.fecha(t.fecha) + '</span>' +
+      '<span class="tasa__texto">' + ui.icono('refresh-cw', 'icono--16') + 'Tasa BCV · ' + f.tasaTexto(t.valor) + '<span class="tasa__fecha-sep"> · </span><span class="tasa__fecha">' + f.fecha(t.fecha) + '</span></span>' +
       (vieja ? ui.estado({ nivel: 'aviso', texto: 'Tasa del ' + f.fechaCorta(t.fecha) }) : '') +
       '<span class="sr">' + (puede('editarTasa') ? 'Actualizar tasa' : 'Ver tasa') + '</span></button>';
   }
@@ -199,15 +199,17 @@
     var franja = raiz.querySelector('[data-franja]');
     franja.innerHTML =
       '<span class="aviso-demo">' + ui.icono('info', 'icono--16') + 'Datos de ejemplo' +
-        (SB.almacen.desfasados() ? ' del ' + f.fechaCorta(e.creado) + '</span><button type="button" class="btn btn--sutil" data-poner-al-dia>Poner al día</button>' : '</span>') +
+        (SB.almacen.desfasados() ? '<span class="aviso-demo__fecha"> del ' + f.fechaCorta(e.creado) + '</span>' : '') + '</span>' +
       tasaHTML(e, hoy, 'franja') +
       '<div class="menu-rol franja__rol" data-menu-rol>' +
         '<button type="button" class="rol-boton" aria-expanded="false" aria-controls="menu-rol-panel" data-menu-rol-boton data-foco="menu-rol">' +
           ui.icono(r.icono) + '<span class="rol-boton__texto"><span class="sr">Rol: </span>' + esc(r.nombre) + '</span>' + ui.icono('chevron-down', 'icono--16') + '</button>' +
         '<div class="menu-rol__panel" id="menu-rol-panel" hidden data-menu-rol-panel>' +
-          '<p>Entraste como ' + esc(r.nombre) + '. Demo sin contraseñas.</p>' +
+          '<p>Entraste como ' + esc(r.nombre) + '. Demo sin contraseñas.' +
+            (SB.almacen.desfasados() ? ' Los datos de ejemplo son del ' + f.fecha(e.creado) + ', con cambios.' : '') + '</p>' +
+          (SB.almacen.desfasados() ? '<button type="button" class="menu-rol__opcion" data-poner-al-dia>' + ui.icono('refresh-cw') + 'Poner al día los datos de ejemplo</button>' : '') +
           '<button type="button" class="menu-rol__opcion" data-cambiar-rol>' + ui.icono('log-out') + 'Cambiar de rol</button>' +
-          '<button type="button" class="menu-rol__opcion" data-restablecer>' + ui.icono('rotate-ccw') + 'Restablecer datos de ejemplo</button>' +
+          (SB.almacen.desfasados() ? '' : '<button type="button" class="menu-rol__opcion" data-restablecer>' + ui.icono('rotate-ccw') + 'Restablecer datos de ejemplo</button>') +
         '</div>' +
       '</div>';
     raiz.querySelector('[data-tasa-cabecera]').innerHTML = tasaHTML(e, hoy, 'cabecera');
@@ -229,7 +231,8 @@
     franja.querySelector('[data-menu-rol]').addEventListener('focusout', function (ev) {
       if (!ev.currentTarget.contains(ev.relatedTarget)) cerrarMenuRol();
     });
-    franja.querySelector('[data-restablecer]').addEventListener('click', function () {
+    var restablecerBtn = franja.querySelector('[data-restablecer]');
+    if (restablecerBtn) restablecerBtn.addEventListener('click', function () {
       cerrarMenuRol();
       ui.fijarDisparador(boton);
       ui.confirmar({
@@ -246,6 +249,8 @@
     raiz.querySelectorAll('[data-tasa]').forEach(function (b) { b.addEventListener('click', abrirTasa); });
     var alDia = franja.querySelector('[data-poner-al-dia]');
     if (alDia) alDia.addEventListener('click', function () {
+      cerrarMenuRol();
+      ui.fijarDisparador(boton);
       ui.confirmar({
         titulo: 'Poner al día los datos de ejemplo', destructivo: true,
         texto: 'Los datos de ejemplo se crearon el ' + f.fecha(e.creado) + ' y tienen cambios hechos en la demo. Se vuelven a crear con fecha de hoy y esos cambios se pierden.',
@@ -396,6 +401,8 @@
 
   function iniciar() {
     raiz = document.getElementById('app');
+    // el desplazamiento lo lleva la app (arriba al cambiar de sección); el navegador no lo restaura a medias
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     // una recarga con un diálogo abierto deja su entrada en el historial: se limpia
     if (history.state && history.state.sbDialogo) history.replaceState(null, '', location.href);
     SB.almacen.cargar();

@@ -33,10 +33,11 @@
   /* Cantidades con su unidad: 0,25 kg → «250 g», 0,2 L → «200 ml» */
   var UNIDADES = { kg: 'kg', L: 'L', und: 'und.', manojo: 'manojo' };
   function cantidad(n, unidad) {
-    if (unidad === 'kg' && Math.abs(n) > 0 && Math.abs(n) < 1) return nfCant.format(redondear(n * 1000, 0)) + ' g';
-    if (unidad === 'L' && Math.abs(n) > 0 && Math.abs(n) < 1) return nfCant.format(redondear(n * 1000, 0)) + ' ml';
-    if (unidad === 'manojo') return nfCant.format(n) + (Math.abs(n) === 1 ? ' manojo' : ' manojos');
-    return nfCant.format(n) + ' ' + (UNIDADES[unidad] || unidad);
+    // espacio duro: «5 manojos» nunca se parte
+    if (unidad === 'kg' && Math.abs(n) > 0 && Math.abs(n) < 1) return nfCant.format(redondear(n * 1000, 0)) + '\u00a0g';
+    if (unidad === 'L' && Math.abs(n) > 0 && Math.abs(n) < 1) return nfCant.format(redondear(n * 1000, 0)) + '\u00a0ml';
+    if (unidad === 'manojo') return nfCant.format(n) + (Math.abs(n) === 1 ? '\u00a0manojo' : '\u00a0manojos');
+    return nfCant.format(n) + '\u00a0' + (UNIDADES[unidad] || unidad);
   }
   function nombreUnidad(unidad) {
     return { kg: 'kilo', L: 'litro', und: 'unidad', manojo: 'manojo' }[unidad] || unidad;

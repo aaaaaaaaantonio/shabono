@@ -66,7 +66,8 @@
         var u = x.p.unidad;
         return '<tr data-fila><td><button type="button" class="tabla__nombre" data-accion="detalle" data-id="' + esc(x.p.id) + '">' + esc(x.p.nombre) + '</button>' +
           '<span class="tabla__sub">' + esc(x.p.categoria) + '</span></td>' +
-          '<td class="num">' + f.cantidad(x.ex.util, u) + (x.ex.vencida ? '<span class="tabla__sub">+ ' + f.cantidad(x.ex.vencida, u) + ' vencido</span>' : '') + '</td>' +
+          '<td class="num">' + f.cantidad(x.ex.util, u) + (x.ex.vencida ? '<span class="tabla__sub">+ ' + f.cantidad(x.ex.vencida, u) + ' vencido</span>' : '') +
+            '<span class="tabla__sub solo-medio">mín.\u00a0' + f.cantidad(x.p.minimo, u) + '</span></td>' +
           '<td class="num solo-ancho">' + f.cantidad(x.p.minimo, u) + '</td>' +
           '<td>' + venceCelda(x.pv, ctx.hoy, x.ex) + '</td>' +
           (verCostos ? '<td class="num solo-ancho">' + ui.dinero(x.valor, x.valor * tasa) + '</td>' : '') +

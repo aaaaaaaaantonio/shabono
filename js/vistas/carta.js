@@ -63,7 +63,8 @@
         return '<tr data-fila><td><button type="button" class="tabla__nombre" data-accion="plato" data-id="' + esc(x.pl.id) + '">' + esc(x.pl.nombre) + '</button>' +
           '<span class="tabla__sub">' + esc(x.pl.categoria) + '</span></td>' +
           (ver ? '<td class="num">' + ui.dinero(x.costo.total, c.bsHoy(ctx.e, x.costo.total)) + '<span class="tabla__sub">' + (x.m.costoPct !== null ? f.pct(x.m.costoPct) + ' del precio' : '—') + '</span></td>' +
-            '<td class="num">' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span class="suave">Sin precio</span>') + '</td>' +
+            '<td class="num">' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span class="suave">Sin precio</span>') +
+              (x.m.margenPct !== null ? '<span class="tabla__sub solo-medio">Margen ' + f.pct(x.m.margenPct) + '</span>' : '') + '</td>' +
             '<td class="num solo-ancho">' + (x.m.margen !== null ? ui.dinero(x.m.margen, c.margenBs(ctx.e, x.costo.total, x.pl.precio)) + '<span class="tabla__sub">' + f.pct(x.m.margenPct) + '</span>' : '—') + '</td>'
             : '<td class="num">' + x.pl.receta.length + '</td>') +
           '<td>' + ui.estado(x.estado) + '</td></tr>';
@@ -333,7 +334,7 @@
       var cats = ctx.e.platos.map(function (x) { return x.categoria; }).filter(function (x, i, a) { return a.indexOf(x) === i; });
       var h = '';
       if (ctx.puede('verCostos')) {
-        h += '<div class="tarjeta" style="margin-bottom:var(--espacio-m)"><div class="bloque__cabeza" style="margin:0;align-items:center">' +
+        h += '<div class="tarjeta" style="margin-bottom:var(--espacio-m)"><div class="bloque__cabeza" style="margin:0;align-items:center;row-gap:.9rem">' +
           '<p style="margin:0"><strong>Objetivo de costo: ' + f.pct(ctx.e.config.objetivoCosto) + ' del precio.</strong> <span class="suave">Por encima sale «Margen bajo». El costo usa el último precio de cada insumo.</span></p>' +
           (ctx.puede('editarObjetivo') ? '<button type="button" class="btn btn--secundario" data-accion="objetivo">' + ui.icono('pencil') + 'Cambiar objetivo</button>' : '') +
           '</div></div>';

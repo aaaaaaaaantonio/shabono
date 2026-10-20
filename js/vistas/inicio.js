@@ -21,7 +21,7 @@
       var hoy = ctx.hoy;
       var alertas = c.alertas(e, hoy, ctx.puede);
       var fechaTxt = f.fechaLarga(hoy);
-      var h = '<p class="saludo">' + esc(fechaTxt.charAt(0).toUpperCase() + fechaTxt.slice(1)) + ' · ' + esc(ctx.rolNombre) + '</p>';
+      var h = '<p class="saludo">' + esc(fechaTxt.charAt(0).toUpperCase() + fechaTxt.slice(1)) + '<span class="saludo__punto"> · </span><span class="saludo__rol">' + esc(ctx.rolNombre) + '</span></p>';
 
       // Acciones rápidas según el rol
       var acc = [];

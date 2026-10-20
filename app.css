@@ -228,7 +228,11 @@ table { font-variant-numeric: tabular-nums; }
 
 .btn-explica { margin: .5rem 0 0; font-size: var(--texto-s); color: var(--tinta-suave); }
 
-@media (max-width: 39.999rem) { .acciones--bloque > .btn { flex: 1 1 100%; } }
+/* Teléfono: acciones de dos en dos para que las alertas de Inicio se vean sin desplazarse */
+@media (max-width: 39.999rem) {
+  .acciones.acciones--bloque { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: .9rem; }
+  .acciones.acciones--bloque > .btn { padding: .6em .75em; }
+}
 .acciones {
   display: flex;
   flex-wrap: wrap;
@@ -591,7 +595,7 @@ table { font-variant-numeric: tabular-nums; }
 .casilla input { width: 20px; height: 20px; margin: 0; accent-color: var(--terracota-boton); }
 
 /* ---------- Campos ---------- */
-.campo { display: grid; gap: .3rem; min-width: 0; }
+.campo { display: grid; gap: .3rem; min-width: 0; align-content: start; }
 .campo__etiqueta { font-size: var(--texto-s); font-weight: 600; line-height: 1.4; }
 .campo__ayuda { font-size: var(--texto-xs); color: var(--tinta-suave); line-height: 1.4; margin: 0; }
 .campo__error {
@@ -743,7 +747,8 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .tabla--interior td { border-radius: 0 !important; }
 
 /* Columnas que solo aparecen en pantallas anchas */
-@media (max-width: 63.999rem) { .solo-ancho { display: none; } }
+/* Las columnas secundarias vuelven a 75rem, cuando ya caben junto a la barra lateral */
+@media (max-width: 74.999rem) { .solo-ancho { display: none; } }
 
 /* La tabla se ve desde tableta; en el teléfono, las tarjetas */
 @media (min-width: 40rem) { .solo-movil { display: none !important; } }
@@ -769,7 +774,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .ficha__arriba { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
 .ficha__nombre { font-weight: 600; font-size: var(--texto-m); overflow-wrap: anywhere; }
 .ficha__abajo { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem 1rem; padding-top: .6rem; border-top: 1px dashed var(--granito); }
-.ficha__dato { display: grid; gap: .1rem; min-width: 0; }
+.ficha__dato { display: grid; gap: .1rem; min-width: 0; align-content: start; }
 .ficha__dato > span:first-child { font-size: .75rem; font-weight: 600; color: var(--tinta-suave); }
 .ficha__dato .dinero { align-items: flex-start; }
 .ficha__dato--cifra { justify-items: end; text-align: right; }
@@ -777,7 +782,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 
 /* ---------- Datos clave (detalles y resúmenes) ---------- */
 .datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .9rem 1.25rem; }
-.datos > div { display: grid; gap: .15rem; min-width: 0; }
+.datos > div { display: grid; gap: .15rem; min-width: 0; align-content: start; }
 .datos dt { font-size: .75rem; font-weight: 600; color: var(--tinta-suave); line-height: 1.4; }
 .datos dd { font-size: var(--texto-m); line-height: 1.4; font-variant-numeric: tabular-nums; }
 .datos .dinero { align-items: flex-start; }
@@ -1051,7 +1056,7 @@ dialog.dialogo::backdrop { background: var(--velo); }
 .aviso-linea .icono { margin-top: .1rem; }
 .resumen-form .estado { white-space: normal; }
 .solo-medio { display: none; }
-@media (min-width: 40rem) and (max-width: 63.999rem) { .solo-medio { display: block; } }
+@media (min-width: 40rem) and (max-width: 74.999rem) { .solo-medio { display: block; } }
 /* El nombre del rol se lee en el botón desde 80rem; antes, solo el icono (y en la barra lateral desde 64rem) */
 @media (max-width: 79.999rem) {
   .rol-boton__texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -1080,3 +1085,23 @@ dialog.dialogo::backdrop { background: var(--velo); }
 /* Instalada en el teléfono: respeta la zona de la cámara y la barra de estado */
 .franja { padding-top: max(.25rem, env(safe-area-inset-top)); }
 .acceso { padding-top: max(2rem, env(safe-area-inset-top)); }
+
+/* Revisión de diseño adaptable */
+@media (max-width: 39.999rem) {
+  .columna .contenido { padding-bottom: calc(var(--nav-real, calc(var(--nav-movil) + env(safe-area-inset-bottom))) + var(--espacio-l)); }
+  .saludo__rol { display: block; }
+  .saludo__punto { display: none; }
+  .tasa--cabecera .tasa__texto { display: block; }
+  .tasa--cabecera .tasa__texto .icono { display: inline-block; vertical-align: -3px; margin-right: .35rem; }
+  .tasa--cabecera .tasa__fecha-sep { display: none; }
+  .tasa--cabecera .tasa__fecha { display: block; padding-left: 1.4rem; }
+}
+.saludo__rol { white-space: nowrap; }
+.rejilla-inicio > .bloque { margin-top: 0; }
+.rejilla-inicio .bloque__cabeza { min-height: 44px; align-items: center; }
+/* Pantallas muy anchas: el contenido se centra y la franja se alinea con él */
+.cabecera-pantalla, .contenido { margin-inline: auto; }
+.franja { padding-inline: max(var(--gutter), calc((100% - var(--contenido-max)) / 2 + var(--gutter))); }
+.formulario > p { margin: 0; }
+.nowrap { white-space: nowrap; }
+@media (max-width: 47.999rem) { .aviso-demo__fecha { display: none; } }

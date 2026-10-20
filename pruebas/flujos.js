@@ -169,8 +169,9 @@ const ok = (c, m) => { if (!c) fallos.push(m); else console.log('  ✓ ' + m); }
   // 10c. Con datos de otro día ya modificados, la franja ofrece ponerlos al día
   await p.evaluate(() => { const e = JSON.parse(localStorage.getItem('shabono-gestion-demo')); e.creado = '2026-01-01'; localStorage.setItem('shabono-gestion-demo', JSON.stringify(e)); });
   await p.reload(); await p.waitForTimeout(100);
-  ok(await p.evaluate(() => !!document.querySelector('[data-poner-al-dia]')), 'Datos de otro día: aparece «Poner al día»');
+  ok(await p.evaluate(() => !!document.querySelector('[data-poner-al-dia]') && /del 01\/01/.test(document.querySelector('.menu-rol__panel').textContent)), 'Datos de otro día: el menú ofrece «Poner al día»');
   await p.evaluate(() => { const e = JSON.parse(localStorage.getItem('shabono-gestion-demo')); e.creado = window.SB.f.hoyISO(); localStorage.setItem('shabono-gestion-demo', JSON.stringify(e)); });
+  await p.reload(); await p.waitForTimeout(100);
 
   // 10d. Doble clic en Guardar: no abre otra cosa debajo
   await abrir('finanzas/por-pagar');
