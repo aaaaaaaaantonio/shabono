@@ -96,6 +96,7 @@
       (co.recibida ? '<div><dt>Recibida</dt><dd>' + f.fecha(co.recibida) + '</dd></div>' : '') +
       (ver ? '<div><dt>Pago</dt><dd>' + esc(pagoTexto(co)) + '</dd></div>' : '') +
       (ver ? '<div><dt>Moneda y tasa</dt><dd>' + (co.moneda === 'EUR' ? 'Euros' : 'Bolívares') + '<span class="tabla__sub">' + f.tasaTexto(co.tasa, true) + '</span></dd></div>' : '') +
+      (co.nota ? '<div><dt>Nota</dt><dd>' + esc(co.nota) + '</dd></div>' : '') +
       '<div><dt>Registró</dt><dd>' + esc(co.por || '—') + (co.recibidaPor ? '<span class="tabla__sub">Recibió: ' + esc(co.recibidaPor) + '</span>' : '') + '</dd></div>' +
       '</dl>' +
       '<section class="dialogo__seccion" aria-labelledby="t-lineas"><h3 class="etiqueta suave" id="t-lineas">Productos</h3>' +
@@ -103,7 +104,9 @@
       (ver ? '<th scope="col" class="num">Subtotal</th>' : '') + '</tr></thead><tbody>' +
       co.lineas.map(function (l) {
         var p = c.porId(e.productos, l.productoId) || { nombre: '—', unidad: '' };
-        return '<tr><td>' + esc(p.nombre) + (ver ? '<span class="tabla__sub">' + f.importe(co.moneda, l.precio) + ' / ' + esc(f.nombreUnidad(p.unidad)) + '</span>' : '') + '</td>' +
+        var falto = co.estado === 'recibida' && l.pedida !== undefined && l.cantidad < l.pedida;
+        return '<tr><td>' + esc(p.nombre) + (ver ? '<span class="tabla__sub">' + f.importe(co.moneda, l.precio) + ' / ' + esc(f.nombreUnidad(p.unidad)) + '</span>' : '') +
+          (falto ? '<span class="tabla__sub">Pedido ' + f.cantidad(l.pedida, p.unidad) + ' · llegó ' + f.cantidad(l.cantidad, p.unidad) + '</span>' + ui.estado({ nivel: 'aviso', texto: l.cantidad ? 'Llegó menos' : 'Faltó' }) : '') + '</td>' +
           '<td class="num">' + f.cantidad(l.cantidad, p.unidad) + '</td>' +
           (ver ? '<td class="num">' + f.importe(co.moneda, l.precio * l.cantidad) + '</td>' : '') + '</tr>';
       }).join('') + '</tbody>' +
@@ -124,7 +127,7 @@
   }
 
   /* Recibir: crea lotes, suma existencias, guarda el precio y anota el gasto o la cuenta por pagar */
-  function recibir(est, co, fecha, cantidades, vences, rolNombre) {
+  function recibir(est, co, fecha, cantidades, vences, rolNombre, dejarPendiente) {
     var prov = provDe(est, co.proveedorId);
     var tasa = c.tasaVigente(est, fecha).valor;
     co.estado = 'recibida';
@@ -132,6 +135,7 @@
     co.recibidaPor = rolNombre;
     co.tasa = tasa;
     co.lineas.forEach(function (l, i) {
+      if (l.pedida === undefined) l.pedida = l.cantidad;
       if (cantidades) l.cantidad = cantidades[i];
       if (!l.cantidad) return;
       var lote = { id: SB.almacen.nuevoId('lote'), productoId: l.productoId, compraId: co.id, proveedorId: co.proveedorId, entrada: fecha,
@@ -141,7 +145,14 @@
       est.movimientos.push({ id: SB.almacen.nuevoId('mov'), fecha: fecha, productoId: l.productoId, loteId: lote.id, tipo: 'entrada',
         cantidad: l.cantidad, nota: 'Compra a ' + prov.nombre, por: rolNombre });
     });
-    co.lineas = co.lineas.filter(function (l) { return l.cantidad > 0; });
+    var faltan = co.lineas.filter(function (l) { return l.cantidad < l.pedida; });
+    if (dejarPendiente && faltan.length) {
+      var resto = faltan.map(function (l) { return { productoId: l.productoId, cantidad: f.redondear(l.pedida - l.cantidad, 3), precio: l.precio }; });
+      est.compras.push({ id: SB.almacen.nuevoId('compra'), proveedorId: co.proveedorId, fecha: co.fecha, recibida: null, estado: 'pendiente',
+        moneda: co.moneda, tasa: co.tasa, lineas: resto,
+        total: f.dinero(co.moneda, resto.reduce(function (s, l) { return s + f.redondear(l.precio * l.cantidad, 2); }, 0), co.tasa),
+        pago: co.pago, vencePago: null, por: rolNombre, nota: 'Lo que faltó de la compra recibida el ' + f.fecha(fecha) });
+    }
     co.total = f.dinero(co.moneda, co.lineas.reduce(function (s, l) { return s + f.redondear(l.precio * l.cantidad, 2); }, 0), tasa);
     if (co.pago === 'contado') {
       var g = { id: SB.almacen.nuevoId('gasto'), fecha: fecha, categoria: 'Insumos', concepto: 'Compra a ' + prov.nombre, proveedorId: co.proveedorId,
@@ -172,9 +183,11 @@
     var cuerpo = '<div class="formulario">' +
       '<p>Revisa lo que llegó. Al recibir se crean los lotes, se suman las existencias, se guarda el precio y ' +
       (co.pago === 'contado' ? 'se anota el gasto.' : 'se abre la cuenta por pagar.') + '</p>' +
-      ui.campo({ id: 're-fecha', nombre: 'fecha', etiqueta: 'Fecha de recepción', tipo: 'date', requerido: true, valor: hoy, attrs: ' max="' + hoy + '"' }) +
+      ui.campo({ id: 're-fecha', nombre: 'fecha', etiqueta: 'Fecha de recepción', tipo: 'date', requerido: true, valor: hoy, attrs: ' min="' + co.fecha + '" max="' + hoy + '"',
+        ayuda: 'El pedido se hizo el ' + f.fecha(co.fecha) + '.' }) +
+      '<label class="casilla"><input type="checkbox" name="pendiente" checked> Dejar lo que falte como pedido pendiente</label>' +
       '<div class="lineas">' + co.lineas.map(function (l, i) {
-        var p = c.porId(e.productos, l.productoId);
+        var p = c.porId(e.productos, l.productoId) || { id: l.productoId, nombre: 'Producto eliminado', unidad: '' };
         return '<fieldset class="linea-form"><legend class="sr">' + esc(p.nombre) + '</legend><div class="linea-form__cabeza"><strong>' + esc(p.nombre) + '</strong>' +
           '<span class="suave">Pedido: ' + f.cantidad(l.cantidad, p.unidad) + '</span></div><div class="linea-form__campos">' +
           ui.campo({ id: 're-cant-' + i, nombre: 'cant-' + i, etiqueta: 'Cantidad recibida', importe: true, decimales: 3, requerido: true,
@@ -195,13 +208,15 @@
       co.lineas.forEach(function (l, i) {
         var pr = c.porId(e.productos, l.productoId);
         reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, noNegativo: true, texto: 'la cantidad', entero: !!pr && pr.unidad === 'und' });
+        reglas.push({ nombre: 'vence-' + i, extra: function (v) { return v && v < ui.valor(form, 'fecha') ? 'Vence antes de la fecha de entrada.' : null; } });
       });
       if (ui.validar(form, reglas)) return;
       var cantidades = co.lineas.map(function (l, i) { return f.redondear(ui.numero(form, 'cant-' + i), 3); });
       if (cantidades.every(function (x) { return x === 0; })) { ui.marcarError(form.querySelector('[name="cant-0"]'), 'Si no llegó nada, cierra y deja el pedido pendiente.'); form.querySelector('[name="cant-0"]').focus(); return; }
       var vences = co.lineas.map(function (l, i) { return ui.valor(form, 'vence-' + i) || null; });
       var fecha = ui.valor(form, 'fecha');
-      SB.almacen.cambiar(function (est) { recibir(est, c.porId(est.compras, id), fecha, cantidades, vences, ctx.rolNombre); });
+      var dejar = form.querySelector('[name="pendiente"]').checked;
+      SB.almacen.cambiar(function (est) { recibir(est, c.porId(est.compras, id), fecha, cantidades, vences, ctx.rolNombre, dejar); });
       d.close();
       ui.avisar('Compra recibida: ' + prov.nombre + '. Existencias actualizadas.');
     });
@@ -291,6 +306,30 @@
       var u = h[h.length - 1];
       return moneda() === u.moneda ? u.precio : (moneda() === 'EUR' ? u.eur : u.eur * tv().valor);
     }
+    /* Al cambiar la moneda, los precios escritos se convierten; los sugeridos se vuelven a pedir al proveedor */
+    function convertirPrecios() {
+      var antes = form.dataset.moneda || 'EUR';
+      var m = moneda();
+      lineas().forEach(function (l) {
+        var i = l.getAttribute('data-linea');
+        var inp = form.querySelector('[name="precio-' + i + '"]');
+        var ayuda = form.querySelector('#nc-precio-' + i + '-ayuda');
+        var pid = ui.valor(form, 'prod-' + i);
+        if (inp.dataset.sugerido && pid) {
+          var sug = precioSugerido(pid);
+          if (sug !== null) { inp.value = f.num(f.redondear(sug, 2)); inp.dataset.formateado = inp.value; }
+          return;
+        }
+        if (antes === m || inp.value.trim() === '') return;
+        var n = ui.numero(form, 'precio-' + i);
+        if (isNaN(n)) return;
+        var t = tv();
+        inp.value = f.num(f.redondear(m === 'VES' ? n * t.valor : n / t.valor, 2));
+        inp.dataset.formateado = inp.value;
+        if (ayuda) ayuda.textContent = 'Convertido a ' + (m === 'VES' ? 'Bs.' : '€') + ' con la tasa del ' + f.fecha(t.fecha) + '.';
+      });
+      form.dataset.moneda = m;
+    }
     function actualizarMoneda() {
       var m = moneda();
       form.querySelectorAll('[name^="precio-"]').forEach(function (inp) {
@@ -324,8 +363,10 @@
           form.querySelector('[name="moneda"][value="' + prov.moneda + '"]').checked = true;
           form.querySelector('[name="pago"][value="' + (prov.credito ? 'credito' : 'contado') + '"]').checked = true;
         }
+        convertirPrecios();
         actualizarMoneda();
       }
+      if (t.name === 'moneda') convertirPrecios();
       if (t.name === 'moneda' || t.name === 'estado') actualizarMoneda();
       if (/^prod-/.test(t.name)) {
         var i = t.name.slice(5);
@@ -334,6 +375,8 @@
         var ayuda = form.querySelector('#nc-precio-' + i + '-ayuda');
         if (precio !== null) {
           inp.value = f.num(f.redondear(precio, 2)).replace('−', '-');
+          inp.dataset.formateado = inp.value;
+          inp.dataset.sugerido = '1';
           ayuda.textContent = 'Último precio pagado. Puedes cambiarlo.';
         } else ayuda.textContent = 'Sin compras anteriores de este producto.';
         var p = c.porId(e.productos, t.value);
@@ -344,7 +387,10 @@
         total();
       }
     });
-    form.addEventListener('input', function (ev) { if (/^(cant|precio)-/.test(ev.target.name)) total(); });
+    form.addEventListener('input', function (ev) {
+      if (/^precio-/.test(ev.target.name)) delete ev.target.dataset.sugerido;   // lo escribió la persona
+      if (/^(cant|precio)-/.test(ev.target.name)) total();
+    });
     form.querySelector('[data-agregar]').addEventListener('click', function () { agregar().querySelector('select').focus(); });
     cont.addEventListener('click', function (ev) {
       var b = ev.target.closest('[data-quitar]');
@@ -368,6 +414,10 @@
         reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, positivo: true, texto: 'la cantidad',
           entero: function () { var pr = c.porId(e.productos, ui.valor(form, 'prod-' + i)); return !!pr && pr.unidad === 'und'; } });
         reglas.push({ nombre: 'precio-' + i, requerido: true, numero: true, positivo: true, texto: 'el precio' });
+        reglas.push({ nombre: 'vence-' + i, extra: function (v) {
+          var recibida = form.querySelector('[name="estado"]:checked').value === 'recibida';
+          return recibida && v && v < ui.valor(form, 'fecha') ? 'Vence antes de la fecha de entrada.' : null;
+        } });
       });
       if (ui.validar(form, reglas)) return;
       var m = moneda();
@@ -628,7 +678,7 @@
       return ctx.puede('gestionarCompras') ? '<button type="button" class="btn btn--principal" data-accion="nueva-compra">' + ui.icono('plus') + 'Registrar compra</button>' : '';
     },
     render: function (ctx) {
-      if (ctx.sub === 'precios' && !ctx.puede('verCostos')) { ctx.sub = null; history.replaceState(null, '', '#/compras'); }
+      if ((ctx.sub === 'precios' && !ctx.puede('verCostos')) || (ctx.sub && ['proveedores', 'precios'].indexOf(ctx.sub) < 0)) { ctx.sub = null; history.replaceState(null, '', '#/compras'); }
       var h = subnav(ctx);
       if (ctx.sub === 'proveedores') {
         h += '<form class="filtros" role="search" aria-label="Buscar proveedores">' +

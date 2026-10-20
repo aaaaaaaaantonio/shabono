@@ -29,9 +29,13 @@
     var e = ctx.e;
     var p = ctx.params;
     var q = f.normalizar(p.q || '');
+    if (!ctx.puede('verCostos') && p.estado && ['no-disponible', 'sin-ficha'].indexOf(p.estado) < 0) {
+      p.estado = '';
+      ctx.fijarParams(p);
+    }
     return e.platos.map(function (pl) {
       var costo = c.costoPlato(e, pl);
-      return { pl: pl, costo: costo, m: c.margen(costo.total, pl.precio), estado: c.estadoPlato(e, pl, ctx.hoy) };
+      return { pl: pl, costo: costo, m: c.margen(costo.total, pl.precio), estado: estadoVisible(ctx, c.estadoPlato(e, pl, ctx.hoy)) };
     }).filter(function (x) {
       if (q && f.normalizar(x.pl.nombre + ' ' + x.pl.categoria).indexOf(q) < 0) return false;
       if (p.categoria && x.pl.categoria !== p.categoria) return false;
@@ -62,11 +66,11 @@
             '<td class="num">' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span class="suave">Sin precio</span>') + '</td>' +
             '<td class="num solo-ancho">' + (x.m.margen !== null ? ui.dinero(x.m.margen, c.margenBs(ctx.e, x.costo.total, x.pl.precio)) + '<span class="tabla__sub">' + f.pct(x.m.margenPct) + '</span>' : '—') + '</td>'
             : '<td class="num">' + x.pl.receta.length + '</td>') +
-          '<td>' + ui.estado(estadoVisible(ctx, x.estado)) + '</td></tr>';
+          '<td>' + ui.estado(x.estado) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     var fichas = '<ul class="fichas solo-movil" role="list">' + filas.map(function (x) {
       return '<li><button type="button" class="ficha" data-accion="plato" data-id="' + esc(x.pl.id) + '">' +
-        '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(x.pl.nombre) + '</span>' + ui.estado(estadoVisible(ctx, x.estado)) + '</span>' +
+        '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(x.pl.nombre) + '</span>' + ui.estado(x.estado) + '</span>' +
         '<span class="suave">' + esc(x.pl.categoria) + '</span>' +
         (ver ? '<span class="ficha__abajo">' +
           '<span class="ficha__dato ficha__dato--cifra"><span>Costo' + (x.m.costoPct !== null ? ' · ' + f.pct(x.m.costoPct) : '') + '</span>' + ui.dinero(x.costo.total, c.bsHoy(ctx.e, x.costo.total)) + '</span>' +

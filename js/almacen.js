@@ -50,7 +50,14 @@
     return r;
   }
 
+  /* Otra pestaña guardó: se toman sus datos */
+  function recargar() {
+    try { var e = JSON.parse(leer(CLAVE)); if (e && e.version === VERSION) estado = e; } catch (err) { /* se queda lo que hay */ }
+  }
+
+  var generacion = 0;
   function restablecer() {
+    generacion += 1;      // los «Deshacer» pendientes dejan de valer
     estado = SB.semilla.generar(SB.f.hoyISO());
     guardar();
     avisar();
@@ -68,8 +75,16 @@
     var i = lista.findIndex(function (r) { return r.id === id; });
     if (i < 0) return null;
     var registro = lista[i];
+    var gen = generacion;
     cambiar(function (e) { e[coleccion].splice(i, 1); });
     return function deshacer() {
+      if (gen !== generacion) return false;
+      // un pedido no vuelve si ya no existen su proveedor o sus productos
+      if (coleccion === 'compras' && (!estado.proveedores.some(function (p) { return p.id === registro.proveedorId; }) ||
+          registro.lineas.some(function (l) { return !estado.productos.some(function (p) { return p.id === l.productoId; }); }))) {
+        if (SB.ui) SB.ui.avisar('No se puede deshacer: el proveedor o algún producto del pedido ya no existe.');
+        return false;
+      }
       cambiar(function (e) {
         if (e[coleccion].some(function (r) { return r.id === id; })) return;
         e[coleccion].splice(Math.min(i, e[coleccion].length), 0, registro);
@@ -82,6 +97,8 @@
 
   SB.almacen = {
     cargar: cargar,
+    recargar: recargar,
+    get generacion() { return generacion; },
     get estado() { return estado; },
     cambiar: cambiar,
     restablecer: restablecer,

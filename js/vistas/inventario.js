@@ -33,7 +33,7 @@
       if (q && f.normalizar(x.p.nombre + ' ' + x.p.categoria).indexOf(q) < 0) return false;
       if (p.categoria && x.p.categoria !== p.categoria) return false;
       if (p.estado && !x.estados.some(function (s) { return s.clave === p.estado; })) return false;
-      if (p.vence === 'semana' && !c.venceEnDias(e, x.p.id, hoy, 7) && !x.estados.some(function (s) { return s.clave === 'vence-pronto'; })) return false;
+      if (p.vence === 'semana' && !c.venceEnDias(e, x.p.id, hoy, 7)) return false;
       return true;
     }).sort(function (a, b) {
       return c.PESO[b.estados[0].nivel] - c.PESO[a.estados[0].nivel] || a.p.nombre.localeCompare(b.p.nombre, 'es');
@@ -196,8 +196,11 @@
       l.cantidad = 0;
     });
     ui.avisar('Dado de baja: ' + f.cantidad(antes, p.unidad) + ' de ' + p.nombre + '.', function () {
+      var l = c.porId(SB.almacen.estado.lotes, loteId);
+      if (!l) return false;
       SB.almacen.cambiar(function (est) {
-        c.porId(est.lotes, loteId).cantidad = antes;
+        var lote = c.porId(est.lotes, loteId);
+        lote.cantidad = f.redondear(lote.cantidad + antes, 3);
         est.movimientos = est.movimientos.filter(function (m) { return m.id !== movId; });
       });
     });
@@ -261,8 +264,8 @@
       var cantidad = f.redondear(ui.numero(form, 'cantidad'), 3);
       var motivo = ui.valor(form, 'motivo');
       var fecha = ui.valor(form, 'fecha');
-      var copia = JSON.stringify(e.lotes.filter(function (l) { return l.productoId === prod.id; }));
       var nuevos = [];
+      var deltas = [];      // lo que se movió de cada lote, para deshacerlo sin pisar lo que pase después
       var lotesNuevos = [];
       var cambio = 0;
       SB.almacen.cambiar(function (est) {
@@ -271,7 +274,7 @@
           if (cambio < 0) {
             c.descontar(est, prod.id, -cambio, hoy, false).forEach(function (t) {
               var m = { id: SB.almacen.nuevoId('mov'), fecha: fecha, productoId: prod.id, loteId: t.loteId, tipo: 'conteo', cantidad: -t.cantidad, nota: motivo || 'Conteo físico', por: ctx.rolNombre };
-              est.movimientos.push(m); nuevos.push(m.id);
+              est.movimientos.push(m); nuevos.push(m.id); deltas.push({ loteId: t.loteId, cantidad: -t.cantidad });
             });
           } else if (cambio > 0) {
             var vigentes = c.lotesDe(est, prod.id).filter(function (l) { return !c.loteVencido(l, hoy); });
@@ -284,14 +287,14 @@
             }
             lote.cantidad = f.redondear(lote.cantidad + cambio, 3);
             var m2 = { id: SB.almacen.nuevoId('mov'), fecha: fecha, productoId: prod.id, loteId: lote.id, tipo: 'conteo', cantidad: cambio, nota: motivo || 'Conteo físico', por: ctx.rolNombre };
-            est.movimientos.push(m2); nuevos.push(m2.id);
+            est.movimientos.push(m2); nuevos.push(m2.id); deltas.push({ loteId: lote.id, cantidad: cambio });
           }
         } else {
           cambio = -cantidad;
           c.descontar(est, prod.id, cantidad, hoy, false).forEach(function (t) {
             var m = { id: SB.almacen.nuevoId('mov'), fecha: fecha, productoId: prod.id, loteId: t.loteId, tipo: tipo, cantidad: t.cantidad,
               nota: motivo || (tipo === 'consumo' ? 'Consumo de cocina' : ''), por: ctx.rolNombre };
-            est.movimientos.push(m); nuevos.push(m.id);
+            est.movimientos.push(m); nuevos.push(m.id); deltas.push({ loteId: t.loteId, cantidad: -t.cantidad });
           });
         }
       });
@@ -299,8 +302,12 @@
       if (cambio === 0) { ui.avisar('Sin cambios: el conteo coincide con lo registrado.'); return; }
       ui.avisar('Existencias ajustadas: ' + prod.nombre + ', ' + (cambio > 0 ? '+' : '−') + ' ' + f.cantidad(Math.abs(cambio), prod.unidad) + '.', function () {
         SB.almacen.cambiar(function (est) {
-          var previos = JSON.parse(copia);
-          est.lotes = est.lotes.filter(function (l) { return l.productoId !== prod.id; }).concat(previos);
+          deltas.forEach(function (dl) {
+            var l = c.porId(est.lotes, dl.loteId);
+            if (l) l.cantidad = Math.max(0, f.redondear(l.cantidad - dl.cantidad, 3));
+          });
+          // un lote creado por el conteo se quita si sigue vacío
+          est.lotes = est.lotes.filter(function (l) { return lotesNuevos.indexOf(l.id) < 0 || l.cantidad > 0; });
           est.movimientos = est.movimientos.filter(function (m) { return nuevos.indexOf(m.id) < 0; });
         });
       });

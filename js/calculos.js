@@ -125,7 +125,7 @@
     e.compras.forEach(function (c) {
       if (c.estado !== 'recibida') return;
       c.lineas.forEach(function (l) {
-        if (l.productoId !== pid) return;
+        if (l.productoId !== pid || !l.cantidad) return;      // lo que no llegó no cuenta como precio pagado
         r.push({ fecha: c.recibida, proveedorId: c.proveedorId, moneda: c.moneda, precio: l.precio, tasa: c.tasa,
           eur: c.moneda === 'EUR' ? l.precio : l.precio / c.tasa, compraId: c.id });
       });
@@ -311,11 +311,17 @@
     var bajo = cuenta('bajo-minimo');
     if (bajo.length) r.push({ nivel: 'aviso', texto: 'Bajo mínimo', titulo: plural(bajo.length, 'producto bajo mínimo', 'productos bajo mínimo'), detalle: nombres(bajo), enlace: '#/inventario?estado=bajo-minimo' });
     var esPronto = function (x) { return x.estados.some(function (s) { return s.clave === 'vence-pronto'; }); };
-    var semana = conEstado.filter(function (x) { return venceEnDias(e, x.p.id, hoy, 7) || esPronto(x); });
+    var semana = conEstado.filter(function (x) { return venceEnDias(e, x.p.id, hoy, 7); });
     if (semana.length) {
       var pronto = semana.filter(esPronto).length;
       r.push({ nivel: 'aviso', texto: 'Vence pronto', titulo: plural(semana.length, 'producto vence esta semana', 'productos vencen esta semana'),
         detalle: nombres(semana) + (pronto ? ' · ' + plural(pronto, 'ya está en su aviso de vencimiento', 'ya están en su aviso de vencimiento') : ''), enlace: '#/inventario?vence=semana' });
+    }
+    // productos con un aviso de vencimiento más largo que una semana
+    var avisoLargo = conEstado.filter(function (x) { return esPronto(x) && !venceEnDias(e, x.p.id, hoy, 7); });
+    if (avisoLargo.length) {
+      r.push({ nivel: 'aviso', texto: 'Vence pronto', titulo: plural(avisoLargo.length, 'producto en su aviso de vencimiento', 'productos en su aviso de vencimiento'),
+        detalle: nombres(avisoLargo) + ' · vence en más de 7 días, según el aviso del producto', enlace: '#/inventario?estado=vence-pronto' });
     }
     if (puede('verCostos')) {
       var bajos = platosEstado.filter(function (x) { return x.estado.clave === 'margen-bajo'; });
@@ -324,7 +330,7 @@
     if (puede('verFinanzas') && pp.semana.length) r.push({ nivel: 'aviso', texto: 'Vence pronto', titulo: plural(pp.semana.length, 'cuenta vence esta semana', 'cuentas vencen esta semana'), detalle: pp.semana.map(function (c) { return c.acreedor; }).join(', '), enlace: '#/finanzas/por-pagar?estado=vence-pronto' });
 
     var pend = e.compras.filter(function (c) { return c.estado === 'pendiente'; });
-    if (pend.length) r.push({ nivel: 'info', texto: 'Pendiente', titulo: plural(pend.length, 'compra por recibir', 'compras por recibir'), detalle: pend.map(function (c) { return porId(e.proveedores, c.proveedorId).nombre; }).join(', '), enlace: '#/compras?estado=pendiente' });
+    if (pend.length) r.push({ nivel: 'info', texto: 'Pendiente', titulo: plural(pend.length, 'compra por recibir', 'compras por recibir'), detalle: pend.map(function (c) { return (porId(e.proveedores, c.proveedorId) || { nombre: 'Proveedor eliminado' }).nombre; }).join(', '), enlace: '#/compras?estado=pendiente' });
     return r;
   }
 

@@ -36,6 +36,8 @@
 
   var raiz;
   var marcoMontado = false;
+  var observadorMarco = null;
+  var temporizador = null;
   var rutaAnterior = null;
   var ctxActual = null;
   var vistaActual = null;
@@ -98,12 +100,15 @@
 
     // Las cabeceras fijas de las tablas se pegan justo debajo de la franja, mida lo que mida
     if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver(function (en) {
-        document.documentElement.style.setProperty('--franja-alto', Math.ceil(en[0].target.getBoundingClientRect().height) + 'px');
-      }).observe(raiz.querySelector('[data-franja]'));
-      new ResizeObserver(function (en) {
-        document.documentElement.style.setProperty('--nav-real', Math.ceil(en[0].target.getBoundingClientRect().height) + 'px');
-      }).observe(raiz.querySelector('.nav-principal'));
+      if (observadorMarco) observadorMarco.disconnect();
+      observadorMarco = new ResizeObserver(function (en) {
+        en.forEach(function (x) {
+          var nombre = x.target.matches('[data-franja]') ? '--franja-alto' : '--nav-real';
+          document.documentElement.style.setProperty(nombre, Math.ceil(x.target.getBoundingClientRect().height) + 'px');
+        });
+      });
+      observadorMarco.observe(raiz.querySelector('[data-franja]'));
+      observadorMarco.observe(raiz.querySelector('.nav-principal'));
     }
 
     raiz.querySelector('[data-saltar]').addEventListener('click', function (ev) {
@@ -130,18 +135,21 @@
         vistaActual.acciones[el.getAttribute('data-accion')](el, ctxActual, ev);
       });
     });
-    var temporizador;
     main.addEventListener('input', function (ev) {
       if (!ev.target.matches('[data-filtro]') || !vistaActual || !vistaActual.filtrar) return;
       clearTimeout(temporizador);
-      temporizador = setTimeout(function () { aplicarFiltro(); }, ev.target.type === 'search' ? 180 : 0);
+      var vista = vistaActual;
+      temporizador = setTimeout(function () { if (vistaActual === vista) aplicarFiltro(); }, ev.target.type === 'search' ? 180 : 0);
     });
     main.addEventListener('change', function (ev) {
       if (!ev.target.matches('[data-filtro]') || !vistaActual || !vistaActual.filtrar) return;
       aplicarFiltro();
     });
     main.addEventListener('submit', function (ev) { ev.preventDefault(); });
+  }
 
+  /* Escuchas del documento: se registran una sola vez */
+  function escuchasDocumento() {
     document.addEventListener('click', function (ev) {
       var menu = document.querySelector('[data-menu-rol]');
       if (menu && !menu.contains(ev.target)) cerrarMenuRol();
@@ -157,6 +165,7 @@
   }
 
   function aplicarFiltro() {
+    if (!vistaActual || !vistaActual.filtrar) return;
     var main = raiz.querySelector('[data-vista]');
     var params = vistaActual.filtrar(main, ctxActual);
     fijarParams(params);
@@ -276,7 +285,8 @@
         '<p>Escribe la tasa euro que publica el BCV, con todos sus decimales. Las cifras en Bs. de hoy se calculan con ella; los registros anteriores conservan la suya.</p>' +
         ui.campo({ id: 'tasa-valor', nombre: 'valor', etiqueta: 'Bs. por € 1', importe: true, decimales: 8, requerido: true,
           valor: f.tasaCompleta(t.valor), ayuda: 'Por ejemplo: 988,97203073' }) +
-        ui.campo({ id: 'tasa-fecha', nombre: 'fecha', etiqueta: 'Fecha valor', tipo: 'date', requerido: true, valor: hoy }) +
+        ui.campo({ id: 'tasa-fecha', nombre: 'fecha', etiqueta: 'Fecha valor', tipo: 'date', requerido: true, valor: hoy,
+          attrs: ' max="' + f.sumarDias(hoy, 7) + '"', ayuda: 'Si el BCV la publica con fecha valor de mañana, se aplicará desde ese día.' }) +
         '</div>' +
         '<div class="dialogo__seccion"><h3 class="etiqueta suave">Últimas tasas</h3>' + lista + '</div>',
       pie: '<button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button>' +
@@ -292,12 +302,30 @@
       ])) return;
       var valor = ui.numero(form, 'valor');
       var fecha = ui.valor(form, 'fecha');
-      SB.almacen.cambiar(function (est) {
-        est.tasas = est.tasas.filter(function (x) { return x.fecha !== fecha; });
-        est.tasas.push({ id: SB.almacen.nuevoId('tasa'), fecha: fecha, valor: valor });
-      });
+      var vigente = SB.calc.tasaVigente(e, fecha);
+      function guardar() {
+        SB.almacen.cambiar(function (est) {
+          est.tasas = est.tasas.filter(function (x) { return x.fecha !== fecha; });
+          est.tasas.push({ id: SB.almacen.nuevoId('tasa'), fecha: fecha, valor: valor });
+        });
+        var actual = SB.calc.tasaActual(SB.almacen.estado);
+        if (fecha > hoy) ui.avisar('Tasa guardada: se aplicará desde el ' + f.fecha(fecha) + '. Hoy sigue la del ' + f.fecha(actual.fecha) + '.');
+        else if (actual.fecha !== fecha) ui.avisar('Guardada como tasa histórica del ' + f.fecha(fecha) + '. Hoy sigue la del ' + f.fecha(actual.fecha) + '.');
+        else ui.avisar('Tasa guardada: ' + f.tasaTexto(valor, true) + ' · ' + f.fecha(fecha) + '.');
+      }
+      // Un cero de más o una coma olvidada no deben pasar sin preguntar
+      if (vigente && Math.abs(valor - vigente.valor) / vigente.valor > 0.25) {
+        ui.cerrarYAbrir(d, function () {
+          ui.confirmar({
+            titulo: '¿La tasa es correcta?', destructivo: true,
+            texto: 'La tasa pasa de Bs. ' + f.tasaCompleta(vigente.valor) + ' a Bs. ' + f.tasaCompleta(valor) + ' por € 1. Es un cambio de más del 25 %.',
+            aceptar: 'Sí, guardar la tasa', cancelar: 'No, revisar'
+          }).then(function (si) { if (si) guardar(); else abrirTasa(); });
+        });
+        return;
+      }
       d.close();
-      ui.avisar('Tasa guardada: ' + f.tasaTexto(valor, true) + ' · ' + f.fecha(fecha) + '.');
+      guardar();
     });
   }
 
@@ -344,10 +372,18 @@
     var main = raiz.querySelector('[data-vista]');
     vistaActual = vista;
     ctxActual = ctx;
-    main.innerHTML = vista.render(ctx);
-    if (vista.despues) vista.despues(main, ctx);
-    ui.pintarGraficos(main);
-    ui.enlazarImportes(main);
+    clearTimeout(temporizador);
+    try {
+      main.innerHTML = vista.render(ctx);
+      if (vista.despues) vista.despues(main, ctx);
+      ui.pintarGraficos(main);
+      ui.enlazarImportes(main);
+    } catch (err) {
+      if (window.console) console.error(err);
+      main.innerHTML = '<div class="tarjeta">' + ui.vacio('orante', 'Algo falló al mostrar esta pantalla. Los datos de ejemplo pueden haberse dañado.',
+        '<button type="button" class="btn btn--principal" data-reparar>' + ui.icono('rotate-ccw') + 'Restablecer datos de ejemplo</button>') + '</div>';
+      main.querySelector('[data-reparar]').addEventListener('click', function () { SB.almacen.restablecer(); });
+    }
 
     if (cambioDeRuta) {
       window.scrollTo(0, 0);
@@ -360,9 +396,23 @@
 
   function iniciar() {
     raiz = document.getElementById('app');
+    // una recarga con un diálogo abierto deja su entrada en el historial: se limpia
+    if (history.state && history.state.sbDialogo) history.replaceState(null, '', location.href);
     SB.almacen.cargar();
     SB.almacen.alCambiar(function () { if (rolActual()) render(); });
-    window.addEventListener('hashchange', render);
+    escuchasDocumento();
+    window.addEventListener('hashchange', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('dialog[open]'), function (d) { d._porAtras = true; d.close(); });
+      render();
+    });
+    // Otra pestaña cambió los datos o el rol: se recargan aquí para no pisarlos
+    window.addEventListener('storage', function (ev) {
+      if (ev.key !== 'shabono-gestion-demo' && ev.key !== 'shabono-gestion-rol') return;
+      Array.prototype.forEach.call(document.querySelectorAll('dialog[open]'), function (d) { d._porAtras = true; d.close(); });
+      if (ev.key === 'shabono-gestion-demo') SB.almacen.recargar();
+      render();
+      if (rolActual()) ui.avisar('Los datos cambiaron en otra pestaña: esta ya está al día.');
+    });
     render();
   }
 

@@ -72,6 +72,26 @@
     if (h1) h1.focus();
   }
 
+  /* Tras cerrar un diálogo, el segundo clic de un doble clic no debe caer en la página */
+  var ultimoCierre = 0;
+  document.addEventListener('click', function (ev) {
+    // solo el segundo clic de un doble clic o doble toque (detail ≥ 2); los clics nuevos pasan
+    if (ev.detail >= 2 && Date.now() - ultimoCierre < 500 && !ev.target.closest('dialog[open]')) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+  }, true);
+
+  /* El botón Atrás (o el gesto de Android) cierra el diálogo en lugar de cambiar la página de fondo */
+  var ignorarAtras = false;
+  window.addEventListener('popstate', function () {
+    if (ignorarAtras) { ignorarAtras = false; return; }
+    var abiertos = document.querySelectorAll('dialog[open]');
+    if (abiertos.length) {
+      var ult = abiertos[abiertos.length - 1];
+      ult._porAtras = true;
+      ult.close();
+    }
+  });
+  function entradaDialogo() { return history.state && history.state.sbDialogo; }
+
   function dialogo(op) {
     contadorDialogos += 1;
     var id = 'dialogo-' + contadorDialogos;
@@ -100,6 +120,7 @@
     });
     d.addEventListener('close', function () {
       d.remove();
+      ultimoCierre = Date.now();
       ultimaClave = foco;
       if (op.alCerrar) op.alCerrar();
       if (d._siguiente) {
@@ -107,8 +128,14 @@
         try { d._siguiente(); } finally { heredada = null; }
         return;
       }
+      // quita del historial la entrada que puso el diálogo (salvo si se cerró con Atrás o queda otro abierto)
+      if (!d._porAtras && !document.querySelector('dialog[open]') && entradaDialogo()) { ignorarAtras = true; history.back(); }
       setTimeout(function () { devolverFoco(foco); }, 0);
     });
+    // el instante del cierre se apunta al pedirlo: el segundo clic de un doble clic llega antes del evento close
+    var cerrarNativo = d.close.bind(d);
+    d.close = function (v) { ultimoCierre = Date.now(); cerrarNativo(v); };
+    if (!entradaDialogo()) history.pushState({ sbDialogo: true }, '', location.href);
     d.showModal();
     var primero = op.foco ? d.querySelector(op.foco) : null;
     (primero || d.querySelector('.dialogo__cabeza h2')).focus();
@@ -169,10 +196,11 @@
   /* ---------- Avisos flotantes («Eliminado · Deshacer», 8 s) ---------- */
   var ultimoDeshacer = null;
   function focoSeguro() { var h = document.getElementById('titulo-pantalla'); if (h) h.focus(); }
-  function ejecutarDeshacer(fn) {
+  var genDeshacer = 0;
+  function ejecutarDeshacer(fn, gen) {
     ultimoDeshacer = null;
-    fn();
-    avisar('Se deshizo el cambio.');
+    if (gen !== undefined && SB.almacen && gen !== SB.almacen.generacion) return;   // se restablecieron los datos
+    if (fn() !== false) avisar('Se deshizo el cambio.');
   }
   function avisar(texto, deshacer) {
     var zona = document.getElementById('avisos');
@@ -201,11 +229,12 @@
     correr();
     a.querySelector('[aria-label="Cerrar aviso"]').addEventListener('click', quitar);
     if (deshacer) {
-      ultimoDeshacer = deshacer;
+      var gen = SB.almacen ? SB.almacen.generacion : 0;
+      ultimoDeshacer = function () { return ejecutarDeshacer(deshacer, gen); };
       a.querySelector('.btn--sutil').addEventListener('click', function () {
         quitar();
         focoSeguro();
-        ejecutarDeshacer(deshacer);
+        ejecutarDeshacer(deshacer, gen);
       });
     }
   }
@@ -214,7 +243,7 @@
     if (document.querySelector('dialog[open]') || (ev.target.closest && ev.target.closest('input, textarea, select, [contenteditable]'))) return;
     ev.preventDefault();
     Array.prototype.forEach.call(document.querySelectorAll('#avisos .aviso'), function (x) { x.remove(); });
-    ejecutarDeshacer(ultimoDeshacer);
+    ultimoDeshacer();
   });
   if (SB.almacen) SB.almacen.alCambiar(function () { ultimoDeshacer = null; });
 
@@ -320,6 +349,20 @@
         else if (r.noNegativo && n < 0) msg = 'No puede ser negativo.';
         else if (r.max !== undefined && n > r.max) msg = r.mensajeMax || 'No puede pasar de ' + f.numCantidad(r.max) + '.';
       } else if (r.numero && r.requerido === false && v === '') msg = null;
+      if (!msg && v !== '' && el.type === 'date') {
+        if (el.max && v > el.max) msg = 'No puede ser posterior al ' + f.fecha(el.max) + '.';
+        else if (el.min && v < el.min) msg = 'No puede ser anterior al ' + f.fecha(el.min) + '.';
+      }
+      if (!msg && v !== '' && el.type === 'number') {
+        var nn = Number(v);
+        if (el.max !== '' && nn > Number(el.max)) msg = 'No puede pasar de ' + el.max + '.';
+        else if (el.min !== '' && nn < Number(el.min)) msg = 'No puede ser menor que ' + el.min + '.';
+      }
+      if (!msg && r.numero && v !== '' && el.hasAttribute('data-importe')) {
+        var dec = +el.getAttribute('data-importe');
+        var tope = dec === 3 ? 100000 : 1e10;
+        if (Math.abs(leerCampo(el)) > tope) msg = 'Revisa la cifra: parece demasiado alta.';
+      }
       if (r.extra && !msg) msg = r.extra(v, el);
       if (msg) { marcarError(el, msg); if (!primero) primero = el; }
     });
@@ -374,6 +417,9 @@
   var graficosPendientes = {};
 
   function pintarGraficos(raiz) {
+    graficos.forEach(function (cfg, el) {
+      if (!el.isConnected) { if (observador) observador.unobserve(el); graficos.delete(el); }
+    });
     raiz.querySelectorAll('[data-grafico]').forEach(function (el) {
       var cfg = graficosPendientes[el.getAttribute('data-grafico')];
       if (!cfg) return;

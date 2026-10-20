@@ -172,6 +172,45 @@ const ok = (c, m) => { if (!c) fallos.push(m); else console.log('  ✓ ' + m); }
   ok(await p.evaluate(() => !!document.querySelector('[data-poner-al-dia]')), 'Datos de otro día: aparece «Poner al día»');
   await p.evaluate(() => { const e = JSON.parse(localStorage.getItem('shabono-gestion-demo')); e.creado = window.SB.f.hoyISO(); localStorage.setItem('shabono-gestion-demo', JSON.stringify(e)); });
 
+  // 10d. Doble clic en Guardar: no abre otra cosa debajo
+  await abrir('finanzas/por-pagar');
+  await clic('[data-accion="gasto"]');
+  await p.fill('#ga-concepto', 'Prueba doble clic');
+  await p.fill('#ga-monto', '120');
+  await p.dblclick('dialog[open] button[type="submit"]');
+  await p.waitForTimeout(150);
+  ok(!(await p.evaluate(() => !!document.querySelector('dialog[open]'))) && (await estado()).gastos.filter((g) => g.concepto === 'Prueba doble clic').length === 1, 'Doble clic en Guardar: un solo registro y nada se abre debajo');
+
+  // 10e. Atrás con un diálogo abierto: cierra el diálogo y no cambia de pantalla
+  await abrir('inventario');
+  await clic('[data-accion="detalle"][data-id="tomate"]');
+  await p.goBack();
+  await p.waitForTimeout(150);
+  ok(!(await p.evaluate(() => !!document.querySelector('dialog[open]'))) && (await p.evaluate(() => location.hash)) === '#/inventario', 'Atrás cierra el diálogo y deja la misma pantalla');
+
+  // 10f. Recibir con 0: la línea se conserva y lo que falta queda pedido
+  await abrir('compras?estado=pendiente&proveedor=prov-central');
+  await clic('[data-accion="compra"]');
+  await p.click('dialog[open] [data-recibir]');
+  await p.waitForTimeout(60);
+  await p.fill('[name="cant-0"]', '0');
+  await p.click('dialog[open] button[type="submit"]');
+  await p.waitForTimeout(80);
+  ok(await p.evaluate(() => { const e = window.SB.almacen.estado; const pend = e.compras.filter((c) => c.estado === 'pendiente' && c.proveedorId === 'prov-central');
+    const rec = e.compras.filter((c) => c.estado === 'recibida' && c.proveedorId === 'prov-central' && c.lineas.some((l) => l.productoId === 'arroz' && l.cantidad === 0 && l.pedida === 25));
+    return pend.length === 1 && pend[0].lineas.length === 1 && pend[0].lineas[0].productoId === 'arroz' && rec.length === 1; }), 'Recibir con 0: queda la línea y el arroz sigue pedido');
+
+  // 10g. Cambiar a Bs. convierte el precio escrito
+  await abrir('compras');
+  await clic('[data-accion="nueva-compra"]');
+  await p.selectOption('[name="prod-0"]', 'tomate');
+  await p.fill('[name="precio-0"]', '2');
+  await p.locator('[name="precio-0"]').blur();
+  await p.check('[name="moneda"][value="VES"]');
+  ok(await p.evaluate(() => { const t = window.SB.calc.tasaActual(window.SB.almacen.estado).valor; const v = window.SB.f.leerDecimal(document.querySelector('[name="precio-0"]').value.replace(/\./g, ''), 2); return Math.abs(v - 2 * t) < 0.02; }), 'Cambiar a Bs. convierte el precio escrito con la tasa');
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(80);
+
   // 11. Persistencia tras recargar
   await p.reload();
   await p.waitForTimeout(100);

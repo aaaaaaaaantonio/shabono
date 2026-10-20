@@ -278,7 +278,7 @@
         ui.campo({ id: 'ga-concepto', nombre: 'concepto', etiqueta: 'Concepto', requerido: true, ayuda: 'Por ejemplo: gas, 2 bombonas.' }) +
         '<div class="formulario__fila formulario__fila--2">' +
         ui.campo({ id: 'ga-categoria', nombre: 'categoria', etiqueta: 'Categoría', tipo: 'select', valor: 'Otros', opciones: CATEGORIAS_GASTO }) +
-        ui.campo({ id: 'ga-fecha', nombre: 'fecha', etiqueta: 'Fecha', tipo: 'date', requerido: true, valor: hoy }) + '</div>' +
+        ui.campo({ id: 'ga-fecha', nombre: 'fecha', etiqueta: 'Fecha', tipo: 'date', requerido: true, valor: hoy, attrs: ' max="' + hoy + '"' }) + '</div>' +
         '<fieldset class="grupo-opciones"><legend>Moneda</legend><div class="grupo-opciones__lista">' +
           '<label class="opcion"><input type="radio" name="moneda" value="VES" checked> Bolívares (Bs.)</label>' +
           '<label class="opcion"><input type="radio" name="moneda" value="EUR"> Euros (€)</label></div></fieldset>' +
@@ -320,7 +320,8 @@
       var porPagar = form.querySelector('[name="estado"]:checked').value === 'por-pagar';
       var reglas = [{ nombre: 'concepto', requerido: true, texto: 'el concepto' }, { nombre: 'fecha', requerido: true, texto: 'la fecha' },
         { nombre: 'monto', requerido: true, numero: true, positivo: true, texto: 'el importe' }];
-      if (porPagar) reglas.push({ nombre: 'acreedor', requerido: true, texto: 'a quién se le debe' }, { nombre: 'vence', requerido: true, texto: 'la fecha de vencimiento' });
+      if (porPagar) reglas.push({ nombre: 'acreedor', requerido: true, texto: 'a quién se le debe' }, { nombre: 'vence', requerido: true, texto: 'la fecha de vencimiento',
+        extra: function (v) { return v < ui.valor(form, 'fecha') ? 'Vence antes de la fecha del gasto.' : null; } });
       if (ui.validar(form, reglas)) return;
       var m = form.querySelector('[name="moneda"]:checked').value;
       var dn = f.dinero(m, ui.numero(form, 'monto'), tv().valor);
@@ -406,7 +407,7 @@
       titulo: 'Registrar pago', formulario: true,
       cuerpo: '<div class="formulario"><p><strong>' + esc(cu.acreedor) + '</strong> · ' + esc(cu.concepto) + '</p>' +
         '<p>Importe: ' + f.importe(cu.dinero.moneda, cu.dinero.monto) + '</p>' +
-        ui.campo({ id: 'pa-fecha', nombre: 'fecha', etiqueta: 'Fecha del pago', tipo: 'date', requerido: true, valor: hoy, attrs: ' max="' + hoy + '"' }) +
+        ui.campo({ id: 'pa-fecha', nombre: 'fecha', etiqueta: 'Fecha del pago', tipo: 'date', requerido: true, valor: hoy, attrs: ' min="' + cu.emitida + '" max="' + hoy + '"' }) +
         '<fieldset class="grupo-opciones"><legend>Moneda del pago</legend><div class="grupo-opciones__lista">' +
           '<label class="opcion"><input type="radio" name="moneda" value="EUR"' + (cu.dinero.moneda === 'EUR' ? ' checked' : '') + '> Euros (€)</label>' +
           '<label class="opcion"><input type="radio" name="moneda" value="VES"' + (cu.dinero.moneda === 'VES' ? ' checked' : '') + '> Bolívares (Bs.)</label></div></fieldset>' +
@@ -468,6 +469,7 @@
       return '<button type="button" class="btn btn--principal" data-accion="ingreso">' + ui.icono('plus') + 'Registrar ingreso del día</button>';
     },
     render: function (ctx) {
+      if (ctx.sub && ['ingresos', 'gastos', 'por-pagar'].indexOf(ctx.sub) < 0) { ctx.sub = null; history.replaceState(null, '', '#/finanzas'); }
       var h = subnav(ctx);
       if (!ctx.puede('editarFinanzas')) h += '<p class="filtros__cuenta" style="margin-bottom:var(--espacio-s)">' + ui.icono('info', 'icono--16') + ' Solo lectura: los registros de finanzas los hace Administración.</p>';
       if (!ctx.sub) return h + resumen(ctx);
