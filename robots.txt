@@ -1,4 +1,3 @@
+# Demo interna: no indexar
 User-agent: *
-Allow: /
-
-Sitemap: https://[DOMINIO]/sitemap.xml
+Disallow: /

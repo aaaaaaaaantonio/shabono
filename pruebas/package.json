@@ -1,0 +1,8 @@
+{
+  "name": "shabono-gestion-pruebas",
+  "private": true,
+  "description": "Pruebas de la demo (no se publican): datos, accesibilidad con axe-core y desbordamiento lateral.",
+  "devDependencies": {
+    "axe-core": "4.10.2"
+  }
+}

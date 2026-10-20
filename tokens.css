@@ -1,0 +1,59 @@
+/* Tokens de Shabono · copia literal del bloque «Tokens» de design.md (manda design.md).
+   Si cambia allí, se cambia aquí. */
+:root {
+  /* Papeles (fondos claros) */
+  --cal: #FBF7EF;              /* oklch(0.977 0.011 84.6) · fondo base */
+  --beige: #E8D9BF;            /* oklch(0.891 0.038 81.5) */
+  --terracota-clara: #EDC3AA;  /* oklch(0.847 0.059 52.4) */
+  --salvia-clara: #E3E8D6;     /* oklch(0.922 0.025 119.5) */
+  --lavanda-acai: #EBDDE6;     /* oklch(0.911 0.019 338.7) */
+  --blanco: #FFFFFF;           /* texto de botones · superficie de tarjetas (app) */
+  /* Noche */
+  --verde-oliva: #4F5A2E;      /* oklch(0.447 0.067 120.7) · bloques oscuros, barra lateral (app) */
+  --negro-logo: #1C1B19;       /* fondo de la portada web · base de --velo */
+  --crema: #F2ECE1;            /* texto sobre noche (6,3:1 sobre oliva) */
+  --crema-suave: color-mix(in srgb, var(--crema) 85%, transparent); /* texto secundario sobre noche (5,1:1) */
+  /* Tinta */
+  --tinta: #262B14;            /* oklch(0.277 0.039 119.1) · texto principal */
+  --tinta-suave: #545A44;      /* texto secundario; sobre --terracota-clara usar --tinta-tierra */
+  --tinta-tierra: #5A4436;     /* texto secundario sobre terracota claro */
+  --granito: #8C8A85;          /* bordes de campo y rayas de tabla, solo sobre cal o blanco (≥3,2:1); nunca texto */
+  --linea: #D9D6CC;            /* app · separa dentro de una tarjeta, no la delimita (1,4:1) */
+  /* Acentos */
+  --terracota: #C2582B;        /* color del local · borde del botón secundario al pasar el cursor; no lleva texto blanco (4,4:1) */
+  --terracota-boton: #B9522A;  /* oklch(0.563 0.144 40.5) · fondo del botón principal */
+  --terracota-hondo: #A8461F;  /* botón principal al pasar el cursor */
+  --terracota-texto: #9C4421;  /* texto de acento y foco sobre claro */
+  --terracota-trazo: #9C4421;  /* trazo de petroglifos: fijo aunque una zona cambie --terracota-texto */
+  --terracota-tierra: #7A3318; /* acento y foco sobre terracota claro */
+  --acai: #4A1E3F;             /* oklch(0.312 0.081 337.9) · bloques en morado, texto de info */
+  --acai-trazo: #6E3B60;       /* dibujos sobre beige y lavanda */
+  --dorado-luz: #E3B866;       /* oklch(0.804 0.112 82.1) · sólido solo sobre noche o açaí; sobre claro, solo translúcido (halo) */
+  /* Estados · app (siempre con icono y palabra, nunca solo color) */
+  --estado-ok-fondo: var(--salvia-clara);         --estado-ok-texto: var(--verde-oliva);        /* 5,9:1 */
+  --estado-aviso-fondo: #F5E2B5;                  --estado-aviso-texto: #6B4A10;                /* 6,3:1 */
+  --estado-peligro-fondo: var(--terracota-clara); --estado-peligro-texto: var(--terracota-tierra); /* 5,6:1 */
+  --estado-info-fondo: var(--lavanda-acai);       --estado-info-texto: var(--acai);             /* 10,3:1 */
+  --velo: color-mix(in srgb, var(--negro-logo) 50%, transparent); /* app · fondo de los modales */
+
+  /* woff2 variables propios en fonts/ (Inter 100–900 y Playfair 400–900, subconjunto latino con €),
+     con licencia SIL OFL 1.1. Sin Google Fonts. La app no copia la cursiva de Playfair. */
+  --fuente-titulos: "Playfair Display", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --texto-xs: .8125rem; --texto-s: .875rem; --texto-m: 1rem; --texto-l: 1.25rem; --texto-xl: 1.5rem; --texto-2xl: 2rem; /* app */
+  --espacio-3xs: .25rem; --espacio-2xs: .5rem; --espacio-xs: .75rem; --espacio-s: 1rem;  /* app · escala de 4 px */
+  --espacio-m: 1.5rem;   --espacio-l: 2rem;    --espacio-xl: 3rem;   --espacio-2xl: 4rem;
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);      /* entradas y trazos */
+  --ease-in: cubic-bezier(.7, 0, .84, 0);       /* salidas */
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);  /* fundidos */
+  --transicion: .35s cubic-bezier(.2, .7, .2, 1); /* solo web */
+  --duracion-app: 180ms;                        /* app · cambios de estado */
+
+  --radio: 14px;               /* tarjetas, fotos grandes y mapa */
+  --radio-boton: 2px;          /* botones; el segundo borde lleva 3px */
+  --radio-campo: 4px;          /* app · campos */
+  --halo: 0 0 0 1px color-mix(in srgb, var(--dorado-luz) 50%, transparent),
+          0 0 22px 3px color-mix(in srgb, var(--dorado-luz) 25%, transparent),
+          0 0 60px 10px color-mix(in srgb, var(--dorado-luz) 10%, transparent);
+}
