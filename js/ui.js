@@ -49,6 +49,7 @@
 
   function claveFoco(el) {
     if (!el || !el.getAttribute) return null;
+    if (el.getAttribute('data-foco')) return { foco: el.getAttribute('data-foco'), elemento: el };
     var a = el.getAttribute('data-accion');
     var id = el.getAttribute('data-id');
     return a ? { accion: a, id: id, elemento: el } : { elemento: el };
@@ -57,6 +58,10 @@
   function devolverFoco(clave) {
     if (!clave || document.querySelector('dialog[open]')) return;
     if (clave.elemento && document.contains(clave.elemento) && clave.elemento.getClientRects().length) { clave.elemento.focus(); return; }
+    if (clave.foco) {
+      var porFoco = Array.prototype.find.call(document.querySelectorAll('[data-foco="' + clave.foco + '"]'), function (x) { return x.getClientRects().length > 0; });
+      if (porFoco) { porFoco.focus(); return; }
+    }
     if (clave.accion) {
       var sel = '[data-accion="' + clave.accion + '"]' + (clave.id ? '[data-id="' + CSS.escape(clave.id) + '"]' : '');
       // la tabla y las tarjetas del teléfono repiten el botón: se elige el que se ve
@@ -74,10 +79,10 @@
     d.className = 'dialogo';
     d.setAttribute('aria-labelledby', id + '-titulo');
     d.innerHTML =
-      '<div class="dialogo__cabeza"><h2 class="subtitulo" id="' + id + '-titulo">' + esc(op.titulo) + '</h2>' +
+      '<div class="dialogo__cabeza"><h2 class="subtitulo" id="' + id + '-titulo" tabindex="-1">' + esc(op.titulo) + '</h2>' +
       '<button type="button" class="btn btn--icono" data-cerrar aria-label="Cerrar">' + icono('x', 'icono--24') + '</button></div>' +
       (op.formulario ? '<form class="dialogo__form" novalidate>' : '') +
-      '<div class="dialogo__cuerpo" tabindex="0">' + op.cuerpo + '</div>' +
+      '<div class="dialogo__cuerpo">' + op.cuerpo + '</div>' +
       (op.pie ? '<div class="dialogo__pie">' + op.pie + '</div>' : '') +
       (op.formulario ? '</form>' : '');
     // Vuelve al botón que lo abrió (Safari no lo enfoca al hacer clic) o, si viene de otro diálogo, a donde volvía aquel
@@ -106,7 +111,31 @@
     });
     d.showModal();
     var primero = op.foco ? d.querySelector(op.foco) : null;
-    (primero || d.querySelector('.dialogo__cuerpo')).focus();
+    (primero || d.querySelector('.dialogo__cabeza h2')).focus();
+    var cuerpoD = d.querySelector('.dialogo__cuerpo');
+    function marcarDesplazable() {
+      var desplaza = cuerpoD.scrollHeight > cuerpoD.clientHeight + 1;
+      if (desplaza) {
+        cuerpoD.tabIndex = 0;
+        cuerpoD.setAttribute('role', 'region');
+        cuerpoD.setAttribute('aria-labelledby', id + '-titulo');
+      } else {
+        cuerpoD.removeAttribute('tabindex');
+        cuerpoD.removeAttribute('role');
+        cuerpoD.removeAttribute('aria-labelledby');
+      }
+    }
+    marcarDesplazable();
+    if (typeof ResizeObserver !== 'undefined') {
+      var ro = new ResizeObserver(marcarDesplazable);
+      ro.observe(cuerpoD);
+      d.addEventListener('close', function () { ro.disconnect(); });
+    }
+    // los resúmenes que cambian al escribir se anuncian una vez, al dejar de escribir
+    d.addEventListener('input', function () {
+      var textos = Array.prototype.map.call(d.querySelectorAll('[data-resumen]'), function (x) { return x.textContent.trim(); }).filter(Boolean);
+      if (textos.length) anunciar(textos.join('. '), 900);
+    });
     enlazarImportes(d);
     if (op.alAbrir) op.alAbrir(d);
     return d;
@@ -123,37 +152,71 @@
       var respuesta = false;
       var d = dialogo({
         titulo: op.titulo,
-        cuerpo: '<p>' + op.texto + '</p>',
+        cuerpo: '<p data-descripcion>' + op.texto + '</p>',
         pie: '<button type="button" class="btn btn--secundario" data-cerrar>' + esc(op.cancelar || 'Cancelar') + '</button>' +
           '<button type="button" class="btn btn--principal" data-si>' + esc(op.aceptar) + '</button>',
-        foco: '[data-si]',
+        foco: op.destructivo ? '.dialogo__pie [data-cerrar]' : '[data-si]',
         alCerrar: function () { resolver(respuesta); }
       });
+      d.setAttribute('role', 'alertdialog');
+      var desc = d.querySelector('[data-descripcion]');
+      desc.id = d.getAttribute('aria-labelledby').replace('-titulo', '-desc');
+      d.setAttribute('aria-describedby', desc.id);
       d.querySelector('[data-si]').addEventListener('click', function () { respuesta = true; d.close(); });
     });
   }
 
   /* ---------- Avisos flotantes («Eliminado · Deshacer», 8 s) ---------- */
+  var ultimoDeshacer = null;
+  function focoSeguro() { var h = document.getElementById('titulo-pantalla'); if (h) h.focus(); }
+  function ejecutarDeshacer(fn) {
+    ultimoDeshacer = null;
+    fn();
+    avisar('Se deshizo el cambio.');
+  }
   function avisar(texto, deshacer) {
     var zona = document.getElementById('avisos');
     if (!zona) return;
     var a = document.createElement('div');
     a.className = 'aviso';
-    a.innerHTML = '<span class="aviso__texto">' + esc(texto) + '</span>' +
+    a.innerHTML = '<span class="aviso__texto">' + esc(texto) + (deshacer ? '<span class="sr"> Para deshacerlo, pulsa Control y Z.</span>' : '') + '</span>' +
       (deshacer ? '<button type="button" class="btn btn--sutil">Deshacer</button>' : '') +
       '<button type="button" class="btn btn--icono" aria-label="Cerrar aviso">' + icono('x') + '</button>';
     zona.appendChild(a);
-    var t = setTimeout(quitar, 8000);
-    function quitar() { clearTimeout(t); if (a.parentNode) a.remove(); }
+    var restante = 8000;
+    var inicio = 0;
+    var t = null;
+    function correr() { clearTimeout(t); inicio = Date.now(); t = setTimeout(quitar, restante); }
+    function pausar() { clearTimeout(t); restante = Math.max(2000, restante - (Date.now() - inicio)); }
+    function quitar() {
+      clearTimeout(t);
+      var teniaFoco = a.contains(document.activeElement);
+      if (a.parentNode) a.remove();
+      if (teniaFoco) focoSeguro();
+    }
+    a.addEventListener('mouseenter', pausar);
+    a.addEventListener('mouseleave', correr);
+    a.addEventListener('focusin', pausar);
+    a.addEventListener('focusout', function (ev) { if (!a.contains(ev.relatedTarget)) correr(); });
+    correr();
     a.querySelector('[aria-label="Cerrar aviso"]').addEventListener('click', quitar);
     if (deshacer) {
+      ultimoDeshacer = deshacer;
       a.querySelector('.btn--sutil').addEventListener('click', function () {
         quitar();
-        deshacer();
-        avisar('Se deshizo el cambio.');
+        focoSeguro();
+        ejecutarDeshacer(deshacer);
       });
     }
   }
+  document.addEventListener('keydown', function (ev) {
+    if (!ultimoDeshacer || ev.key.toLowerCase() !== 'z' || !(ev.ctrlKey || ev.metaKey) || ev.shiftKey || ev.altKey) return;
+    if (document.querySelector('dialog[open]') || (ev.target.closest && ev.target.closest('input, textarea, select, [contenteditable]'))) return;
+    ev.preventDefault();
+    Array.prototype.forEach.call(document.querySelectorAll('#avisos .aviso'), function (x) { x.remove(); });
+    ejecutarDeshacer(ultimoDeshacer);
+  });
+  if (SB.almacen) SB.almacen.alCambiar(function () { ultimoDeshacer = null; });
 
   /* ---------- Campos ---------- */
   function campo(op) {
@@ -214,12 +277,20 @@
   }
 
   /* Importes: aceptan coma o punto y al salir del campo se escriben 1.234,56 */
+  function leerCampo(el) {
+    var v = el.value.trim();
+    if (el.dataset.formateado && v === el.dataset.formateado) {
+      return parseFloat(v.replace('\u2212', '-').split('.').join('').replace(',', '.'));
+    }
+    return f.leerDecimal(v, +el.getAttribute('data-importe') || 2);
+  }
   function formatearImporte(input) {
     var dec = +input.getAttribute('data-importe') || 2;
-    var n = f.leerDecimal(input.value, dec);
+    var n = leerCampo(input);
     if (input.value.trim() === '' || isNaN(n)) return;
     var nf = new Intl.NumberFormat('es-VE', { minimumFractionDigits: dec === 2 || dec > 3 ? 2 : 0, maximumFractionDigits: dec });
-    input.value = (n < 0 ? '−' : '') + nf.format(Math.abs(n));
+    input.value = (n < 0 ? '\u2212' : '') + nf.format(Math.abs(n));
+    input.dataset.formateado = input.value;
   }
   function enlazarImportes(raiz) {
     raiz.querySelectorAll('[data-importe]').forEach(function (i) {
@@ -241,8 +312,10 @@
       var msg = null;
       if (r.requerido && v === '') msg = r.mensaje || 'Escribe ' + r.texto + '.';
       else if (r.numero && v !== '') {
-        var n = f.leerDecimal(v, +el.getAttribute('data-importe') || 2);
+        var n = leerCampo(el);
+        var entero = typeof r.entero === 'function' ? r.entero() : r.entero;
         if (isNaN(n)) msg = 'Escribe un número, por ejemplo 12,50.';
+        else if (entero && Math.abs(n - Math.round(n)) > 1e-9) msg = 'Escribe un número entero: se cuenta por unidades.';
         else if (r.positivo && n <= 0) msg = 'Debe ser mayor que cero.';
         else if (r.noNegativo && n < 0) msg = 'No puede ser negativo.';
         else if (r.max !== undefined && n > r.max) msg = r.mensajeMax || 'No puede pasar de ' + f.numCantidad(r.max) + '.';
@@ -250,14 +323,41 @@
       if (r.extra && !msg) msg = r.extra(v, el);
       if (msg) { marcarError(el, msg); if (!primero) primero = el; }
     });
-    if (primero) primero.focus();
+    if (primero) {
+      // si el foco ya estaba en ese campo (se envió con Intro), focus() no avisa: se anuncia el error
+      if (document.activeElement === primero) {
+        var err = document.getElementById(primero.id + '-error');
+        anunciar(err ? err.textContent : 'Revisa los campos marcados.', 0, 'alert');
+      } else primero.focus();
+    }
     return primero;
   }
 
   function valor(form, nombre) { var el = form.querySelector('[name="' + nombre + '"]'); return el ? el.value.trim() : ''; }
   function numero(form, nombre) {
     var el = form.querySelector('[name="' + nombre + '"]');
-    return el ? f.leerDecimal(el.value, +el.getAttribute('data-importe') || 2) : NaN;
+    return el ? leerCampo(el) : NaN;
+  }
+
+  /* Anuncios para lectores de pantalla, dentro del diálogo abierto si lo hay (lo de fuera queda inerte) */
+  var temporizadorAnuncio;
+  function anunciar(texto, retraso, rol) {
+    clearTimeout(temporizadorAnuncio);
+    temporizadorAnuncio = setTimeout(function () {
+      var raiz = document.querySelector('dialog[open]') || document.body;
+      var sel = rol === 'alert' ? '[data-anuncio-alerta]' : '[data-anuncio]';
+      var zona = raiz.querySelector(':scope > ' + sel) || raiz.querySelector(sel);
+      if (!zona || (raiz !== document.body && !raiz.contains(zona))) {
+        zona = document.createElement('p');
+        zona.className = 'sr';
+        zona.setAttribute(rol === 'alert' ? 'data-anuncio-alerta' : 'data-anuncio', '');
+        zona.setAttribute('role', rol === 'alert' ? 'alert' : 'status');
+        zona.setAttribute('aria-atomic', 'true');
+        raiz.appendChild(zona);
+      }
+      zona.textContent = '';
+      setTimeout(function () { zona.textContent = texto; }, 60);
+    }, retraso === undefined ? 700 : retraso);
   }
 
   /* ---------- Gráficos de líneas (se dibujan al ancho real de su caja) ---------- */
@@ -357,7 +457,7 @@
 
   SB.ui = {
     icono: icono, estado: estado, dinero: dinero, dineroDe: dineroDe, dibujo: dibujo, vacio: vacio, esqueleto: esqueleto,
-    dialogo: dialogo, cerrarYAbrir: cerrarYAbrir, confirmar: confirmar, fijarDisparador: fijarDisparador, avisar: avisar, devolverFoco: devolverFoco,
+    anunciar: anunciar, dialogo: dialogo, cerrarYAbrir: cerrarYAbrir, confirmar: confirmar, fijarDisparador: fijarDisparador, avisar: avisar, devolverFoco: devolverFoco,
     campo: campo, marcarError: marcarError, limpiarError: limpiarError, enlazarImportes: enlazarImportes, validar: validar,
     valor: valor, numero: numero, grafico: grafico, pintarGraficos: pintarGraficos, leyenda: leyenda
   };

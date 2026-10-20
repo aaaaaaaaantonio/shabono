@@ -33,7 +33,7 @@
       if (q && f.normalizar(x.p.nombre + ' ' + x.p.categoria).indexOf(q) < 0) return false;
       if (p.categoria && x.p.categoria !== p.categoria) return false;
       if (p.estado && !x.estados.some(function (s) { return s.clave === p.estado; })) return false;
-      if (p.vence === 'semana' && !c.venceEnDias(e, x.p.id, hoy, 7)) return false;
+      if (p.vence === 'semana' && !c.venceEnDias(e, x.p.id, hoy, 7) && !x.estados.some(function (s) { return s.clave === 'vence-pronto'; })) return false;
       return true;
     }).sort(function (a, b) {
       return c.PESO[b.estados[0].nivel] - c.PESO[a.estados[0].nivel] || a.p.nombre.localeCompare(b.p.nombre, 'es');
@@ -253,6 +253,7 @@
       var reglas = [];
       if (!p) reglas.push({ nombre: 'producto', requerido: true, mensaje: 'Elige el producto.' });
       reglas.push({ nombre: 'cantidad', requerido: true, numero: true, texto: 'la cantidad', positivo: tipo !== 'conteo', noNegativo: tipo === 'conteo',
+        entero: !!prod && prod.unidad === 'und',
         max: tipo === 'conteo' || !prod ? undefined : util, mensajeMax: prod ? 'Solo hay ' + f.cantidad(util, prod.unidad) + ' utilizables.' : '' });
       if (tipo === 'merma') reglas.push({ nombre: 'motivo', requerido: true, mensaje: 'Explica el motivo de la merma.' });
       reglas.push({ nombre: 'fecha', requerido: true, texto: 'la fecha' });
@@ -341,7 +342,7 @@
           var otro = e.productos.find(function (x) { return x.id !== pid && f.normalizar(x.nombre) === f.normalizar(v); });
           return otro ? 'Ya existe un producto con ese nombre.' : null;
         } },
-        { nombre: 'minimo', requerido: true, numero: true, noNegativo: true, texto: 'el mínimo' },
+        { nombre: 'minimo', requerido: true, numero: true, noNegativo: true, texto: 'el mínimo', entero: function () { return (conLotes ? p.unidad : ui.valor(form, 'unidad')) === 'und'; } },
         { nombre: 'aviso', requerido: true, numero: true, noNegativo: true, texto: 'los días de aviso' }
       ])) return;
       var datosP = {

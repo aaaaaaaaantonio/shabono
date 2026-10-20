@@ -9,9 +9,18 @@
   function suma(lista, fn) { return lista.reduce(function (s, x) { return s + fn(x); }, 0); }
 
   /* ---------- Tasa ---------- */
-  function tasaActual(e) {
-    var t = e.tasas[0];
-    e.tasas.forEach(function (x) { if (x.fecha >= t.fecha) t = x; });
+  /* La tasa vigente en una fecha es la última publicada con fecha valor igual o anterior */
+  function tasaVigente(e, fecha) {
+    var t = null;
+    e.tasas.forEach(function (x) { if (x.fecha <= fecha && (!t || x.fecha >= t.fecha)) t = x; });
+    if (!t) e.tasas.forEach(function (x) { if (!t || x.fecha < t.fecha) t = x; });
+    return t;
+  }
+  function tasaActual(e) { return tasaVigente(e, f.hoyISO()); }
+  function tasaProxima(e) {
+    var hoy = f.hoyISO();
+    var t = null;
+    e.tasas.forEach(function (x) { if (x.fecha > hoy && (!t || x.fecha < t.fecha)) t = x; });
     return t;
   }
 
@@ -158,16 +167,19 @@
       var up = ultimoPrecio(e, r.productoId, hasta);
       var costoUnit = up ? up.eur : null;
       return { producto: p, productoId: r.productoId, cantidad: r.cantidad, costoUnit: costoUnit,
-        subtotal: costoUnit === null ? 0 : costoUnit * r.cantidad, sinPrecio: costoUnit === null };
+        subtotal: costoUnit === null ? 0 : f.redondear(costoUnit * r.cantidad, 2), sinPrecio: costoUnit === null };
     });
-    return { total: f.redondear(suma(lineas, function (l) { return l.subtotal; }), 4), lineas: lineas,
+    return { total: f.redondear(suma(lineas, function (l) { return l.subtotal; }), 2), lineas: lineas,
       completo: lineas.every(function (l) { return !l.sinPrecio; }) };
   }
 
   function margen(costo, precio) {
     if (!precio) return { costoPct: null, margen: null, margenPct: null };
-    return { costoPct: costo / precio, margen: precio - costo, margenPct: (precio - costo) / precio };
+    return { costoPct: costo / precio, margen: f.redondear(precio - costo, 2), margenPct: (precio - costo) / precio };
   }
+  /* Bs. de un importe en € a la tasa de hoy; el margen en Bs. es precio en Bs. menos costo en Bs. */
+  function bsHoy(e, eur) { return f.redondear(eur * tasaActual(e).valor, 2); }
+  function margenBs(e, costo, precio) { return f.redondear(bsHoy(e, precio) - bsHoy(e, costo), 2); }
 
   function precioSugerido(costo, objetivo) { return Math.ceil(costo / objetivo * 2) / 2; }
 
@@ -287,7 +299,7 @@
     var agotados = cuenta('agotado');
     if (agotados.length) r.push({ nivel: 'peligro', texto: 'Agotado', titulo: plural(agotados.length, 'producto agotado', 'productos agotados'), detalle: nombres(agotados), enlace: '#/inventario?estado=agotado' });
     var vencidos = cuenta('vencido');
-    if (vencidos.length) r.push({ nivel: 'peligro', texto: 'Vencido', titulo: plural(vencidos.length, 'producto con un lote vencido', 'productos con lotes vencidos'), detalle: nombres(vencidos) + ' · hay que darlo de baja', enlace: '#/inventario?estado=vencido' });
+    if (vencidos.length) r.push({ nivel: 'peligro', texto: 'Vencido', titulo: plural(vencidos.length, 'producto con un lote vencido', 'productos con lotes vencidos'), detalle: nombres(vencidos) + (vencidos.length === 1 ? ' · hay que darlo de baja' : ' · hay que darlos de baja'), enlace: '#/inventario?estado=vencido' });
 
     var platosEstado = e.platos.map(function (pl) { return { p: pl, estado: estadoPlato(e, pl, hoy) }; });
     var noDisp = platosEstado.filter(function (x) { return x.estado.clave === 'no-disponible'; });
@@ -298,11 +310,12 @@
 
     var bajo = cuenta('bajo-minimo');
     if (bajo.length) r.push({ nivel: 'aviso', texto: 'Bajo mínimo', titulo: plural(bajo.length, 'producto bajo mínimo', 'productos bajo mínimo'), detalle: nombres(bajo), enlace: '#/inventario?estado=bajo-minimo' });
-    var semana = conEstado.filter(function (x) { return venceEnDias(e, x.p.id, hoy, 7); });
+    var esPronto = function (x) { return x.estados.some(function (s) { return s.clave === 'vence-pronto'; }); };
+    var semana = conEstado.filter(function (x) { return venceEnDias(e, x.p.id, hoy, 7) || esPronto(x); });
     if (semana.length) {
-      var pronto = semana.filter(function (x) { return x.estados.some(function (s) { return s.clave === 'vence-pronto'; }); }).length;
+      var pronto = semana.filter(esPronto).length;
       r.push({ nivel: 'aviso', texto: 'Vence pronto', titulo: plural(semana.length, 'producto vence esta semana', 'productos vencen esta semana'),
-        detalle: nombres(semana) + (pronto ? ' · ' + plural(pronto, 'vence', 'vencen') + ' en ' + e.config.diasAviso + ' días o menos' : ''), enlace: '#/inventario?vence=semana' });
+        detalle: nombres(semana) + (pronto ? ' · ' + plural(pronto, 'ya está en su aviso de vencimiento', 'ya están en su aviso de vencimiento') : ''), enlace: '#/inventario?vence=semana' });
     }
     if (puede('verCostos')) {
       var bajos = platosEstado.filter(function (x) { return x.estado.clave === 'margen-bajo'; });
@@ -316,11 +329,11 @@
   }
 
   SB.calc = {
-    PESO: PESO, porId: porId, suma: suma, tasaActual: tasaActual, diasAviso: diasAviso, lotesDe: lotesDe, loteVencido: loteVencido,
+    PESO: PESO, porId: porId, suma: suma, tasaActual: tasaActual, tasaVigente: tasaVigente, tasaProxima: tasaProxima, diasAviso: diasAviso, lotesDe: lotesDe, loteVencido: loteVencido,
     existencia: existencia, proximoVence: proximoVence, comprasPendientesDe: comprasPendientesDe, estadosProducto: estadosProducto,
     venceEnDias: venceEnDias, valorProducto: valorProducto, valorInventario: valorInventario, descontar: descontar,
     historialPrecios: historialPrecios, ultimoPrecio: ultimoPrecio, preciosPorProveedor: preciosPorProveedor,
-    costoPlato: costoPlato, margen: margen, precioSugerido: precioSugerido, estadoPlato: estadoPlato, evolucionCosto: evolucionCosto,
+    costoPlato: costoPlato, margen: margen, bsHoy: bsHoy, margenBs: margenBs, precioSugerido: precioSugerido, estadoPlato: estadoPlato, evolucionCosto: evolucionCosto,
     estadoCuenta: estadoCuenta, porPagar: porPagar, sumaDinero: sumaDinero, totalesPeriodo: totalesPeriodo, totalesMes: totalesMes,
     rangoMes: rangoMes, mesesConDatos: mesesConDatos, semanas: semanas, alertas: alertas
   };

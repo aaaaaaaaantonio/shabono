@@ -36,6 +36,7 @@
 
 html {
   overflow-x: clip;
+  scroll-padding-top: calc(var(--franja-alto) + 3.25rem);   /* el foco no queda bajo la franja ni la cabecera de la tabla */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -317,22 +318,24 @@ table { font-variant-numeric: tabular-nums; }
   .nav-principal {
     position: fixed;
     inset: auto 0 0 0;
-    height: calc(var(--nav-movil) + env(safe-area-inset-bottom));
+    min-height: calc(var(--nav-movil) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .nav-principal__lista { height: var(--nav-movil); }
+  .nav-principal__lista { min-height: var(--nav-movil); }
   .nav-principal__lista > li { flex: 1 1 0; min-width: 0; }
   .nav-principal__enlace {
     flex-direction: column;
     justify-content: flex-start;
     gap: .2rem;
-    height: 100%;
-    padding: .5rem .15rem .2rem;
+    min-height: var(--nav-movil);
+    padding: .5rem .1rem .3rem;
     font-size: .75rem;
     text-align: center;
   }
   .nav-principal__enlace[aria-current="page"]::before { inset: 0 18% auto; height: 3px; }
-  .contenido { padding-bottom: calc(var(--nav-movil) + env(safe-area-inset-bottom) + var(--espacio-l)); }
+  .contenido { padding-bottom: calc(var(--nav-real, calc(var(--nav-movil) + env(safe-area-inset-bottom))) + var(--espacio-l)); }
+  html { scroll-padding-bottom: calc(var(--nav-real, var(--nav-movil)) + .5rem); scroll-padding-top: calc(var(--franja-alto) + .5rem); }
+  .nav-principal__movil { overflow-wrap: anywhere; max-width: 100%; }
 }
 
 /* Tableta: barra lateral de iconos con etiqueta corta */
@@ -414,7 +417,7 @@ table { font-variant-numeric: tabular-nums; }
   align-items: center;
   gap: .5rem 1rem;
   flex-wrap: wrap;
-  min-height: var(--franja-alto);
+  min-height: 3.25rem;
   padding: .25rem var(--gutter);
   background: var(--cal);
   border-bottom: 1px solid var(--linea);
@@ -898,7 +901,7 @@ dialog.dialogo::backdrop { background: var(--velo); }
   z-index: 60;
   left: 50%;
   translate: -50% 0;
-  bottom: calc(var(--nav-movil) + env(safe-area-inset-bottom) + .75rem);
+  bottom: calc(var(--nav-real, calc(var(--nav-movil) + env(safe-area-inset-bottom))) + .75rem);
   width: min(30rem, 100% - 2rem);
   display: grid;
   gap: .5rem;
@@ -1004,7 +1007,8 @@ dialog.dialogo::backdrop { background: var(--velo); }
   line-height: 1.35;
   justify-content: stretch;
 }
-.rol strong { display: block; font-size: var(--texto-m); }
+.rol strong { display: block; font-size: var(--texto-m); color: var(--crema); }
+.rol:hover span { color: var(--crema); }
 .rol span { display: block; font-weight: 400; font-size: var(--texto-s); color: var(--crema-suave); letter-spacing: 0; }
 .acceso__nota { display: grid; gap: .5rem; justify-items: center; font-size: var(--texto-xs); color: var(--crema-suave); }
 .acceso__nota p { margin: 0; }
@@ -1055,3 +1059,24 @@ dialog.dialogo::backdrop { background: var(--velo); }
 }
 @media (min-width: 64rem) { .nav-principal__pie span { display: block; font-size: var(--texto-xs); } }
 @media (max-width: 39.999rem) { .cabecera-pantalla > .acciones { width: 100%; } }
+
+/* Entre 40 y 44rem la tasa puede partirse para que la franja siga en una línea */
+@media (min-width: 40rem) and (max-width: 43.999rem) {
+  .tasa--franja .tasa__texto { white-space: normal; }
+  .tasa--franja { flex: 0 1 15rem; }
+}
+/* Alturas muy bajas (zoom al 400 %): nada fijo arriba y el diálogo se desplaza entero */
+@media (max-height: 30rem) {
+  .franja { position: static; }
+  .tabla th { top: 0; }
+  html { scroll-padding-top: 0; }
+  dialog.dialogo { overflow-y: auto; }
+  dialog.dialogo[open] { display: block; }
+  .dialogo__cuerpo { overflow: visible; }
+  .dialogo__pie .btn { flex: 1 1 40%; }
+}
+.franja .btn--sutil { min-height: 44px; font-size: var(--texto-s); }
+
+/* Instalada en el teléfono: respeta la zona de la cámara y la barra de estado */
+.franja { padding-top: max(.25rem, env(safe-area-inset-top)); }
+.acceso { padding-top: max(2rem, env(safe-area-inset-top)); }

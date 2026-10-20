@@ -44,6 +44,11 @@ const ok = (c, m) => { if (!c) fallos.push(m); else console.log('  ✓ ' + m); }
   await p.fill('[name="precio-0"]', '1780,50');
   await p.locator('[name="precio-0"]').blur();
   ok((await p.inputValue('[name="precio-0"]')) === '1.780,50', 'Importe se formatea 1.780,50 al salir del campo');
+  await p.fill('[name="cant-0"]', '1200');
+  await p.locator('[name="cant-0"]').blur();
+  await p.locator('[name="cant-0"]').blur();
+  ok(await p.evaluate(() => window.SB.ui && document.querySelector('[name="cant-0"]').value === '1.200'), 'Cantidad 1200 se escribe 1.200');
+  await p.fill('[name="cant-0"]', '10');
   await p.check('[name="estado"][value="recibida"]');
   await p.click('dialog[open] button[type="submit"]');
   await p.waitForTimeout(80);
@@ -152,6 +157,20 @@ const ok = (c, m) => { if (!c) fallos.push(m); else console.log('  ✓ ' + m); }
   await p.click('#avisos .aviso:last-child .btn--sutil');
   await p.waitForTimeout(60);
   ok((await estado()).proveedores.some((x) => x.id === nuevo.id), 'Deshacer: el proveedor vuelve');
+
+  // 10b. Ctrl+Z deshace la última eliminación
+  await clic(`[data-accion="proveedor"][data-id="${nuevo.id}"]`);
+  await p.click('dialog[open] [data-eliminar]');
+  await p.waitForTimeout(60);
+  await p.keyboard.press('Control+z');
+  await p.waitForTimeout(60);
+  ok((await estado()).proveedores.some((x) => x.id === nuevo.id), 'Ctrl+Z deshace la eliminación');
+
+  // 10c. Con datos de otro día ya modificados, la franja ofrece ponerlos al día
+  await p.evaluate(() => { const e = JSON.parse(localStorage.getItem('shabono-gestion-demo')); e.creado = '2026-01-01'; localStorage.setItem('shabono-gestion-demo', JSON.stringify(e)); });
+  await p.reload(); await p.waitForTimeout(100);
+  ok(await p.evaluate(() => !!document.querySelector('[data-poner-al-dia]')), 'Datos de otro día: aparece «Poner al día»');
+  await p.evaluate(() => { const e = JSON.parse(localStorage.getItem('shabono-gestion-demo')); e.creado = window.SB.f.hoyISO(); localStorage.setItem('shabono-gestion-demo', JSON.stringify(e)); });
 
   // 11. Persistencia tras recargar
   await p.reload();

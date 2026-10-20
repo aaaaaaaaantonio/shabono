@@ -126,7 +126,7 @@
   /* Recibir: crea lotes, suma existencias, guarda el precio y anota el gasto o la cuenta por pagar */
   function recibir(est, co, fecha, cantidades, vences, rolNombre) {
     var prov = provDe(est, co.proveedorId);
-    var tasa = c.tasaActual(est).valor;
+    var tasa = c.tasaVigente(est, fecha).valor;
     co.estado = 'recibida';
     co.recibida = fecha;
     co.recibidaPor = rolNombre;
@@ -142,7 +142,7 @@
         cantidad: l.cantidad, nota: 'Compra a ' + prov.nombre, por: rolNombre });
     });
     co.lineas = co.lineas.filter(function (l) { return l.cantidad > 0; });
-    co.total = f.dinero(co.moneda, co.lineas.reduce(function (s, l) { return s + l.precio * l.cantidad; }, 0), tasa);
+    co.total = f.dinero(co.moneda, co.lineas.reduce(function (s, l) { return s + f.redondear(l.precio * l.cantidad, 2); }, 0), tasa);
     if (co.pago === 'contado') {
       var g = { id: SB.almacen.nuevoId('gasto'), fecha: fecha, categoria: 'Insumos', concepto: 'Compra a ' + prov.nombre, proveedorId: co.proveedorId,
         dinero: co.total, origen: 'compra', compraId: co.id, por: rolNombre };
@@ -192,7 +192,10 @@
       ev.preventDefault();
       var form = ev.target;
       var reglas = [{ nombre: 'fecha', requerido: true, texto: 'la fecha' }];
-      co.lineas.forEach(function (l, i) { reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, noNegativo: true, texto: 'la cantidad' }); });
+      co.lineas.forEach(function (l, i) {
+        var pr = c.porId(e.productos, l.productoId);
+        reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, noNegativo: true, texto: 'la cantidad', entero: !!pr && pr.unidad === 'und' });
+      });
       if (ui.validar(form, reglas)) return;
       var cantidades = co.lineas.map(function (l, i) { return f.redondear(ui.numero(form, 'cant-' + i), 3); });
       if (cantidades.every(function (x) { return x === 0; })) { ui.marcarError(form.querySelector('[name="cant-0"]'), 'Si no llegó nada, cierra y deja el pedido pendiente.'); form.querySelector('[name="cant-0"]').focus(); return; }
@@ -234,7 +237,7 @@
         '<label class="opcion"><input type="radio" name="moneda" value="EUR" checked> Euros (€)</label>' +
         '<label class="opcion"><input type="radio" name="moneda" value="VES"> Bolívares (Bs.)</label></div></fieldset>' +
       '</div>' +
-      '<p class="campo__ayuda">Tasa del día: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Queda guardada con la compra.</p>' +
+      '<p class="campo__ayuda" data-tasa-ayuda>Tasa vigente hoy: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Queda guardada con el registro.</p>' +
       '<div class="lineas" data-lineas></div>' +
       '<div><button type="button" class="btn btn--secundario" data-agregar>' + ui.icono('list-plus') + 'Agregar producto</button></div>' +
       '<fieldset class="grupo-opciones"><legend>¿Ya llegó?</legend><div class="grupo-opciones__lista">' +
@@ -243,7 +246,7 @@
       '<fieldset class="grupo-opciones"><legend>Pago</legend><div class="grupo-opciones__lista">' +
         '<label class="opcion"><input type="radio" name="pago" value="contado" checked> Contado</label>' +
         '<label class="opcion"><input type="radio" name="pago" value="credito"> Crédito</label></div></fieldset>' +
-      '<div class="resumen-form" aria-live="polite" data-total></div>' +
+      '<div class="resumen-form" data-resumen data-total></div>' +
       '</div>';
     var d = ui.dialogo({
       titulo: 'Registrar compra', formulario: true, cuerpo: cuerpo,
@@ -251,6 +254,14 @@
       foco: proveedorId ? '#nc-prod-0' : '#nc-prov'
     });
     var form = d.querySelector('form');
+    // tasa vigente en la fecha que se escriba en el formulario
+    function tv() { return c.tasaVigente(SB.almacen.estado, ui.valor(form, 'fecha') || f.hoyISO()); }
+    form.addEventListener('change', function (ev) {
+      if (ev.target.name !== 'fecha') return;
+      var t = tv();
+      var a = form.querySelector('[data-tasa-ayuda]');
+      if (a) a.textContent = 'Tasa vigente ese día: ' + f.tasaTexto(t.valor, true) + ' · ' + f.fecha(t.fecha) + '. Queda guardada con el registro.';
+    });
     var cont = form.querySelector('[data-lineas]');
 
     function moneda() { return form.querySelector('[name="moneda"]:checked').value; }
@@ -278,7 +289,7 @@
       if (!h.length) h = c.historialPrecios(e, pid);
       if (!h.length) return null;
       var u = h[h.length - 1];
-      return moneda() === u.moneda ? u.precio : (moneda() === 'EUR' ? u.eur : u.eur * tasa.valor);
+      return moneda() === u.moneda ? u.precio : (moneda() === 'EUR' ? u.eur : u.eur * tv().valor);
     }
     function actualizarMoneda() {
       var m = moneda();
@@ -299,7 +310,7 @@
         var precio = ui.numero(form, 'precio-' + i);
         if (!isNaN(cant) && !isNaN(precio)) { s += cant * precio; completas += 1; }
       });
-      var dn = f.dinero(m, s, tasa.valor);
+      var dn = f.dinero(m, s, tv().valor);
       form.querySelector('[data-total]').innerHTML =
         '<div class="resumen-form__fila"><span>Total (' + completas + (completas === 1 ? ' línea' : ' líneas') + ')</span><strong class="cifra">' + f.eur(dn.eur) + '</strong></div>' +
         '<div class="resumen-form__fila suave"><span>' + (m === 'VES' ? 'En Bs., como se paga' : 'En Bs.') + '</span><span class="cifra">' + f.bs(dn.bs) + '</span></div>';
@@ -354,7 +365,8 @@
       lineas().forEach(function (l) {
         var i = l.getAttribute('data-linea');
         reglas.push({ nombre: 'prod-' + i, requerido: true, mensaje: 'Elige el producto.' });
-        reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, positivo: true, texto: 'la cantidad' });
+        reglas.push({ nombre: 'cant-' + i, requerido: true, numero: true, positivo: true, texto: 'la cantidad',
+          entero: function () { var pr = c.porId(e.productos, ui.valor(form, 'prod-' + i)); return !!pr && pr.unidad === 'und'; } });
         reglas.push({ nombre: 'precio-' + i, requerido: true, numero: true, positivo: true, texto: 'el precio' });
       });
       if (ui.validar(form, reglas)) return;
@@ -370,9 +382,9 @@
       var provId = ui.valor(form, 'proveedor');
       var prov = c.porId(e.proveedores, provId);
       SB.almacen.cambiar(function (est) {
-        var co = { id: SB.almacen.nuevoId('compra'), proveedorId: provId, fecha: fecha, recibida: null, estado: 'pendiente', moneda: m, tasa: tasa.valor,
+        var co = { id: SB.almacen.nuevoId('compra'), proveedorId: provId, fecha: fecha, recibida: null, estado: 'pendiente', moneda: m, tasa: tv().valor,
           lineas: ls.map(function (l) { return { productoId: l.productoId, cantidad: l.cantidad, precio: l.precio }; }),
-          total: f.dinero(m, ls.reduce(function (s, l) { return s + l.cantidad * l.precio; }, 0), tasa.valor),
+          total: f.dinero(m, ls.reduce(function (s, l) { return s + f.redondear(l.cantidad * l.precio, 2); }, 0), tv().valor),
           pago: pago, vencePago: null, por: ctx.rolNombre };
         est.compras.push(co);
         if (estado === 'recibida') recibir(est, co, fecha, null, ls.map(function (l) { return l.vence; }), ctx.rolNombre);

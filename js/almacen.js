@@ -5,7 +5,7 @@
 
   var CLAVE = 'shabono-gestion-demo';
   var CLAVE_ROL = 'shabono-gestion-rol';
-  var VERSION = 1;
+  var VERSION = 2;
   var memoria = {};
   var estado = null;
   var oyentes = [];
@@ -28,7 +28,8 @@
     if (texto) {
       try {
         var e = JSON.parse(texto);
-        if (e && e.version === VERSION) { estado = e; return estado; }
+        // Si se crearon otro día y nadie los tocó, se regeneran con la fecha de hoy
+        if (e && e.version === VERSION && (e.creado === SB.f.hoyISO() || e.modificado)) { estado = e; return estado; }
       } catch (err) { /* datos dañados: se regeneran */ }
     }
     estado = SB.semilla.generar(SB.f.hoyISO());
@@ -43,6 +44,7 @@
   /* Toda modificación pasa por aquí: cambia, guarda y repinta */
   function cambiar(mutador) {
     var r = mutador(estado);
+    estado.modificado = true;
     guardar();
     avisar();
     return r;
@@ -86,6 +88,7 @@
     nuevoId: nuevoId,
     eliminar: eliminar,
     alCambiar: function (fn) { oyentes.push(fn); },
+    desfasados: function () { return !!estado && estado.creado !== SB.f.hoyISO(); },
     rol: rol,
     fijarRol: fijarRol,
     leer: leer,

@@ -8,7 +8,7 @@
   var esc = f.esc;
   SB.vistas = SB.vistas || {};
 
-  var CATEGORIAS_GASTO = ['Insumos', 'Nómina', 'Servicios', 'Gas y combustible', 'Mantenimiento', 'Limpieza y desechables', 'Otros'];
+  var CATEGORIAS_GASTO = ['Insumos', 'Nómina', 'Alquiler', 'Impuestos y tasas', 'Servicios', 'Gas y combustible', 'Mantenimiento', 'Limpieza y desechables', 'Otros'];
   var ORIGEN = { manual: 'Registro manual', compra: 'Compra de contado', cuenta: 'Pago de una cuenta' };
 
   function subnav(ctx) {
@@ -42,14 +42,14 @@
     var pp = c.porPagar(e, ctx.hoy);
     var r = c.rangoMes(mes);
     var ingFechas = e.ingresos.filter(function (x) { return x.fecha >= r[0] && x.fecha <= r[1]; }).map(function (x) { return x.fecha; }).sort();
-    var nota = ingFechas.length ? 'Cierres del ' + f.fecha(ingFechas[0]) + ' al ' + f.fecha(ingFechas[ingFechas.length - 1]) + ' · ' + t.dias + ' días' : 'Sin cierres de caja este mes';
+    var nota = ingFechas.length ? 'Cierres del ' + f.fecha(ingFechas[0]) + ' al ' + f.fecha(ingFechas[ingFechas.length - 1]) + ' · ' + t.dias + (t.dias === 1 ? ' día' : ' días') : 'Sin cierres de caja este mes';
     var h = '<form class="filtros" aria-label="Elegir el mes">' + selectorMes(ctx) + '</form>' +
       '<p class="filtros__cuenta" style="margin-bottom:var(--espacio-s)">' + esc(nota) + '</p>' +
       '<div class="cifras">' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('banknote') + 'Ingresos</span>' + ui.dineroDe(t.ingresos) +
         '<p class="cifra-tarjeta__nota">En Bs.: ' + f.bs(t.ingresosBs.bs) + ' · En divisas: ' + f.eur(t.ingresosDivisas.eur) + '</p></div>' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('receipt') + 'Gastos pagados</span>' + ui.dineroDe(t.gastos) +
-        '<p class="cifra-tarjeta__nota">' + t.gastos.n + ' pagos registrados</p></div>' +
+        '<p class="cifra-tarjeta__nota">' + t.gastos.n + (t.gastos.n === 1 ? ' pago registrado' : ' pagos registrados') + '</p></div>' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('calculator') + 'Resultado</span>' + ui.dineroDe(t.resultado) +
         '<p class="cifra-tarjeta__nota">' + (t.ingresos.eur ? f.pct(t.resultado.eur / t.ingresos.eur) + ' de los ingresos' : 'Ingresos menos gastos') + '</p></div>' +
       '<div class="tarjeta cifra-tarjeta"><span class="cifra-tarjeta__nombre">' + ui.icono('hand-coins') + 'Por pagar hoy</span>' + ui.dinero(pp.eur, pp.bs) +
@@ -168,19 +168,27 @@
         ui.campo({ id: 'in-fecha', nombre: 'fecha', etiqueta: 'Fecha', tipo: 'date', requerido: true, valor: hoy, attrs: ' max="' + hoy + '"' }) +
         ui.campo({ id: 'in-bs', nombre: 'bs', etiqueta: 'Ventas en bolívares', importe: true, opcional: true, sufijo: 'Bs.', ayuda: 'Punto de venta, pago móvil y efectivo en Bs.' }) +
         ui.campo({ id: 'in-eur', nombre: 'eur', etiqueta: 'Ventas en divisas', importe: true, opcional: true, sufijo: '€' }) +
-        '<p class="campo__ayuda">Tasa: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Se guarda con el ingreso.</p>' +
-        '<div class="resumen-form" aria-live="polite" data-total></div></div>',
+        '<p class="campo__ayuda" data-tasa-ayuda>Tasa vigente hoy: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Queda guardada con el registro.</p>' +
+        '<div class="resumen-form" data-resumen data-total></div></div>',
       pie: '<button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button type="submit" class="btn btn--principal">' + ui.icono('check') + 'Guardar ingreso</button>',
       foco: '#in-bs'
     });
     var form = d.querySelector('form');
+    // tasa vigente en la fecha que se escriba en el formulario
+    function tv() { return c.tasaVigente(SB.almacen.estado, ui.valor(form, 'fecha') || f.hoyISO()); }
+    form.addEventListener('change', function (ev) {
+      if (ev.target.name !== 'fecha') return;
+      var t = tv();
+      var a = form.querySelector('[data-tasa-ayuda]');
+      if (a) a.textContent = 'Tasa vigente ese día: ' + f.tasaTexto(t.valor, true) + ' · ' + f.fecha(t.fecha) + '. Queda guardada con el registro.';
+    });
     function total() {
       var bs = ui.numero(form, 'bs');
       var eur = ui.numero(form, 'eur');
-      var te = (isNaN(bs) ? 0 : bs / tasa.valor) + (isNaN(eur) ? 0 : eur);
+      var te = (isNaN(bs) ? 0 : bs / tv().valor) + (isNaN(eur) ? 0 : eur);
       var ya = e.ingresos.filter(function (x) { return x.fecha === ui.valor(form, 'fecha'); });
       form.querySelector('[data-total]').innerHTML = '<div class="resumen-form__fila"><span>Total del cierre</span><strong class="cifra">' + f.eur(te) + '</strong></div>' +
-        '<div class="resumen-form__fila suave"><span>Equivale a</span><span class="cifra">' + f.bs(te * tasa.valor) + '</span></div>' +
+        '<div class="resumen-form__fila suave"><span>Equivale a</span><span class="cifra">' + f.bs(te * tv().valor) + '</span></div>' +
         (ya.length ? '<p class="campo__ayuda aviso-linea">' + ui.icono('triangle-alert', 'icono--16') + '<span>Ya hay un cierre para esa fecha: se sumará.</span></p>' : '');
     }
     form.addEventListener('input', total);
@@ -198,8 +206,8 @@
       var bs = ui.valor(form, 'bs') ? ui.numero(form, 'bs') : 0;
       var eur = ui.valor(form, 'eur') ? ui.numero(form, 'eur') : 0;
       SB.almacen.cambiar(function (est) {
-        if (bs) est.ingresos.push({ id: SB.almacen.nuevoId('ingreso'), fecha: fecha, concepto: 'Ventas del día', metodo: 'bolivares', dinero: f.dinero('VES', bs, tasa.valor), por: ctx.rolNombre });
-        if (eur) est.ingresos.push({ id: SB.almacen.nuevoId('ingreso'), fecha: fecha, concepto: 'Ventas del día', metodo: 'divisas', dinero: f.dinero('EUR', eur, tasa.valor), por: ctx.rolNombre });
+        if (bs) est.ingresos.push({ id: SB.almacen.nuevoId('ingreso'), fecha: fecha, concepto: 'Ventas del día', metodo: 'bolivares', dinero: f.dinero('VES', bs, tv().valor), por: ctx.rolNombre });
+        if (eur) est.ingresos.push({ id: SB.almacen.nuevoId('ingreso'), fecha: fecha, concepto: 'Ventas del día', metodo: 'divisas', dinero: f.dinero('EUR', eur, tv().valor), por: ctx.rolNombre });
       });
       d.close();
       ui.avisar('Ingreso del ' + f.fecha(fecha) + ' guardado.');
@@ -275,7 +283,7 @@
           '<label class="opcion"><input type="radio" name="moneda" value="VES" checked> Bolívares (Bs.)</label>' +
           '<label class="opcion"><input type="radio" name="moneda" value="EUR"> Euros (€)</label></div></fieldset>' +
         ui.campo({ id: 'ga-monto', nombre: 'monto', etiqueta: 'Importe', importe: true, requerido: true, sufijo: 'Bs.' }) +
-        '<p class="resumen-form" aria-live="polite" data-equiv></p>' +
+        '<p class="resumen-form" data-resumen data-equiv></p>' +
         '<fieldset class="grupo-opciones"><legend>¿Ya se pagó?</legend><div class="grupo-opciones__lista">' +
           '<label class="opcion"><input type="radio" name="estado" value="pagado" checked> Sí, está pagado</label>' +
           '<label class="opcion"><input type="radio" name="estado" value="por-pagar"> No, queda por pagar</label></div></fieldset>' +
@@ -287,12 +295,21 @@
       foco: '#ga-concepto'
     });
     var form = d.querySelector('form');
+    // tasa vigente en la fecha que se escriba en el formulario
+    function tv() { return c.tasaVigente(SB.almacen.estado, ui.valor(form, 'fecha') || f.hoyISO()); }
+    form.addEventListener('change', function (ev) {
+      if (ev.target.name !== 'fecha') return;
+      var t = tv();
+      var a = form.querySelector('[data-tasa-ayuda]');
+      if (a) a.textContent = 'Tasa vigente ese día: ' + f.tasaTexto(t.valor, true) + ' · ' + f.fecha(t.fecha) + '. Queda guardada con el registro.';
+    });
     function refrescar() {
       var m = form.querySelector('[name="moneda"]:checked').value;
       form.querySelector('#ga-monto').parentNode.querySelector('.campo__sufijo').textContent = f.simbolo(m);
       var n = ui.numero(form, 'monto');
-      form.querySelector('[data-equiv]').textContent = isNaN(n) ? 'Tasa del día: ' + f.tasaTexto(tasa.valor) + '.' :
-        'Equivale a ' + (m === 'VES' ? f.eur(n / tasa.valor) : f.bs(n * tasa.valor)) + ' con la tasa del ' + f.fecha(tasa.fecha) + '.';
+      var t = tv();
+      form.querySelector('[data-equiv]').textContent = isNaN(n) ? 'Tasa vigente ese día: ' + f.tasaTexto(t.valor) + ' · ' + f.fecha(t.fecha) + '.' :
+        'Equivale a ' + (m === 'VES' ? f.eur(n / t.valor) : f.bs(n * t.valor)) + ' con la tasa del ' + f.fecha(t.fecha) + '.';
       form.querySelector('[data-por-pagar]').hidden = form.querySelector('[name="estado"]:checked').value !== 'por-pagar';
     }
     form.addEventListener('change', refrescar);
@@ -306,7 +323,7 @@
       if (porPagar) reglas.push({ nombre: 'acreedor', requerido: true, texto: 'a quién se le debe' }, { nombre: 'vence', requerido: true, texto: 'la fecha de vencimiento' });
       if (ui.validar(form, reglas)) return;
       var m = form.querySelector('[name="moneda"]:checked').value;
-      var dn = f.dinero(m, ui.numero(form, 'monto'), tasa.valor);
+      var dn = f.dinero(m, ui.numero(form, 'monto'), tv().valor);
       var concepto = ui.valor(form, 'concepto');
       SB.almacen.cambiar(function (est) {
         if (porPagar) {
@@ -393,19 +410,27 @@
         '<fieldset class="grupo-opciones"><legend>Moneda del pago</legend><div class="grupo-opciones__lista">' +
           '<label class="opcion"><input type="radio" name="moneda" value="EUR"' + (cu.dinero.moneda === 'EUR' ? ' checked' : '') + '> Euros (€)</label>' +
           '<label class="opcion"><input type="radio" name="moneda" value="VES"' + (cu.dinero.moneda === 'VES' ? ' checked' : '') + '> Bolívares (Bs.)</label></div></fieldset>' +
-        '<p class="resumen-form" aria-live="polite" data-pago></p></div>',
+        '<p class="resumen-form" data-resumen data-pago></p></div>',
       pie: '<button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button type="submit" class="btn btn--principal">' + ui.icono('check') + 'Guardar pago</button>',
       foco: '#pa-fecha'
     });
     var form = d.querySelector('form');
+    // tasa vigente en la fecha que se escriba en el formulario
+    function tv() { return c.tasaVigente(SB.almacen.estado, ui.valor(form, 'fecha') || f.hoyISO()); }
+    form.addEventListener('change', function (ev) {
+      if (ev.target.name !== 'fecha') return;
+      var t = tv();
+      var a = form.querySelector('[data-tasa-ayuda]');
+      if (a) a.textContent = 'Tasa vigente ese día: ' + f.tasaTexto(t.valor, true) + ' · ' + f.fecha(t.fecha) + '. Queda guardada con el registro.';
+    });
     function monto() {
       var m = form.querySelector('[name="moneda"]:checked').value;
       if (m === cu.dinero.moneda) return { m: m, n: cu.dinero.monto };
-      return { m: m, n: m === 'VES' ? cu.dinero.eur * tasa.valor : cu.dinero.bs / tasa.valor };
+      return { m: m, n: m === 'VES' ? cu.dinero.eur * tv().valor : cu.dinero.bs / tv().valor };
     }
     function pintar() {
       var x = monto();
-      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m !== cu.dinero.moneda ? ' con la tasa del ' + f.fecha(tasa.fecha) + ' (' + f.tasaTexto(tasa.valor) + ').' : '.');
+      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m !== cu.dinero.moneda ? ' con la tasa del ' + f.fecha(tv().fecha) + ' (' + f.tasaTexto(tv().valor) + ').' : '.');
     }
     form.addEventListener('change', pintar);
     pintar();
@@ -418,7 +443,7 @@
       SB.almacen.cambiar(function (est) {
         var cuenta = c.porId(est.cuentas, id);
         est.gastos.push({ id: gid, fecha: fecha, categoria: cuenta.categoria || 'Insumos', concepto: 'Pago a ' + cuenta.acreedor + ' · ' + cuenta.concepto,
-          proveedorId: cuenta.proveedorId, dinero: f.dinero(x.m, x.n, tasa.valor), origen: 'cuenta', cuentaId: id, compraId: cuenta.compraId, por: ctx.rolNombre });
+          proveedorId: cuenta.proveedorId, dinero: f.dinero(x.m, x.n, tv().valor), origen: 'cuenta', cuentaId: id, compraId: cuenta.compraId, por: ctx.rolNombre });
         cuenta.pagada = fecha;
         cuenta.gastoId = gid;
       });

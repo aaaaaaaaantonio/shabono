@@ -101,11 +101,14 @@
       new ResizeObserver(function (en) {
         document.documentElement.style.setProperty('--franja-alto', Math.ceil(en[0].target.getBoundingClientRect().height) + 'px');
       }).observe(raiz.querySelector('[data-franja]'));
+      new ResizeObserver(function (en) {
+        document.documentElement.style.setProperty('--nav-real', Math.ceil(en[0].target.getBoundingClientRect().height) + 'px');
+      }).observe(raiz.querySelector('.nav-principal'));
     }
 
     raiz.querySelector('[data-saltar]').addEventListener('click', function (ev) {
       ev.preventDefault();
-      document.getElementById('contenido').focus();
+      document.getElementById('titulo-pantalla').focus();
     });
 
     var main = raiz.querySelector('[data-vista]');
@@ -144,7 +147,8 @@
       if (menu && !menu.contains(ev.target)) cerrarMenuRol();
     });
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape' && document.querySelector('[data-menu-rol-panel]:not([hidden])')) {
+      var menu = document.querySelector('[data-menu-rol]');
+      if (ev.key === 'Escape' && menu && menu.contains(document.activeElement) && document.querySelector('[data-menu-rol-panel]:not([hidden])')) {
         cerrarMenuRol();
         var b = document.querySelector('[data-menu-rol-boton]');
         if (b) b.focus();
@@ -175,7 +179,7 @@
   function tasaHTML(e, hoy, variante) {
     var t = SB.calc.tasaActual(e);
     var vieja = t.fecha !== hoy;
-    return '<button type="button" class="tasa tasa--' + variante + '" data-tasa>' +
+    return '<button type="button" class="tasa tasa--' + variante + '" data-tasa data-foco="tasa-' + variante + '">' +
       '<span class="tasa__texto">' + ui.icono('refresh-cw', 'icono--16') + 'Tasa BCV · ' + f.tasaTexto(t.valor) + ' · ' + f.fecha(t.fecha) + '</span>' +
       (vieja ? ui.estado({ nivel: 'aviso', texto: 'Tasa del ' + f.fechaCorta(t.fecha) }) : '') +
       '<span class="sr">' + (puede('editarTasa') ? 'Actualizar tasa' : 'Ver tasa') + '</span></button>';
@@ -185,10 +189,11 @@
     var r = ROLES[rolActual()];
     var franja = raiz.querySelector('[data-franja]');
     franja.innerHTML =
-      '<span class="aviso-demo">' + ui.icono('info', 'icono--16') + 'Datos de ejemplo</span>' +
+      '<span class="aviso-demo">' + ui.icono('info', 'icono--16') + 'Datos de ejemplo' +
+        (SB.almacen.desfasados() ? ' del ' + f.fechaCorta(e.creado) + '</span><button type="button" class="btn btn--sutil" data-poner-al-dia>Poner al día</button>' : '</span>') +
       tasaHTML(e, hoy, 'franja') +
       '<div class="menu-rol franja__rol" data-menu-rol>' +
-        '<button type="button" class="rol-boton" aria-expanded="false" aria-controls="menu-rol-panel" data-menu-rol-boton>' +
+        '<button type="button" class="rol-boton" aria-expanded="false" aria-controls="menu-rol-panel" data-menu-rol-boton data-foco="menu-rol">' +
           ui.icono(r.icono) + '<span class="rol-boton__texto"><span class="sr">Rol: </span>' + esc(r.nombre) + '</span>' + ui.icono('chevron-down', 'icono--16') + '</button>' +
         '<div class="menu-rol__panel" id="menu-rol-panel" hidden data-menu-rol-panel>' +
           '<p>Entraste como ' + esc(r.nombre) + '. Demo sin contraseñas.</p>' +
@@ -212,9 +217,14 @@
       location.hash = '#/inicio';
       render();
     });
+    franja.querySelector('[data-menu-rol]').addEventListener('focusout', function (ev) {
+      if (!ev.currentTarget.contains(ev.relatedTarget)) cerrarMenuRol();
+    });
     franja.querySelector('[data-restablecer]').addEventListener('click', function () {
       cerrarMenuRol();
+      ui.fijarDisparador(boton);
       ui.confirmar({
+        destructivo: true,
         titulo: 'Restablecer datos de ejemplo',
         texto: 'Se borran todos los cambios hechos en esta demo y se vuelven a crear los datos de ejemplo con fecha de hoy. No se puede deshacer.',
         aceptar: 'Restablecer datos'
@@ -225,6 +235,14 @@
       });
     });
     raiz.querySelectorAll('[data-tasa]').forEach(function (b) { b.addEventListener('click', abrirTasa); });
+    var alDia = franja.querySelector('[data-poner-al-dia]');
+    if (alDia) alDia.addEventListener('click', function () {
+      ui.confirmar({
+        titulo: 'Poner al día los datos de ejemplo', destructivo: true,
+        texto: 'Los datos de ejemplo se crearon el ' + f.fecha(e.creado) + ' y tienen cambios hechos en la demo. Se vuelven a crear con fecha de hoy y esos cambios se pierden.',
+        aceptar: 'Poner al día'
+      }).then(function (si) { if (si) { SB.almacen.restablecer(); ui.avisar('Datos de ejemplo puestos al día.'); } });
+    });
   }
 
   function cerrarMenuRol() {
@@ -287,6 +305,7 @@
   function render() {
     var rol = rolActual();
     if (!rol) {
+      var veniaDeLaApp = marcoMontado;
       marcoMontado = false;
       vistaActual = null;
       document.title = 'Entrar · Shabono gestión interna';
@@ -296,6 +315,7 @@
         if (!location.hash || location.hash === '#/' || location.hash === '#/inicio') render(); else location.hash = '#/inicio';
         setTimeout(function () { var h = document.getElementById('titulo-pantalla'); if (h) h.focus(); }, 0);
       });
+      if (veniaDeLaApp) { var ha = raiz.querySelector('.acceso__titulo'); ha.setAttribute('tabindex', '-1'); ha.focus(); }
       return;
     }
     if (!marcoMontado) montarMarco();

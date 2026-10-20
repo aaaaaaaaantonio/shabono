@@ -10,16 +10,17 @@
   var nfEntero = new Intl.NumberFormat('es-VE', { maximumFractionDigits: 0 });
   var MENOS = '−';
 
+  /* Redondeo a d decimales sin el error de los flotantes (15,675 → 15,68) */
   function redondear(n, d) {
     var f = Math.pow(10, d === undefined ? 2 : d);
-    return Math.round((n + Number.EPSILON) * f) / f;
+    return Math.round(Number((n * f).toPrecision(15))) / f;
   }
 
   function conSigno(n, texto) {
     return (n < 0 && texto.replace(/[0,.]/g, '') !== '' ? MENOS : '') + texto;
   }
 
-  function num(n) { return conSigno(n, nf2.format(Math.abs(n))); }
+  function num(n) { n = redondear(n, 2); return conSigno(n, nf2.format(Math.abs(n))); }
   /* Espacio que no se parte: «€ 1.234,56» nunca queda en dos líneas */
   function eur(n) { return '€\u00a0' + num(n); }
   function bs(n) { return 'Bs.\u00a0' + num(n); }
@@ -59,6 +60,7 @@
       if ((s.match(/,/g) || []).length > 1) return NaN;
       s = s.replace(',', '.');
     } else if ((s.match(/\./g) || []).length > 1) {
+      if (!/^-?\d{1,3}(\.\d{3})+$/.test(s)) return NaN;     // «1.2.3» no es un número
       s = s.split('.').join('');
     } else if (ultimoPunto > -1 && (decimales || 2) <= 2 && /^-?\d{1,3}\.\d{3}$/.test(s)) {
       s = s.replace('.', '');

@@ -13,7 +13,7 @@ import zipfile
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DIST = RAIZ / 'dist'
-PUBLICAR = ['index.html', 'tokens.css', 'app.css', '_headers', 'robots.txt', 'js', 'img', 'fonts', 'licencias']
+PUBLICAR = ['index.html', 'manifest.webmanifest', 'tokens.css', 'app.css', '_headers', 'robots.txt', 'js', 'img', 'fonts', 'licencias']
 
 
 def archivos():
@@ -45,6 +45,8 @@ def vista_previa():
         return re.sub(r'url\("(fonts/[^"]+)"\)', lambda m: f'url("{data_uri(RAIZ / m.group(1), "font/woff2")}")', texto)
 
     html = re.sub(r'\s*<link rel="preload"[^>]*>', '', html)
+    # Instalación en el teléfono: solo tiene sentido publicada; en el archivo suelto se quita
+    html = re.sub(r'\s*<link rel="(manifest|apple-touch-icon)"[^>]*>', '', html)
     html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: '<style>\n' + css(m.group(1)) + '\n</style>', html)
     html = re.sub(r'<script src="([^"]+)" defer></script>',
                   lambda m: '<script>\n' + (RAIZ / m.group(1)).read_text(encoding='utf-8').replace('</script', '<\\/script') + '\n</script>', html)

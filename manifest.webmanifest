@@ -1,0 +1,17 @@
+{
+  "name": "Shabono · Gestión interna",
+  "short_name": "Shabono",
+  "description": "Demo de gestión interna de Shabono by Nelson Méndez, con datos de ejemplo.",
+  "lang": "es-VE",
+  "start_url": "./#/inicio",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#4F5A2E",
+  "theme_color": "#4F5A2E",
+  "icons": [
+    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

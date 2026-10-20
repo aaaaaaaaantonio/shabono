@@ -1,7 +1,8 @@
 /* Datos de ejemplo: ficticios pero verosímiles (design.md · Voz).
    - Productos y proveedores inventados, sin marcas, teléfonos ni RIF.
    - Nombres de platos tomados de la carta pública; fichas técnicas y precios de venta inventados.
-   - Las fechas se calculan desde el día en que se abre la demo (8 semanas hacia atrás).
+   - Las fechas se calculan desde el día en que se abre la demo: empiezan el día 1 del mes que contiene
+     el lunes de hace 8 semanas, para que los meses y las semanas del gráfico salgan completos.
    - La tasa actual es la euro BCV del 20/10/2026 que dio el cliente. Las tasas de los registros
      anteriores son ficticias: bajan poco a poco hacia atrás desde esa.
    Todo total, margen o alerta se calcula después a partir de estos registros. */
@@ -10,7 +11,7 @@
 
   var f = SB.f;
   var TASA_REAL = { fecha: '2026-10-20', valor: 988.97203073 };
-  var DIAS = 56;
+  var DIAS = 56;      // días de historia; generar() lo recalcula según la fecha de hoy
 
   function azar(semilla) {
     var a = semilla >>> 0;
@@ -35,6 +36,7 @@
   }
 
   function serie(ultimo, pasos) {
+    if (Array.isArray(ultimo)) { pasos = ultimo[1]; ultimo = ultimo[0]; }
     var r = [];
     var d = ultimo;
     var i = 0;
@@ -43,13 +45,13 @@
   }
 
   var PROVEEDORES = [
-    { id: 'prov-remanso', nombre: 'Pescadería El Remanso', vende: 'Pescado de río', moneda: 'VES', credito: 0, dias: serie(3, [4, 3]) },
-    { id: 'prov-litoral', nombre: 'Mariscos del Litoral', vende: 'Mariscos congelados', moneda: 'EUR', credito: 15, dias: serie(9, [14]) },
-    { id: 'prov-sabana', nombre: 'Frigorífico Sabana Alta', vende: 'Carnes, cerdo, pollo y charcutería', moneda: 'EUR', credito: 7, dias: serie(3, [7]) },
-    { id: 'prov-tapiz', nombre: 'Lácteos El Tapiz', vende: 'Lácteos y huevos', moneda: 'VES', credito: 0, dias: serie(4, [7]) },
-    { id: 'prov-saman', nombre: 'Hortalizas El Samán', vende: 'Frutas y verduras', moneda: 'VES', credito: 0, dias: serie(1, [3, 4]) },
-    { id: 'prov-raiz', nombre: 'Cooperativa Raíz del Monte', vende: 'Productos amazónicos', moneda: 'VES', credito: 0, dias: serie(3, [14]) },
-    { id: 'prov-central', nombre: 'Abastos Central Ayacucho', vende: 'Despensa, quesos importados, pollo y mozzarella', moneda: 'EUR', credito: 15, dias: serie(6, [14]) }
+    { id: 'prov-remanso', nombre: 'Pescadería El Remanso', vende: 'Pescado de río', moneda: 'VES', credito: 0, plan: [3, [4, 3]] },
+    { id: 'prov-litoral', nombre: 'Mariscos del Litoral', vende: 'Mariscos congelados', moneda: 'EUR', credito: 15, plan: [9, [14]] },
+    { id: 'prov-sabana', nombre: 'Frigorífico Sabana Alta', vende: 'Carnes, cerdo, pollo y charcutería', moneda: 'EUR', credito: 7, plan: [3, [7]] },
+    { id: 'prov-tapiz', nombre: 'Lácteos El Tapiz', vende: 'Lácteos y huevos', moneda: 'VES', credito: 0, plan: [4, [7]] },
+    { id: 'prov-saman', nombre: 'Hortalizas El Samán', vende: 'Frutas y verduras', moneda: 'VES', credito: 0, plan: [1, [3, 4]] },
+    { id: 'prov-raiz', nombre: 'Cooperativa Raíz del Monte', vende: 'Productos amazónicos', moneda: 'VES', credito: 0, plan: [3, [14]] },
+    { id: 'prov-central', nombre: 'Abastos Central Ayacucho', vende: 'Despensa, quesos importados, pollo y mozzarella', moneda: 'EUR', credito: 15, plan: [6, [14]] }
   ];
 
   var CATEGORIAS = ['Pescado de río', 'Mariscos', 'Carnes y aves', 'Lácteos y huevos', 'Frutas y verduras', 'Productos amazónicos', 'Despensa'];
@@ -63,44 +65,44 @@
   }
   var PRODUCTOS = [
     P('dorado', 'Dorado (filete fresco)', 0, 'kg', 6, 'prov-remanso', 7.22, 0.08, 5, 14, [7]),
-    P('morocoto', 'Morocoto', 0, 'kg', 4, 'prov-remanso', 4.80, 0, 30, 5, [6, 2], { alternas: true }),
-    P('cachama', 'Cachama', 0, 'kg', 4, 'prov-remanso', 4.20, 0, 30, 4, [5, 1.5], { alternas: true }),
-    P('palometa', 'Palometa', 0, 'kg', 3, 'prov-remanso', 4.50, 0, 30, 3, [4.5], { alternas: true }),
-    P('bagre', 'Bagre rayado', 0, 'kg', 5, 'prov-remanso', 6.50, 0, 30, 7, [8, 2], { alternas: true }),
+    P('morocoto', 'Morocoto (congelado)', 0, 'kg', 4, 'prov-remanso', 4.80, 0, 90, 5, [6, 2], { alternas: true }),
+    P('cachama', 'Cachama (congelada)', 0, 'kg', 4, 'prov-remanso', 4.20, 0, 90, 4, [5, 1.5], { alternas: true }),
+    P('palometa', 'Palometa (congelada)', 0, 'kg', 3, 'prov-remanso', 4.50, 0, 90, 3, [4.5], { alternas: true }),
+    P('bagre', 'Bagre rayado (congelado)', 0, 'kg', 5, 'prov-remanso', 6.50, 0, 90, 7, [8, 2], { alternas: true }),
     P('camaron', 'Camarón mediano (congelado)', 1, 'kg', 5, 'prov-litoral', 13.20, 0.02, 90, 2.5, [3]),
     P('pulpo', 'Pulpo (congelado)', 1, 'kg', 2, 'prov-litoral', 16.80, 0.01, 90, 1.5, [], { desde: 20 }),
     P('calamar', 'Calamar (congelado)', 1, 'kg', 2, 'prov-litoral', 9.00, 0, 90, 1.2, [3.5]),
     P('mejillon', 'Mejillón (congelado)', 1, 'kg', 2, 'prov-litoral', 7.50, 0, 90, 1.2, [3]),
     P('centro-lomito', 'Centro de lomito', 2, 'kg', 8, 'prov-sabana', 14.02, 0.12, 21, 9, [5]),
     P('lomito', 'Lomito', 2, 'kg', 5, 'prov-sabana', 12.00, 0.05, 21, 5, [7, 1]),
-    P('pollo', 'Pechuga de pollo', 2, 'kg', 6, 'prov-sabana', 5.80, 0, 60, 8, [9, 3], { prov2: { id: 'prov-central', base: 5.50 } }),
+    P('pollo', 'Pechuga de pollo (congelada)', 2, 'kg', 6, 'prov-sabana', 5.80, 0, 90, 8, [9, 3], { prov2: { id: 'prov-central', base: 5.50 } }),
     P('costilla', 'Costilla de cerdo', 2, 'kg', 4, 'prov-sabana', 7.20, 0, 21, 4, [6]),
     P('panceta', 'Panceta de cerdo', 2, 'kg', 3, 'prov-sabana', 8.00, 0, 21, 3, [4.5]),
     P('tocineta', 'Tocineta', 2, 'kg', 1.5, 'prov-sabana', 10.50, 0, 30, 1.5, [2.5]),
     P('jamon', 'Jamón serrano', 2, 'kg', 1, 'prov-sabana', 28.00, 0, 90, 0.7, [1.8], { alternas: true }),
     P('mozzarella', 'Queso mozzarella', 3, 'kg', 3, 'prov-tapiz', 8.50, 0, 21, 4, [5], { prov2: { id: 'prov-central', base: 8.90 } }),
     P('queso-blanco', 'Queso blanco llanero', 3, 'kg', 3, 'prov-tapiz', 6.20, 0, 14, 4, [5.5]),
-    P('leche', 'Leche entera', 3, 'L', 8, 'prov-tapiz', 1.40, 0, 7, 20, [12]),
+    P('leche', 'Leche entera', 3, 'L', 8, 'prov-tapiz', 1.40, 0, 7, 20, [12], { paso: 1 }),
     P('crema', 'Crema de leche', 3, 'L', 2, 'prov-tapiz', 4.80, 0, 17, 2, [2.5, 0, 1]),
     P('mantequilla', 'Mantequilla', 3, 'kg', 1, 'prov-tapiz', 9.00, 0, 60, 1, [2], { alternas: true }),
-    P('huevos', 'Huevos', 3, 'und', 60, 'prov-tapiz', 0.16, 0, 21, 150, [120]),
-    P('tomate', 'Tomate', 4, 'kg', 5, 'prov-saman', 1.80, 0, null, 12, [7]),
-    P('cebolla', 'Cebolla', 4, 'kg', 5, 'prov-saman', 1.30, 0, null, 10, [8, 2]),
-    P('ajo', 'Ajo', 4, 'kg', 1, 'prov-saman', 5.00, 0, null, 1, [1.6], { alternas: true }),
-    P('pimenton', 'Pimentón', 4, 'kg', 3, 'prov-saman', 2.40, 0, null, 6, [4]),
-    P('lechuga', 'Lechuga', 4, 'und', 10, 'prov-saman', 1.20, 0, null, 30, [14]),
+    P('huevos', 'Huevos', 3, 'und', 60, 'prov-tapiz', 0.16, 0, 21, 150, [120], { paso: 30 }),
+    P('tomate', 'Tomate', 4, 'kg', 5, 'prov-saman', 1.80, 0, 7, 12, [7]),
+    P('cebolla', 'Cebolla', 4, 'kg', 5, 'prov-saman', 1.30, 0, 30, 10, [8, 2]),
+    P('ajo', 'Ajo', 4, 'kg', 1, 'prov-saman', 5.00, 0, 60, 1, [1.6], { alternas: true }),
+    P('pimenton', 'Pimentón', 4, 'kg', 3, 'prov-saman', 2.40, 0, 10, 6, [4]),
+    P('lechuga', 'Lechuga', 4, 'und', 10, 'prov-saman', 1.20, 0, 5, 30, [14]),
     P('cilantro', 'Cilantro', 4, 'manojo', 5, 'prov-saman', 0.60, 0, 5, 20, [6, 3]),
     P('albahaca', 'Albahaca', 4, 'manojo', 4, 'prov-saman', 0.90, 0, 5, 14, [6]),
-    P('limon', 'Limón', 4, 'kg', 3, 'prov-saman', 2.00, 0, null, 6, [5]),
-    P('platano', 'Plátano', 4, 'und', 20, 'prov-saman', 0.45, 0, null, 70, [36]),
-    P('papa', 'Papa', 4, 'kg', 8, 'prov-saman', 1.40, 0, null, 20, [14, 3]),
+    P('limon', 'Limón', 4, 'kg', 3, 'prov-saman', 2.00, 0, 14, 6, [5]),
+    P('platano', 'Plátano', 4, 'und', 20, 'prov-saman', 0.45, 0, 8, 70, [36]),
+    P('papa', 'Papa', 4, 'kg', 8, 'prov-saman', 1.40, 0, 30, 20, [14, 3]),
     P('catara', 'Catara', 5, 'L', 1.5, 'prov-raiz', 12.00, 0, 120, 1.2, [3]),
     P('manoco', 'Mañoco', 5, 'kg', 4, 'prov-raiz', 3.20, 0, 180, 2.5, [2.5]),
     P('casabe', 'Casabe (torta)', 5, 'und', 10, 'prov-raiz', 1.60, 0, 30, 18, [22]),
     P('tupiro', 'Túpiro', 5, 'kg', 2, 'prov-raiz', 3.00, 0, 10, 2, [], { desde: 15 }),
     P('aji', 'Ají amazónico', 5, 'kg', 0.5, 'prov-raiz', 4.50, 0, 20, 0.4, [0.9]),
-    P('manaca', 'Pulpa de manaca (açaí)', 5, 'kg', 2, 'prov-raiz', 5.50, 0, 8, 3, [3.5]),
-    P('copoazu', 'Pulpa de copoazú', 5, 'kg', 2, 'prov-raiz', 4.80, 0, 90, 3, [5]),
+    P('manaca', 'Pulpa de manaca (açaí, congelada)', 5, 'kg', 2, 'prov-raiz', 5.50, 0, 90, 3, [3.5]),
+    P('copoazu', 'Pulpa de copoazú (congelada)', 5, 'kg', 2, 'prov-raiz', 4.80, 0, 90, 3, [5]),
     P('merey', 'Merey tostado', 5, 'kg', 0.5, 'prov-raiz', 13.00, 0, 120, 0.4, [1.1]),
     P('arroz', 'Arroz', 6, 'kg', 10, 'prov-central', 1.30, 0, 365, 10, [16]),
     P('pasta', 'Pasta larga', 6, 'kg', 6, 'prov-central', 2.10, 0, 365, 6, [9]),
@@ -108,7 +110,7 @@
     P('harina-trigo', 'Harina de trigo', 6, 'kg', 4, 'prov-central', 1.10, 0, 180, 3, [6]),
     P('aceite', 'Aceite vegetal', 6, 'L', 6, 'prov-central', 2.90, 0, 365, 8, [10]),
     P('oliva', 'Aceite de oliva', 6, 'L', 2, 'prov-central', 9.50, 0, 365, 1.5, [3]),
-    P('pan-arabe', 'Pan árabe', 6, 'und', 20, 'prov-central', 0.40, 0, 30, 25, [34]),
+    P('pan-arabe', 'Pan árabe (congelado)', 6, 'und', 20, 'prov-central', 0.40, 0, 60, 25, [34]),
     P('cafe', 'Café molido', 6, 'kg', 2, 'prov-central', 9.00, 0, 120, 2, [3.5]),
     P('parmesano', 'Queso parmesano', 3, 'kg', 2, 'prov-central', 22.00, 0, 120, 1, [1.2]),
     P('manchego', 'Queso manchego', 3, 'kg', 1, 'prov-central', 24.00, 0, 90, 0.6, [1.5])
@@ -116,17 +118,17 @@
 
   /* Platos de la carta (nombres públicos). Fichas técnicas y precios de venta: de ejemplo. */
   var PLATOS = [
-    ['centro-lomito', 'Centro de lomito Shabono', 'Carnes', 26, [['centro-lomito', 0.45], ['papa', 0.3], ['mantequilla', 0.03], ['catara', 0.05], ['oliva', 0.03], ['ajo', 0.01], ['cebolla', 0.05], ['pimenton', 0.05]]],
+    ['centro-lomito', 'Centro de lomito Shabono', 'Carnes', 21.5, [['centro-lomito', 0.35], ['papa', 0.3], ['mantequilla', 0.03], ['catara', 0.05], ['oliva', 0.03], ['ajo', 0.01], ['cebolla', 0.05], ['pimenton', 0.05]]],
     ['costillitas', 'Costillitas BBQ', 'Cerdo', 18, [['costilla', 0.5], ['papa', 0.25], ['cebolla', 0.05], ['ajo', 0.01], ['aceite', 0.05]]],
-    ['catara', 'Pescado a la catara', 'Pescados y mariscos', 19, [['bagre', 0.35], ['catara', 0.06], ['manoco', 0.06], ['aji', 0.02], ['cebolla', 0.05], ['ajo', 0.01], ['casabe', 1], ['cilantro', 0.25]]],
-    ['cubos-dorado', 'Cubos de dorado rebozados', 'Pescados y mariscos', 14.5, [['dorado', 0.35], ['harina-trigo', 0.06], ['huevos', 2], ['aceite', 0.2], ['limon', 0.05], ['platano', 1], ['catara', 0.03], ['aji', 0.02], ['manoco', 0.05]]],
+    ['catara', 'Pescado a la catara', 'Pescados y mariscos', 19, [['bagre', 0.35], ['catara', 0.06], ['manoco', 0.06], ['aji', 0.02], ['cebolla', 0.05], ['ajo', 0.01], ['casabe', 0.25], ['cilantro', 0.1]]],
+    ['cubos-dorado', 'Cubos de dorado rebozados', 'Pescados y mariscos', 13, [['dorado', 0.35], ['harina-trigo', 0.06], ['huevos', 2], ['aceite', 0.05], ['limon', 0.05], ['platano', 1], ['catara', 0.03], ['aji', 0.02], ['manoco', 0.05]]],
     ['pulpo', 'Pulpo a la gallega o al ajillo', 'Pescados y mariscos', 24, [['pulpo', 0.3], ['papa', 0.2], ['oliva', 0.04], ['ajo', 0.015], ['pimenton', 0.03]]],
     ['paella', 'Paella x2', 'Pescados y mariscos', 42, [['arroz', 0.3], ['camaron', 0.2], ['calamar', 0.15], ['mejillon', 0.2], ['pollo', 0.15], ['pimenton', 0.1], ['cebolla', 0.1], ['ajo', 0.02], ['tomate', 0.1], ['oliva', 0.06]]],
-    ['ceviche', 'Ceviche clásico', 'Entradas', 12, [['dorado', 0.18], ['limon', 0.15], ['cebolla', 0.06], ['cilantro', 0.5], ['aji', 0.01], ['platano', 0.5]]],
-    ['ajicero', 'Ajicero', 'Entradas', 8, [['aji', 0.05], ['catara', 0.04], ['manoco', 0.05], ['casabe', 1], ['cebolla', 0.03]]],
+    ['ceviche', 'Ceviche clásico', 'Entradas', 12, [['dorado', 0.18], ['limon', 0.15], ['cebolla', 0.06], ['cilantro', 0.1], ['aji', 0.01], ['platano', 0.5]]],
+    ['ajicero', 'Ajicero', 'Entradas', 8, [['aji', 0.05], ['catara', 0.04], ['manoco', 0.05], ['casabe', 0.25], ['cebolla', 0.03]]],
     ['autana', 'Ensalada Autana', 'Entradas', 10, [['lechuga', 0.5], ['tomate', 0.1], ['queso-blanco', 0.06], ['merey', 0.02], ['copoazu', 0.03], ['oliva', 0.02]]],
     ['tequenos', 'Tequeños', 'Entradas', 7, [['harina-trigo', 0.1], ['queso-blanco', 0.12], ['mantequilla', 0.02], ['huevos', 1], ['aceite', 0.1]]],
-    ['pasta-shabono', 'Pasta Shabono', 'Pastas', 14, [['pasta', 0.15], ['albahaca', 1], ['merey', 0.03], ['oliva', 0.04], ['mozzarella', 0.08], ['parmesano', 0.03], ['pan-arabe', 1], ['lechuga', 0.25], ['ajo', 0.005]]],
+    ['pasta-shabono', 'Pasta Shabono', 'Pastas', 14, [['pasta', 0.15], ['albahaca', 0.25], ['merey', 0.03], ['oliva', 0.04], ['mozzarella', 0.08], ['parmesano', 0.03], ['pan-arabe', 1], ['lechuga', 0.25], ['ajo', 0.005]]],
     ['carbonara', 'Carbonara', 'Pastas', 13, [['pasta', 0.15], ['tocineta', 0.08], ['huevos', 2], ['parmesano', 0.03], ['crema', 0.05]]],
     ['arepa-shabono', 'Arepa Shabono', 'Arepas', 7, [['harina-maiz', 0.12], ['panceta', 0.08], ['queso-blanco', 0.05], ['platano', 0.5], ['mantequilla', 0.01]]],
     ['sandwich-shabono', 'Sándwich Shabono', 'Sándwiches', 11, [['jamon', 0.06], ['tomate', 0.08], ['manchego', 0.04], ['oliva', 0.01], ['pan-arabe', 1]]],
@@ -134,19 +136,23 @@
     ['cafe-leche', 'Café con leche grande', 'Café y té', 2.5, [['cafe', 0.02], ['leche', 0.2]]]
   ];
 
-  function paso(unidad) { return unidad === 'kg' || unidad === 'L' ? 0.5 : 1; }
-  function aPaso(n, unidad) { var p = paso(unidad); return Math.max(p, Math.round(n / p) * p); }
+  function paso(p) { return p.paso || (p.unidad === 'kg' || p.unidad === 'L' ? 0.5 : 1); }   // huevos por cartón de 30
+  function aPaso(n, p) { var x = paso(p); return Math.max(x, Math.round(n / x) * x); }
 
   function generar(hoy) {
+    var lunes = f.sumarDias(hoy, -((f.aFecha(hoy).getDay() + 6) % 7));
+    var inicio = f.sumarDias(lunes, -56).slice(0, 8) + '01';
+    DIAS = f.diasEntre(inicio, hoy);
+    PROVEEDORES.forEach(function (p) { p.dias = serie(p.plan); });
     var r = azar(20261020);
     var id = (function () { var n = 0; return function (p) { n += 1; return p + '-' + n; }; })();
     var dia = function (haceDias) { return f.sumarDias(hoy, -haceDias); };
 
     var e = {
-      version: 1,
+      version: 2,
       creado: hoy,
       config: { objetivoCosto: 0.33, diasAviso: 3 },
-      tasas: [{ id: 'tasa-real', fecha: TASA_REAL.fecha, valor: TASA_REAL.valor }],
+      tasas: [],
       proveedores: [],
       productos: [],
       lotes: [],
@@ -158,6 +164,13 @@
       cuentas: []
     };
 
+    // Historial de tasas de ejemplo: una por día hábil; la última es la real del 20/10/2026
+    for (var dt = inicio; dt < TASA_REAL.fecha && dt <= hoy; dt = f.sumarDias(dt, 1)) {
+      var ds = f.aFecha(dt).getDay();
+      if (ds !== 0 && ds !== 6) e.tasas.push({ id: 'tasa-' + dt, fecha: dt, valor: tasaDe(dt), ejemplo: true });
+    }
+    e.tasas.push({ id: 'tasa-real', fecha: TASA_REAL.fecha, valor: TASA_REAL.valor });
+
     PROVEEDORES.forEach(function (p) {
       e.proveedores.push({ id: p.id, nombre: p.nombre, vende: p.vende, moneda: p.moneda, credito: p.credito, nota: '' });
     });
@@ -167,7 +180,7 @@
     });
 
     function precioEUR(p, base, hace) {
-      var avance = (DIAS - hace) / DIAS;
+      var avance = 1 - hace / 56;     // la tendencia se mide en 8 semanas
       var ruido = p.tend ? 0 : 0.012 * Math.sin(hace * 1.7 + p.id.length);
       return base * (1 + p.tend * avance) * (1 + ruido);
     }
@@ -191,7 +204,7 @@
           if (esPrincipal && p.alternas && k % 2 === 1) return;
           var siguiente = k > 0 ? dias[k - 1] : 0;
           var intervalo = esPrincipal ? (p.alternas ? 2 : 1) * Math.max(3, (dias[k + 1] || hace + 7) - hace) : 14;
-          var cant = aPaso(p.semana * intervalo / 7 * (esSegundo ? 0.35 : 1) * (0.9 + r() * 0.2), p.unidad);
+          var cant = aPaso(p.semana * intervalo / 7 * (esSegundo ? 0.35 : 1) * (0.9 + r() * 0.2), p);
           lineas.push({ p: p, esPrincipal: esPrincipal, cant: cant, siguiente: siguiente,
             precioEUR: precioEUR(p, esSegundo ? p.prov2.base : p.base, hace) });
         });
@@ -201,7 +214,7 @@
         var total = 0;
         var lineasCompra = lineas.map(function (l) {
           var precio = precioEn(prov.moneda, l.precioEUR, tasa);
-          total += precio * l.cant;
+          total += f.redondear(precio * l.cant, 2);
           return { productoId: l.p.id, cantidad: l.cant, precio: precio };
         });
         var compra = {
@@ -225,7 +238,7 @@
             }
           }
           var resta = l.esPrincipal && p.resta[orden] ? p.resta[orden] : 0;
-          var cant = Math.max(l.cant, resta ? aPaso(resta + p.semana / 7 * Math.min(hace, 3) + paso(p.unidad), p.unidad) : l.cant);
+          var cant = Math.max(l.cant, resta ? aPaso(resta + p.semana / 7 * Math.min(hace, 3) + paso(p), p) : l.cant);
           lineasCompra[i].cantidad = cant;
           var lote = {
             id: id('lote'), productoId: p.id, compraId: compraId, proveedorId: prov.id,
@@ -245,7 +258,7 @@
           }
         });
         // recalcula el total con las cantidades finales
-        var suma = lineasCompra.reduce(function (s, l) { return s + l.precio * l.cantidad; }, 0);
+        var suma = lineasCompra.reduce(function (s, l) { return s + f.redondear(l.precio * l.cantidad, 2); }, 0);
         compra.total = f.dinero(prov.moneda, suma, tasa);
 
         if (prov.credito && prov.id === 'prov-sabana' && hace === 10) compraUnpaid[compraId] = true;
@@ -276,7 +289,7 @@
       var lineas = items.map(function (it) {
         var p = PRODUCTOS.find(function (x) { return x.id === it[0]; });
         var precio = precioEn(prov.moneda, precioEUR(p, p.base, 0), tasa);
-        total += precio * it[1];
+        total += f.redondear(precio * it[1], 2);
         return { productoId: p.id, cantidad: it[1], precio: precio };
       });
       e.compras.push({ id: id('compra'), proveedorId: provId, fecha: fecha, recibida: null, estado: 'pendiente',
@@ -363,6 +376,20 @@
         dinero: f.dinero('VES', enBs, t), por: 'Administración' });
       e.ingresos.push({ id: id('ingreso'), fecha: fe, concepto: 'Ventas del día', metodo: 'divisas',
         dinero: f.dinero('EUR', enDivisas, t), por: 'Administración' });
+    }
+
+    /* ---------- Alquiler, impuestos y tasas (de ejemplo; no es contabilidad fiscal) ---------- */
+    for (var k = DIAS; k >= 1; k -= 1) {
+      var fk = dia(k);
+      var dk = f.aFecha(fk).getDate();
+      if (dk === 5) gasto(fk, 'Alquiler', 'Alquiler del local', 'EUR', 1200);
+      if (dk === 10) gasto(fk, 'Impuestos y tasas', 'Patente municipal', 'VES', 45);
+      if (dk === 15) {
+        var mesAnt = f.mesDe(f.sumarDias(fk.slice(0, 8) + '01', -1));
+        var ventas = e.ingresos.filter(function (x) { return f.mesDe(x.fecha) === mesAnt; })
+          .reduce(function (acc, x) { return acc + x.dinero.eur; }, 0) || 566 * 30;   // primer mes: ventas estimadas
+        gasto(fk, 'Impuestos y tasas', 'IVA e IGTF de ' + f.mesNombre(mesAnt).toLowerCase(), 'VES', Math.round(ventas * 0.09));
+      }
     }
 
     /* ---------- Platos ---------- */

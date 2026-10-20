@@ -38,7 +38,7 @@ e.productos.forEach((p) => {
 });
 // Compras: total = suma de líneas
 e.compras.forEach((co) => {
-  const s = co.lineas.reduce((a, l) => a + l.precio * l.cantidad, 0);
+  const s = co.lineas.reduce((a, l) => a + f.redondear(l.precio * l.cantidad, 2), 0);
   ok(Math.abs(s - co.total.monto) < 0.01, 'Total de compra no cuadra ' + co.id);
 });
 

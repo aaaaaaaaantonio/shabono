@@ -54,14 +54,25 @@
       if (ctx.puede('verFinanzas')) {
         var mes = f.mesDe(hoy);
         var t = c.totalesMes(e, mes);
+        var notaMes = '';
+        if (t.dias < 7) {
+          var anterior = f.mesDe(f.sumarDias(mes + '-01', -1));
+          var ta = c.totalesMes(e, anterior);
+          if (ta.dias) {
+            notaMes = '<p class="filtros__cuenta" style="margin-bottom:.75rem">' + esc(f.mesNombre(mes)) + ' lleva ' + t.dias + (t.dias === 1 ? ' día' : ' días') +
+              ' con cierre de caja; se muestra el mes anterior completo.</p>';
+            mes = anterior;
+            t = ta;
+          }
+        }
         var pp = c.porPagar(e, hoy);
         var inv = c.valorInventario(e, hoy);
         var tasa = c.tasaActual(e);
         bloqueResumen = '<section class="bloque" aria-labelledby="t-resumen"><div class="bloque__cabeza"><h2 class="etiqueta" id="t-resumen">Resumen de ' + esc(f.mesNombre(mes).toLowerCase()) + '</h2>' +
-          '<a class="btn btn--sutil" href="#/finanzas">Ver finanzas</a></div>' +
+          '<a class="btn btn--sutil" href="#/finanzas?mes=' + mes + '">Ver finanzas</a></div>' + notaMes +
           '<div class="cifras">' +
           cifra('Ingresos', 'banknote', t.ingresos, t.dias + (t.dias === 1 ? ' día con cierre de caja' : ' días con cierre de caja')) +
-          cifra('Gastos pagados', 'receipt', t.gastos, t.gastos.n + ' pagos en el mes') +
+          cifra('Gastos pagados', 'receipt', t.gastos, t.gastos.n + (t.gastos.n === 1 ? ' pago en el mes' : ' pagos en el mes')) +
           cifra('Resultado', 'calculator', t.resultado, 'Ingresos menos gastos pagados') +
           cifra('Por pagar', 'hand-coins', pp, pp.n + (pp.n === 1 ? ' cuenta abierta' : ' cuentas abiertas') + ' · <a href="#/finanzas/por-pagar">ver cuentas</a>') +
           cifra('Valor del inventario', 'package', inv, 'Bs. a la tasa del ' + f.fecha(tasa.fecha)) +
