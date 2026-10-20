@@ -78,7 +78,7 @@
             '<img class="marca__logo" src="img/logo-nm.svg" alt="" width="95" height="40" loading="lazy" decoding="async">' +
             '<span class="marca__nombre">Shabono <small>by Nelson Méndez</small></span></a>' +
           '<ul class="nav-principal__lista" role="list" data-nav></ul>' +
-          '<div class="nav-principal__pie"><strong>Gestión interna</strong>Demo para uso interno, no fiscal.</div>' +
+          '<div class="nav-principal__pie"><span>Entraste como</span><strong data-rol-lateral></strong>Gestión interna, no fiscal.</div>' +
         '</nav>' +
         '<div class="columna">' +
           '<header class="franja" data-franja></header>' +
@@ -95,6 +95,13 @@
         '</div>' +
       '</div>';
     marcoMontado = true;
+
+    // Las cabeceras fijas de las tablas se pegan justo debajo de la franja, mida lo que mida
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(function (en) {
+        document.documentElement.style.setProperty('--franja-alto', Math.ceil(en[0].target.getBoundingClientRect().height) + 'px');
+      }).observe(raiz.querySelector('[data-franja]'));
+    }
 
     raiz.querySelector('[data-saltar]').addEventListener('click', function (ev) {
       ev.preventDefault();
@@ -169,7 +176,7 @@
     var t = SB.calc.tasaActual(e);
     var vieja = t.fecha !== hoy;
     return '<button type="button" class="tasa tasa--' + variante + '" data-tasa>' +
-      '<span class="tasa__texto">' + ui.icono('refresh-cw', 'icono--16') + 'Tasa BCV · € 1 = Bs. ' + f.tasa(t.valor) + ' · ' + f.fecha(t.fecha) + '</span>' +
+      '<span class="tasa__texto">' + ui.icono('refresh-cw', 'icono--16') + 'Tasa BCV · ' + f.tasaTexto(t.valor) + ' · ' + f.fecha(t.fecha) + '</span>' +
       (vieja ? ui.estado({ nivel: 'aviso', texto: 'Tasa del ' + f.fechaCorta(t.fecha) }) : '') +
       '<span class="sr">' + (puede('editarTasa') ? 'Actualizar tasa' : 'Ver tasa') + '</span></button>';
   }
@@ -182,7 +189,7 @@
       tasaHTML(e, hoy, 'franja') +
       '<div class="menu-rol franja__rol" data-menu-rol>' +
         '<button type="button" class="rol-boton" aria-expanded="false" aria-controls="menu-rol-panel" data-menu-rol-boton>' +
-          ui.icono(r.icono) + '<span><span class="sr">Rol: </span>' + esc(r.nombre) + '</span>' + ui.icono('chevron-down', 'icono--16') + '</button>' +
+          ui.icono(r.icono) + '<span class="rol-boton__texto"><span class="sr">Rol: </span>' + esc(r.nombre) + '</span>' + ui.icono('chevron-down', 'icono--16') + '</button>' +
         '<div class="menu-rol__panel" id="menu-rol-panel" hidden data-menu-rol-panel>' +
           '<p>Entraste como ' + esc(r.nombre) + '. Demo sin contraseñas.</p>' +
           '<button type="button" class="menu-rol__opcion" data-cambiar-rol>' + ui.icono('log-out') + 'Cambiar de rol</button>' +
@@ -190,6 +197,7 @@
         '</div>' +
       '</div>';
     raiz.querySelector('[data-tasa-cabecera]').innerHTML = tasaHTML(e, hoy, 'cabecera');
+    raiz.querySelector('[data-rol-lateral]').textContent = r.nombre;
 
     var boton = franja.querySelector('[data-menu-rol-boton]');
     boton.addEventListener('click', function () {
@@ -232,7 +240,7 @@
     var t = SB.calc.tasaActual(e);
     var historial = e.tasas.slice().sort(function (a, b) { return a.fecha < b.fecha ? 1 : -1; }).slice(0, 5);
     var lista = '<ul class="lista-simple" role="list">' + historial.map(function (x) {
-      return '<li><span class="lista-simple__principal"><strong>€ 1 = Bs. ' + f.tasaCompleta(x.valor) + '</strong></span><span class="lista-simple__lado">' + f.fecha(x.fecha) + '</span></li>';
+      return '<li><span class="lista-simple__principal"><strong>' + f.tasaTexto(x.valor, true) + '</strong></span><span class="lista-simple__lado">' + f.fecha(x.fecha) + '</span></li>';
     }).join('') + '</ul>';
     if (!puede('editarTasa')) {
       ui.dialogo({
@@ -271,7 +279,7 @@
         est.tasas.push({ id: SB.almacen.nuevoId('tasa'), fecha: fecha, valor: valor });
       });
       d.close();
-      ui.avisar('Tasa guardada: € 1 = Bs. ' + f.tasaCompleta(valor) + ' · ' + f.fecha(fecha) + '.');
+      ui.avisar('Tasa guardada: ' + f.tasaTexto(valor, true) + ' · ' + f.fecha(fecha) + '.');
     });
   }
 

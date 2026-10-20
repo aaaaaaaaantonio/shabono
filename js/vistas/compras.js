@@ -77,7 +77,7 @@
         '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(provDe(e, co.proveedorId).nombre) + '</span>' + ui.estado(EST_COMPRA[co.estado]) + '</span>' +
         '<span class="suave">' + esc(nombresLineas(e, co)) + '</span>' +
         '<span class="ficha__abajo"><span class="ficha__dato"><span>' + (co.estado === 'pendiente' ? 'Pedida' : 'Recibida') + '</span><span>' + f.fecha(co.recibida || co.fecha) + '</span></span>' +
-        (ver ? '<span class="ficha__dato"><span>Total</span>' + ui.dineroDe(co.total) + '</span><span class="ficha__dato"><span>Pago</span><span>' + esc(pagoTexto(co)) + '</span></span>' : '') +
+        (ver ? '<span class="ficha__dato ficha__dato--cifra"><span>Total</span>' + ui.dineroDe(co.total) + '</span><span class="ficha__dato"><span>Pago</span><span>' + esc(pagoTexto(co)) + '</span></span>' : '') +
         '</span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;
@@ -95,7 +95,7 @@
       '<div><dt>Pedida</dt><dd>' + f.fecha(co.fecha) + '</dd></div>' +
       (co.recibida ? '<div><dt>Recibida</dt><dd>' + f.fecha(co.recibida) + '</dd></div>' : '') +
       (ver ? '<div><dt>Pago</dt><dd>' + esc(pagoTexto(co)) + '</dd></div>' : '') +
-      (ver ? '<div><dt>Moneda y tasa</dt><dd>' + (co.moneda === 'EUR' ? 'Euros' : 'Bolívares') + '<span class="tabla__sub">€ 1 = Bs. ' + f.tasaCompleta(co.tasa) + '</span></dd></div>' : '') +
+      (ver ? '<div><dt>Moneda y tasa</dt><dd>' + (co.moneda === 'EUR' ? 'Euros' : 'Bolívares') + '<span class="tabla__sub">' + f.tasaTexto(co.tasa, true) + '</span></dd></div>' : '') +
       '<div><dt>Registró</dt><dd>' + esc(co.por || '—') + (co.recibidaPor ? '<span class="tabla__sub">Recibió: ' + esc(co.recibidaPor) + '</span>' : '') + '</dd></div>' +
       '</dl>' +
       '<section class="dialogo__seccion" aria-labelledby="t-lineas"><h3 class="etiqueta suave" id="t-lineas">Productos</h3>' +
@@ -234,7 +234,7 @@
         '<label class="opcion"><input type="radio" name="moneda" value="EUR" checked> Euros (€)</label>' +
         '<label class="opcion"><input type="radio" name="moneda" value="VES"> Bolívares (Bs.)</label></div></fieldset>' +
       '</div>' +
-      '<p class="campo__ayuda">Tasa del día: € 1 = Bs. ' + f.tasaCompleta(tasa.valor) + ' · ' + f.fecha(tasa.fecha) + '. Queda guardada con la compra.</p>' +
+      '<p class="campo__ayuda">Tasa del día: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Queda guardada con la compra.</p>' +
       '<div class="lineas" data-lineas></div>' +
       '<div><button type="button" class="btn btn--secundario" data-agregar>' + ui.icono('list-plus') + 'Agregar producto</button></div>' +
       '<fieldset class="grupo-opciones"><legend>¿Ya llegó?</legend><div class="grupo-opciones__lista">' +
@@ -301,8 +301,8 @@
       });
       var dn = f.dinero(m, s, tasa.valor);
       form.querySelector('[data-total]').innerHTML =
-        '<div class="resumen-form__fila"><span>Total (' + completas + (completas === 1 ? ' línea' : ' líneas') + ')</span><strong class="cifra">' + f.importe(m, dn.monto) + '</strong></div>' +
-        '<div class="resumen-form__fila suave"><span>Equivale a</span><span class="cifra">' + (m === 'EUR' ? f.bs(dn.bs) : f.eur(dn.eur)) + '</span></div>';
+        '<div class="resumen-form__fila"><span>Total (' + completas + (completas === 1 ? ' línea' : ' líneas') + ')</span><strong class="cifra">' + f.eur(dn.eur) + '</strong></div>' +
+        '<div class="resumen-form__fila suave"><span>' + (m === 'VES' ? 'En Bs., como se paga' : 'En Bs.') + '</span><span class="cifra">' + f.bs(dn.bs) + '</span></div>';
     }
 
     form.addEventListener('change', function (ev) {
@@ -425,7 +425,7 @@
         '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(p.nombre) + '</span>' + (ver ? ui.estado(inf.estado) : '') + '</span>' +
         '<span class="suave">' + esc(p.vende) + ' · ' + esc(condicion(p)) + '</span>' +
         '<span class="ficha__abajo"><span class="ficha__dato"><span>Última compra</span><span>' + (inf.ultima ? f.fecha(inf.ultima.recibida) : 'Sin compras') + '</span></span>' +
-        (ver ? '<span class="ficha__dato"><span>Por pagar</span>' + ui.dinero(inf.deuda.eur, inf.deuda.bs) + '</span>' : '') + '</span></button></li>';
+        (ver ? '<span class="ficha__dato ficha__dato--cifra"><span>Por pagar</span>' + ui.dinero(inf.deuda.eur, inf.deuda.bs) + '</span>' : '') + '</span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;
   }
@@ -562,7 +562,7 @@
       var d = filaDatos(x);
       return '<li><button type="button" class="ficha" data-accion="precio" data-id="' + esc(x.p.id) + '">' +
         '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(x.p.nombre) + '</span>' + variacionHTML(d.v) + '</span>' +
-        '<span class="ficha__abajo"><span class="ficha__dato"><span>Último precio por ' + esc(f.nombreUnidad(x.p.unidad)) + '</span>' + ui.dinero(d.u.eur, d.u.eur * d.u.tasa) + '</span>' +
+        '<span class="ficha__abajo"><span class="ficha__dato ficha__dato--cifra"><span>Último precio por ' + esc(f.nombreUnidad(x.p.unidad)) + '</span>' + ui.dinero(d.u.eur, d.u.eur * d.u.tasa) + '</span>' +
         '<span class="ficha__dato"><span>Proveedor</span><span>' + esc(d.prov.nombre) + '</span></span></span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;

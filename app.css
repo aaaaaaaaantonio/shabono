@@ -210,7 +210,6 @@ table { font-variant-numeric: tabular-nums; }
 }
 .btn--sutil::after { content: none; }
 .btn--sutil:hover { text-decoration-thickness: 2px; }
-.btn--sutil:focus-visible { outline-offset: 2px; }
 
 /* Botón solo con icono (cerrar, menú) */
 .btn--icono {
@@ -220,7 +219,6 @@ table { font-variant-numeric: tabular-nums; }
 }
 .btn--icono::after { content: none; }
 .btn--icono:hover { background: color-mix(in srgb, var(--tinta) 6%, transparent); }
-.btn--icono:focus-visible { outline-offset: 2px; }
 
 .btn[aria-busy="true"] { cursor: progress; }
 .btn[aria-busy="true"] .icono--carga { display: block; }
@@ -326,10 +324,10 @@ table { font-variant-numeric: tabular-nums; }
   .nav-principal__lista > li { flex: 1 1 0; min-width: 0; }
   .nav-principal__enlace {
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: .2rem;
     height: 100%;
-    padding: .3rem .15rem;
+    padding: .5rem .15rem .2rem;
     font-size: .75rem;
     text-align: center;
   }
@@ -453,7 +451,6 @@ table { font-variant-numeric: tabular-nums; }
   font-variant-numeric: tabular-nums;
 }
 .tasa:hover { background: color-mix(in srgb, var(--tinta) 6%, transparent); }
-.tasa:focus-visible { outline-offset: 0; }
 .tasa__texto { display: inline-flex; align-items: center; gap: .4rem; }
 @media (min-width: 40rem) { .tasa__texto { white-space: nowrap; } }
 .tasa--franja { display: none; }
@@ -622,7 +619,7 @@ table { font-variant-numeric: tabular-nums; }
   transition: border-color var(--duracion-app) var(--ease-out), box-shadow var(--duracion-app) var(--ease-out);
 }
 .campo__control:hover { border-color: var(--tinta-suave); }
-.campo__control:focus-visible { outline-offset: 1px; border-color: var(--tinta); }
+.campo__control:focus-visible { border-color: var(--tinta); }
 .campo__control:disabled { opacity: .5; cursor: not-allowed; background: var(--cal); }
 .campo__control[aria-invalid="true"] { border-color: var(--estado-peligro-texto); box-shadow: inset 0 0 0 1px var(--estado-peligro-texto); }
 .campo--ok .campo__control { border-color: var(--estado-ok-texto); }
@@ -766,13 +763,14 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 }
 .ficha:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--tinta) 30%, transparent); }
 .ficha:active { translate: 0 1px; }
-.ficha:focus-visible { outline-offset: 2px; }
 .ficha__arriba { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
 .ficha__nombre { font-weight: 600; font-size: var(--texto-m); overflow-wrap: anywhere; }
 .ficha__abajo { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem 1rem; padding-top: .6rem; border-top: 1px dashed var(--granito); }
 .ficha__dato { display: grid; gap: .1rem; min-width: 0; }
 .ficha__dato > span:first-child { font-size: .75rem; font-weight: 600; color: var(--tinta-suave); }
 .ficha__dato .dinero { align-items: flex-start; }
+.ficha__dato--cifra { justify-items: end; text-align: right; }
+.ficha__dato--cifra .dinero { align-items: flex-end; }
 
 /* ---------- Datos clave (detalles y resúmenes) ---------- */
 .datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .9rem 1.25rem; }
@@ -785,7 +783,8 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .cifras { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
 .cifra-tarjeta { display: grid; gap: .35rem; align-content: start; }
 .cifra-tarjeta__nombre { display: flex; align-items: center; gap: .45rem; font-size: var(--texto-s); font-weight: 600; color: var(--tinta-suave); }
-.cifra-tarjeta .dinero { align-items: flex-start; }
+.cifra-tarjeta .dinero { align-items: flex-end; }
+.cifra-tarjeta__nota { text-align: right; }
 .cifra-tarjeta .dinero__eur { font-size: var(--texto-xl); font-weight: 600; line-height: 1.2; }
 .cifra-tarjeta .dinero__bs { font-size: var(--texto-s); }
 .cifra-tarjeta__nota { font-size: var(--texto-xs); color: var(--tinta-suave); line-height: 1.4; margin: 0; }
@@ -796,7 +795,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .alertas { display: grid; gap: .6rem; }
 .alerta {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 8.75rem minmax(0, 1fr) auto;
   align-items: center;
   gap: .4rem .9rem;
   padding: .75rem .9rem;
@@ -809,7 +808,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
   transition: box-shadow var(--duracion-app) var(--ease-out);
 }
 .alerta:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--tinta) 30%, transparent); }
-.alerta:focus-visible { outline-offset: 2px; }
+.alerta .estado { justify-self: start; }
 .alerta__texto strong { font-weight: 600; }
 .alerta__texto span { display: block; font-size: var(--texto-xs); color: var(--tinta-suave); }
 .alerta__ver { display: inline-flex; align-items: center; gap: .2rem; font-size: var(--texto-s); font-weight: 600; color: var(--terracota-texto); white-space: nowrap; }
@@ -920,7 +919,7 @@ dialog.dialogo::backdrop { background: var(--velo); }
   pointer-events: auto;
 }
 .aviso__texto { flex: 1; }
-.aviso .btn--sutil { color: var(--dorado-luz); font-weight: 600; }
+.aviso .btn--sutil { color: var(--crema); font-weight: 600; text-decoration-color: var(--dorado-luz); }
 .aviso :focus-visible { outline-color: var(--dorado-luz); }
 
 /* ---------- Gráficos ---------- */
@@ -1042,3 +1041,17 @@ dialog.dialogo::backdrop { background: var(--velo); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Revisión de diseño */
+.aviso-linea { display: flex; align-items: flex-start; gap: .35rem; color: var(--estado-aviso-texto); font-weight: 600; }
+.aviso-linea .icono { margin-top: .1rem; }
+.resumen-form .estado { white-space: normal; }
+.solo-medio { display: none; }
+@media (min-width: 40rem) and (max-width: 63.999rem) { .solo-medio { display: block; } }
+/* El nombre del rol se lee en el botón desde 80rem; antes, solo el icono (y en la barra lateral desde 64rem) */
+@media (max-width: 79.999rem) {
+  .rol-boton__texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rol-boton { min-width: 44px; padding-inline: .5rem; }
+}
+@media (min-width: 64rem) { .nav-principal__pie span { display: block; font-size: var(--texto-xs); } }
+@media (max-width: 39.999rem) { .cabecera-pantalla > .acciones { width: 100%; } }

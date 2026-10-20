@@ -45,7 +45,7 @@
             '<span class="alerta__ver">Ver' + ui.icono('chevron-right', 'icono--16') + '</span></a></li>';
         }).join('') + '</ul>';
       } else {
-        bloqueAlertas += '<div class="tarjeta">' + ui.vacio('orante', 'Todo en orden: no hay alertas por ahora.', '') + '</div>';
+        bloqueAlertas += '<div class="tarjeta">' + ui.vacio('orante', 'Todo en orden: no hay alertas por ahora.', '<a class="btn btn--secundario" href="#/inventario">' + ui.icono('package') + 'Ver inventario</a>') + '</div>';
       }
       bloqueAlertas += '</section>';
 

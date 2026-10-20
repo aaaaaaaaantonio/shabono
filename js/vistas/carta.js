@@ -58,9 +58,9 @@
       filas.map(function (x) {
         return '<tr data-fila><td><button type="button" class="tabla__nombre" data-accion="plato" data-id="' + esc(x.pl.id) + '">' + esc(x.pl.nombre) + '</button>' +
           '<span class="tabla__sub">' + esc(x.pl.categoria) + '</span></td>' +
-          (ver ? '<td class="num">' + f.eur(x.costo.total) + '<span class="tabla__sub">' + (x.m.costoPct !== null ? f.pct(x.m.costoPct) + ' del precio' : '—') + '</span></td>' +
+          (ver ? '<td class="num">' + ui.dinero(x.costo.total, x.costo.total * tasa) + '<span class="tabla__sub">' + (x.m.costoPct !== null ? f.pct(x.m.costoPct) + ' del precio' : '—') + '</span></td>' +
             '<td class="num">' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span class="suave">Sin precio</span>') + '</td>' +
-            '<td class="num solo-ancho">' + (x.m.margen !== null ? f.eur(x.m.margen) + '<span class="tabla__sub">' + f.pct(x.m.margenPct) + '</span>' : '—') + '</td>'
+            '<td class="num solo-ancho">' + (x.m.margen !== null ? ui.dinero(x.m.margen, x.m.margen * tasa) + '<span class="tabla__sub">' + f.pct(x.m.margenPct) + '</span>' : '—') + '</td>'
             : '<td class="num">' + x.pl.receta.length + '</td>') +
           '<td>' + ui.estado(estadoVisible(ctx, x.estado)) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
@@ -69,9 +69,9 @@
         '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(x.pl.nombre) + '</span>' + ui.estado(estadoVisible(ctx, x.estado)) + '</span>' +
         '<span class="suave">' + esc(x.pl.categoria) + '</span>' +
         (ver ? '<span class="ficha__abajo">' +
-          '<span class="ficha__dato"><span>Costo</span><span>' + f.eur(x.costo.total) + (x.m.costoPct !== null ? ' <span class="suave">· ' + f.pct(x.m.costoPct) + '</span>' : '') + '</span></span>' +
-          '<span class="ficha__dato"><span>Precio</span>' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span>Sin precio</span>') + '</span>' +
-          '<span class="ficha__dato"><span>Margen</span><span>' + (x.m.margen !== null ? f.eur(x.m.margen) + ' <span class="suave">· ' + f.pct(x.m.margenPct) + '</span>' : '—') + '</span></span>' +
+          '<span class="ficha__dato ficha__dato--cifra"><span>Costo' + (x.m.costoPct !== null ? ' · ' + f.pct(x.m.costoPct) : '') + '</span>' + ui.dinero(x.costo.total, x.costo.total * tasa) + '</span>' +
+          '<span class="ficha__dato ficha__dato--cifra"><span>Precio</span>' + (x.pl.precio ? ui.dinero(x.pl.precio, x.pl.precio * tasa) : '<span>Sin precio</span>') + '</span>' +
+          '<span class="ficha__dato ficha__dato--cifra"><span>Margen' + (x.m.margen !== null ? ' · ' + f.pct(x.m.margenPct) : '') + '</span>' + (x.m.margen !== null ? ui.dinero(x.m.margen, x.m.margen * tasa) : '<span>—</span>') + '</span>' +
           '</span>' : '') +
         '</button></li>';
     }).join('') + '</ul>';
@@ -96,8 +96,8 @@
     if (ver) {
       cuerpo += '<dl class="datos" style="margin-top:1rem">' +
         '<div><dt>Precio de venta</dt><dd>' + (pl.precio ? ui.dinero(pl.precio, pl.precio * tasa) : 'Sin precio') + '</dd></div>' +
-        '<div><dt>Costo</dt><dd>' + f.eur(costo.total) + (m.costoPct !== null ? '<span class="tabla__sub">' + f.pct(m.costoPct) + ' del precio</span>' : '') + '</dd></div>' +
-        '<div><dt>Margen</dt><dd>' + (m.margen !== null ? f.eur(m.margen) + '<span class="tabla__sub">' + f.pct(m.margenPct) + '</span>' : '—') + '</dd></div>' +
+        '<div><dt>Costo</dt><dd>' + ui.dinero(costo.total, costo.total * tasa) + (m.costoPct !== null ? '<span class="tabla__sub">' + f.pct(m.costoPct) + ' del precio</span>' : '') + '</dd></div>' +
+        '<div><dt>Margen</dt><dd>' + (m.margen !== null ? ui.dinero(m.margen, m.margen * tasa) + '<span class="tabla__sub">' + f.pct(m.margenPct) + '</span>' : '—') + '</dd></div>' +
         (sugerido ? '<div><dt>Precio para el objetivo</dt><dd>' + f.eur(sugerido) + '<span class="tabla__sub">Costo al ' + f.pct(objetivo) + ' o menos</span></dd></div>' : '') +
         '</dl>';
     } else {

@@ -64,10 +64,13 @@
         var pct = t.gastos.eur ? g.eur / t.gastos.eur : 0;
         return '<li class="barra"><span>' + esc(g.categoria) + ' <span class="suave">· ' + f.pct(pct) + '</span></span>' + ui.dinero(g.eur, g.bs) +
           '<span class="barra__pista" aria-hidden="true"><span class="barra__relleno" style="display:block;width:' + Math.max(1, g.eur / maxCat * 100).toFixed(1) + '%"></span></span></li>';
-      }).join('') + '</ul>' : ui.vacio('sol', 'No hay gastos registrados este mes.', '')) + '</div></section>';
+      }).join('') + '</ul>' : ui.vacio('sol', 'No hay gastos registrados este mes.',
+        ctx.puede('editarFinanzas') ? '<button type="button" class="btn btn--principal" data-accion="gasto">' + ui.icono('plus') + 'Registrar gasto</button>' : '')) + '</div></section>';
 
     // Gráfico de 8 semanas
-    var sem = c.semanas(e, ctx.hoy, 8);
+    var todas = c.semanas(e, ctx.hoy, 9);
+    var enCurso = todas[todas.length - 1];
+    var sem = todas.slice(0, 8);
     var etiquetas = sem.map(function (s) { return f.fechaCorta(s.desde); });
     var series = [
       { nombre: 'Ingresos', clase: 'ingresos', valores: sem.map(function (s) { return s.ingresos; }) },
@@ -77,14 +80,20 @@
     var totalIng = c.suma(sem, function (s) { return s.ingresos; });
     var totalGas = c.suma(sem, function (s) { return s.gastos; });
     h += '<section class="bloque" aria-labelledby="t-sem"><div class="bloque__cabeza"><h2 class="etiqueta" id="t-sem">Últimas 8 semanas, en €</h2></div><div class="tarjeta">' +
-      ui.grafico({ descripcion: 'Ingresos, gastos y resultado por semana en las últimas 8 semanas. En total: ingresos ' + f.eur(totalIng) + ', gastos ' + f.eur(totalGas) + '. Los datos están en la tabla de abajo.',
+      '<p class="filtros__cuenta" style="margin-bottom:.5rem">Semanas completas, de lunes a domingo, del ' + f.fecha(sem[0].desde) + ' al ' + f.fecha(sem[sem.length - 1].hasta) + '.</p>' +
+      ui.grafico({ descripcion: 'Ingresos, gastos y resultado por semana en las 8 semanas completas anteriores. En total: ingresos ' + f.eur(totalIng) + ', gastos ' + f.eur(totalGas) + '. Los datos están en la tabla de abajo.',
         etiquetas: etiquetas, series: series }) +
       ui.leyenda([{ nombre: 'Ingresos', clase: 'ingresos', forma: 'línea continua' }, { nombre: 'Gastos', clase: 'gastos', forma: 'línea discontinua' }, { nombre: 'Resultado', clase: 'tercera', forma: 'puntos' }]) +
-      '<table class="tabla tabla--compacta tabla--interior" style="margin-top:1rem"><caption class="sr">Datos del gráfico por semana</caption><thead><tr><th scope="col">Semana del</th>' +
+      '<table class="tabla tabla--compacta tabla--interior solo-tabla" style="margin-top:1rem"><caption class="sr">Datos del gráfico por semana</caption><thead><tr><th scope="col">Semana del</th>' +
       '<th scope="col" class="num">Ingresos</th><th scope="col" class="num">Gastos</th><th scope="col" class="num">Resultado</th></tr></thead><tbody>' +
-      sem.map(function (s) {
-        return '<tr><td>' + f.fecha(s.desde) + (s.enCurso ? '<span class="tabla__sub">En curso</span>' : '') + '</td><td class="num">' + f.eur(s.ingresos) + '</td><td class="num">' + f.eur(s.gastos) + '</td><td class="num">' + f.eur(s.resultado) + '</td></tr>';
+      sem.concat([enCurso]).map(function (s) {
+        return '<tr><td>' + f.fecha(s.desde) + (s.enCurso ? '<span class="tabla__sub">En curso, no sale en el gráfico</span>' : '') + '</td><td class="num">' + f.eur(s.ingresos) + '</td><td class="num">' + f.eur(s.gastos) + '</td><td class="num">' + f.eur(s.resultado) + '</td></tr>';
       }).join('') + '</tbody></table>' +
+      '<ul class="lista-simple solo-movil" role="list" style="margin-top:1rem" aria-label="Datos del gráfico por semana">' + sem.concat([enCurso]).map(function (s) {
+        return '<li><span class="lista-simple__principal"><strong>Semana del ' + f.fecha(s.desde) + '</strong>' + (s.enCurso ? '<span class="lista-simple__sub">En curso, no sale en el gráfico</span>' : '') +
+          '<span class="lista-simple__sub">Ingresos ' + f.eur(s.ingresos) + ' · Gastos ' + f.eur(s.gastos) + '</span></span>' +
+          '<span class="lista-simple__lado cifra">' + f.eur(s.resultado) + '<span class="lista-simple__sub">Resultado</span></span></li>';
+      }).join('') + '</ul>' +
       '<p class="nota-pie">Las semanas con pago de nómina (días 15 y último del mes) salen con resultado más bajo.</p></div></section>';
     return h;
   }
@@ -113,18 +122,18 @@
       ctx.puede('editarFinanzas') ? '<button type="button" class="btn btn--principal" data-accion="ingreso">' + ui.icono('plus') + 'Registrar ingreso del día</button>' : '') + '</div>';
     var tot = c.sumaDinero(ctx.e.ingresos.filter(function (x) { return f.mesDe(x.fecha) === mesActual(ctx); }));
     var tabla = '<div class="tabla-caja solo-tabla"><table class="tabla tabla--filas"><caption class="sr">Cierre de caja de cada día</caption><thead><tr>' +
-      '<th scope="col">Fecha</th><th scope="col" class="num">En bolívares</th><th scope="col" class="num">En divisas</th><th scope="col" class="num">Total del día</th></tr></thead><tbody>' +
+      '<th scope="col">Fecha</th><th scope="col" class="num solo-ancho">En bolívares</th><th scope="col" class="num solo-ancho">En divisas</th><th scope="col" class="num">Total del día</th></tr></thead><tbody>' +
       dias.map(function (d) {
         return '<tr data-fila><td><button type="button" class="tabla__nombre" data-accion="dia" data-id="' + d.fecha + '">' + f.fecha(d.fecha) + '</button></td>' +
-          '<td class="num">' + (d.bs.length ? '<span class="dinero"><span>' + f.bs(d.totalBs.bs) + '</span><span class="dinero__bs">' + f.eur(d.totalBs.eur) + '</span></span>' : '—') + '</td>' +
-          '<td class="num">' + (d.divisas.length ? ui.dineroDe(d.totalDivisas) : '—') + '</td>' +
+          '<td class="num solo-ancho">' + (d.bs.length ? ui.dineroDe(d.totalBs) : '—') + '</td>' +
+          '<td class="num solo-ancho">' + (d.divisas.length ? ui.dineroDe(d.totalDivisas) : '—') + '</td>' +
           '<td class="num">' + ui.dineroDe(d.total) + '</td></tr>';
-      }).join('') + '</tbody><tfoot><tr><td>Total del mes</td><td></td><td></td><td class="num">' + ui.dineroDe(tot) + '</td></tr></tfoot></table></div>';
+      }).join('') + '</tbody><tfoot><tr><td>Total del mes</td><td class="solo-ancho"></td><td class="solo-ancho"></td><td class="num">' + ui.dineroDe(tot) + '</td></tr></tfoot></table></div>';
     var fichas = '<ul class="fichas solo-movil" role="list">' + dias.map(function (d) {
       return '<li><button type="button" class="ficha" data-accion="dia" data-id="' + d.fecha + '">' +
         '<span class="ficha__arriba"><span class="ficha__nombre">' + f.fecha(d.fecha) + '</span>' + ui.dineroDe(d.total) + '</span>' +
-        '<span class="ficha__abajo"><span class="ficha__dato"><span>En bolívares</span><span>' + (d.bs.length ? f.bs(d.totalBs.bs) : '—') + '</span></span>' +
-        '<span class="ficha__dato"><span>En divisas</span><span>' + (d.divisas.length ? f.eur(d.totalDivisas.eur) : '—') + '</span></span></span></button></li>';
+        '<span class="ficha__abajo"><span class="ficha__dato ficha__dato--cifra"><span>En bolívares</span>' + (d.bs.length ? ui.dineroDe(d.totalBs) : '<span>—</span>') + '</span>' +
+        '<span class="ficha__dato ficha__dato--cifra"><span>En divisas</span>' + (d.divisas.length ? ui.dineroDe(d.totalDivisas) : '<span>—</span>') + '</span></span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;
   }
@@ -136,7 +145,7 @@
     var cuerpo = '<ul class="lista-simple" role="list">' + regs.map(function (x) {
       return '<li><span class="lista-simple__principal"><strong>' + (x.dinero.moneda === 'VES' ? 'En bolívares' : 'En divisas') + '</strong>' +
         '<span class="lista-simple__sub">' + esc(x.concepto) + ' · tasa ' + f.tasa(x.dinero.tasa) + (x.por ? ' · ' + esc(x.por) : '') + '</span></span>' +
-        '<span class="lista-simple__lado">' + (x.dinero.moneda === 'VES' ? '<span class="dinero"><span>' + f.bs(x.dinero.bs) + '</span><span class="dinero__bs">' + f.eur(x.dinero.eur) + '</span></span>' : ui.dineroDe(x.dinero)) +
+        '<span class="lista-simple__lado">' + ui.dineroDe(x.dinero) +
         (edita ? '<button type="button" class="btn btn--sutil" data-borrar="' + esc(x.id) + '">' + ui.icono('trash-2') + 'Eliminar</button>' : '') + '</span></li>';
     }).join('') + '</ul>';
     var d = ui.dialogo({ titulo: 'Cierre del ' + f.fecha(fecha), cuerpo: cuerpo, pie: '<button type="button" class="btn btn--principal" data-cerrar>Cerrar</button>' });
@@ -159,7 +168,7 @@
         ui.campo({ id: 'in-fecha', nombre: 'fecha', etiqueta: 'Fecha', tipo: 'date', requerido: true, valor: hoy, attrs: ' max="' + hoy + '"' }) +
         ui.campo({ id: 'in-bs', nombre: 'bs', etiqueta: 'Ventas en bolívares', importe: true, opcional: true, sufijo: 'Bs.', ayuda: 'Punto de venta, pago móvil y efectivo en Bs.' }) +
         ui.campo({ id: 'in-eur', nombre: 'eur', etiqueta: 'Ventas en divisas', importe: true, opcional: true, sufijo: '€' }) +
-        '<p class="campo__ayuda">Tasa: € 1 = Bs. ' + f.tasaCompleta(tasa.valor) + ' · ' + f.fecha(tasa.fecha) + '. Se guarda con el ingreso.</p>' +
+        '<p class="campo__ayuda">Tasa: ' + f.tasaTexto(tasa.valor, true) + ' · ' + f.fecha(tasa.fecha) + '. Se guarda con el ingreso.</p>' +
         '<div class="resumen-form" aria-live="polite" data-total></div></div>',
       pie: '<button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button type="submit" class="btn btn--principal">' + ui.icono('check') + 'Guardar ingreso</button>',
       foco: '#in-bs'
@@ -172,7 +181,7 @@
       var ya = e.ingresos.filter(function (x) { return x.fecha === ui.valor(form, 'fecha'); });
       form.querySelector('[data-total]').innerHTML = '<div class="resumen-form__fila"><span>Total del cierre</span><strong class="cifra">' + f.eur(te) + '</strong></div>' +
         '<div class="resumen-form__fila suave"><span>Equivale a</span><span class="cifra">' + f.bs(te * tasa.valor) + '</span></div>' +
-        (ya.length ? '<div class="resumen-form__fila">' + ui.estado({ nivel: 'aviso', texto: 'Ya hay un cierre para esa fecha: se sumará' }) + '</div>' : '');
+        (ya.length ? '<p class="campo__ayuda aviso-linea">' + ui.icono('triangle-alert', 'icono--16') + '<span>Ya hay un cierre para esa fecha: se sumará.</span></p>' : '');
     }
     form.addEventListener('input', total);
     form.addEventListener('change', total);
@@ -236,7 +245,7 @@
     if (!g) return;
     var cuerpo = '<dl class="datos"><div><dt>Fecha</dt><dd>' + f.fecha(g.fecha) + '</dd></div><div><dt>Categoría</dt><dd>' + esc(g.categoria) + '</dd></div>' +
       '<div><dt>Importe</dt><dd>' + ui.dineroDe(g.dinero) + '</dd></div>' +
-      '<div><dt>Moneda y tasa</dt><dd>' + (g.dinero.moneda === 'VES' ? 'Pagado en Bs.' : 'Pagado en €') + '<span class="tabla__sub">€ 1 = Bs. ' + f.tasaCompleta(g.dinero.tasa) + '</span></dd></div>' +
+      '<div><dt>Moneda y tasa</dt><dd>' + (g.dinero.moneda === 'VES' ? 'Pagado en Bs.' : 'Pagado en €') + '<span class="tabla__sub">' + f.tasaTexto(g.dinero.tasa, true) + '</span></dd></div>' +
       (g.proveedorId ? '<div><dt>Proveedor</dt><dd>' + esc(provNombre(e, g.proveedorId)) + '</dd></div>' : '') +
       '<div><dt>Origen</dt><dd>' + esc(ORIGEN[g.origen] || '') + (g.por ? '<span class="tabla__sub">Registró: ' + esc(g.por) + '</span>' : '') + '</dd></div></dl>';
     var borrable = g.origen === 'manual' && ctx.puede('editarFinanzas');
@@ -282,7 +291,7 @@
       var m = form.querySelector('[name="moneda"]:checked').value;
       form.querySelector('#ga-monto').parentNode.querySelector('.campo__sufijo').textContent = f.simbolo(m);
       var n = ui.numero(form, 'monto');
-      form.querySelector('[data-equiv]').textContent = isNaN(n) ? 'Tasa del día: € 1 = Bs. ' + f.tasa(tasa.valor) + '.' :
+      form.querySelector('[data-equiv]').textContent = isNaN(n) ? 'Tasa del día: ' + f.tasaTexto(tasa.valor) + '.' :
         'Equivale a ' + (m === 'VES' ? f.eur(n / tasa.valor) : f.bs(n * tasa.valor)) + ' con la tasa del ' + f.fecha(tasa.fecha) + '.';
       form.querySelector('[data-por-pagar]').hidden = form.querySelector('[name="estado"]:checked').value !== 'por-pagar';
     }
@@ -330,23 +339,25 @@
 
   function listaCuentas(ctx) {
     var filas = cuentasFiltradas(ctx);
-    if (!filas.length) return '<div class="tarjeta">' + ui.vacio('sol', 'No hay cuentas con este estado.', '') + '</div>';
+    if (!filas.length) return '<div class="tarjeta">' + ui.vacio('sol', 'No hay cuentas con este estado.',
+      (ctx.params.estado && ctx.params.estado !== 'abiertas') ? '<button type="button" class="btn btn--secundario" data-accion="limpiar">' + ui.icono('filter-x') + 'Ver cuentas sin pagar</button>' : '') + '</div>';
     var tot = c.sumaDinero(filas);
     var tabla = '<div class="tabla-caja solo-tabla"><table class="tabla tabla--filas"><caption class="sr">Cuentas por pagar</caption><thead><tr>' +
-      '<th scope="col">A quién</th><th scope="col">Vencimiento</th><th scope="col" class="num">Importe</th><th scope="col">Estado</th></tr></thead><tbody>' +
+      '<th scope="col">A quién</th><th scope="col" class="solo-ancho">Vencimiento</th><th scope="col" class="num">Importe</th><th scope="col">Estado</th></tr></thead><tbody>' +
       filas.map(function (cu) {
         var t = cu.pagada ? 'Pagada el ' + f.fecha(cu.pagada) : f.vence(cu.vence, ctx.hoy);
         var partes = t.split(' · ');
         return '<tr data-fila><td><button type="button" class="tabla__nombre" data-accion="cuenta" data-id="' + esc(cu.id) + '">' + esc(cu.acreedor) + '</button>' +
-          '<span class="tabla__sub">' + esc(cu.concepto) + '</span></td><td>' + esc(partes[0]) + (partes[1] ? '<span class="tabla__sub">' + esc(partes[1]) + '</span>' : '') + '</td>' +
+          '<span class="tabla__sub">' + esc(cu.concepto) + '</span><span class="tabla__sub solo-medio">' + esc(t) + '</span></td>' +
+          '<td class="solo-ancho">' + esc(partes[0]) + (partes[1] ? '<span class="tabla__sub">' + esc(partes[1]) + '</span>' : '') + '</td>' +
           '<td class="num">' + ui.dineroDe(cu.dinero) + '</td><td>' + ui.estado(c.estadoCuenta(cu, ctx.hoy)) + '</td></tr>';
-      }).join('') + '</tbody><tfoot><tr><td colspan="2">Total</td><td class="num">' + ui.dineroDe(tot) + '</td><td></td></tr></tfoot></table></div>';
+      }).join('') + '</tbody><tfoot><tr><td>Total</td><td class="solo-ancho"></td><td class="num">' + ui.dineroDe(tot) + '</td><td></td></tr></tfoot></table></div>';
     var fichas = '<ul class="fichas solo-movil" role="list">' + filas.map(function (cu) {
       return '<li><button type="button" class="ficha" data-accion="cuenta" data-id="' + esc(cu.id) + '">' +
         '<span class="ficha__arriba"><span class="ficha__nombre">' + esc(cu.acreedor) + '</span>' + ui.estado(c.estadoCuenta(cu, ctx.hoy)) + '</span>' +
         '<span class="suave">' + esc(cu.concepto) + '</span>' +
         '<span class="ficha__abajo"><span class="ficha__dato"><span>Vencimiento</span><span>' + esc(cu.pagada ? 'Pagada el ' + f.fecha(cu.pagada) : f.vence(cu.vence, ctx.hoy)) + '</span></span>' +
-        '<span class="ficha__dato"><span>Importe</span>' + ui.dineroDe(cu.dinero) + '</span></span></button></li>';
+        '<span class="ficha__dato ficha__dato--cifra"><span>Importe</span>' + ui.dineroDe(cu.dinero) + '</span></span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;
   }
@@ -394,7 +405,7 @@
     }
     function pintar() {
       var x = monto();
-      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m !== cu.dinero.moneda ? ' con la tasa del ' + f.fecha(tasa.fecha) + ' (€ 1 = Bs. ' + f.tasa(tasa.valor) + ').' : '.');
+      form.querySelector('[data-pago]').textContent = 'Se paga ' + f.importe(x.m, x.n) + (x.m !== cu.dinero.moneda ? ' con la tasa del ' + f.fecha(tasa.fecha) + ' (' + f.tasaTexto(tasa.valor) + ').' : '.');
     }
     form.addEventListener('change', pintar);
     pintar();
@@ -448,7 +459,7 @@
         ui.campo({ id: 'f-estado', nombre: 'estado', etiqueta: 'Estado', tipo: 'select', valor: ctx.params.estado || 'abiertas', attrs: ' data-filtro',
           opciones: [{ valor: 'abiertas', texto: 'Sin pagar' }, { valor: 'vencida', texto: 'Vencidas' }, { valor: 'vence-pronto', texto: 'Vencen esta semana' },
             { valor: 'pendiente', texto: 'Pendientes (más adelante)' }, { valor: 'pagada', texto: 'Pagadas' }, { valor: 'todas', texto: 'Todas' }] }) +
-        '</form>' + pieFiltros(false) + '<div data-lista></div>';
+        '</form>' + pieFiltros(true) + '<div data-lista></div>';
     },
     despues: function (main, ctx) { if (ctx.sub) this.pintarLista(main, ctx); },
     pintarLista: function (main, ctx) {
@@ -468,6 +479,7 @@
       main.querySelector('[data-cuenta]').textContent = n;
       var l = main.querySelector('[data-limpiar]');
       if (l && ctx.sub === 'gastos') l.hidden = !(ctx.params.q || ctx.params.categoria);
+      if (l && ctx.sub === 'por-pagar') l.hidden = !ctx.params.estado || ctx.params.estado === 'abiertas';
     },
     filtrar: function (main) {
       var form = main.querySelector('.filtros');
@@ -484,7 +496,7 @@
       limpiar: function (el, ctx) {
         ctx.fijarParams({ mes: ctx.params.mes });
         SB.app.render();
-        var b = document.getElementById('f-q');
+        var b = document.getElementById('f-q') || document.getElementById('f-estado');
         if (b) b.focus();
       }
     },

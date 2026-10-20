@@ -108,7 +108,7 @@ const ok = (c, m) => { if (!c) fallos.push(m); else console.log('  ✓ ' + m); }
   await p.fill('#tasa-valor', '1001,23456789');
   await p.click('dialog[open] button[type="submit"]');
   await p.waitForTimeout(60);
-  ok(await p.evaluate(() => /€ 1 = Bs\. 1\.001,23/.test(document.querySelector('.franja').textContent)), 'Tasa nueva en la barra superior');
+  ok(await p.evaluate(() => /€\s1\s=\sBs\.\s1\.001,23/.test(document.querySelector('.franja').textContent)), 'Tasa nueva en la barra superior');
   ok(await p.evaluate(() => window.SB.calc.tasaActual(window.SB.almacen.estado).valor === 1001.23456789), 'La tasa se guarda con todos sus decimales');
 
   // 8. Precio de un plato

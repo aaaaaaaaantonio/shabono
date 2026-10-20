@@ -79,7 +79,7 @@
         '<span class="ficha__abajo">' +
           '<span class="ficha__dato"><span>Existencia</span><span>' + f.cantidad(x.ex.util, u) + ' <span class="suave">· mín. ' + f.cantidad(x.p.minimo, u) + '</span></span></span>' +
           '<span class="ficha__dato"><span>Vencimiento</span><span>' + (x.ex.util <= 0 ? 'Sin existencias' : x.pv ? esc(f.vence(x.pv, ctx.hoy)) : 'Sin vencimiento') + '</span></span>' +
-          (verCostos ? '<span class="ficha__dato"><span>Valor</span>' + ui.dinero(x.valor, x.valor * tasa) + '</span>' : '') +
+          (verCostos ? '<span class="ficha__dato ficha__dato--cifra"><span>Valor</span>' + ui.dinero(x.valor, x.valor * tasa) + '</span>' : '') +
         '</span></button></li>';
     }).join('') + '</ul>';
     return tabla + fichas;

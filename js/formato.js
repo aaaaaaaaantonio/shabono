@@ -20,8 +20,10 @@
   }
 
   function num(n) { return conSigno(n, nf2.format(Math.abs(n))); }
-  function eur(n) { return '€ ' + num(n); }
-  function bs(n) { return 'Bs. ' + num(n); }
+  /* Espacio que no se parte: «€ 1.234,56» nunca queda en dos líneas */
+  function eur(n) { return '€\u00a0' + num(n); }
+  function bs(n) { return 'Bs.\u00a0' + num(n); }
+  function tasaTexto(v, completa) { return '€\u00a01 =\u00a0Bs.\u00a0' + (completa ? tasaCompleta(v) : tasa(v)); }
   function entero(n) { return conSigno(n, nfEntero.format(Math.abs(n))); }
   function pct(r) { return conSigno(r, nfPct.format(Math.abs(r * 100))) + ' %'; }
   function tasa(v) { return nf2.format(v); }
@@ -117,7 +119,7 @@
   }
 
   SB.f = {
-    redondear: redondear, num: num, eur: eur, bs: bs, entero: entero, pct: pct, tasa: tasa, tasaCompleta: tasaCompleta,
+    redondear: redondear, num: num, eur: eur, bs: bs, tasaTexto: tasaTexto, entero: entero, pct: pct, tasa: tasa, tasaCompleta: tasaCompleta,
     cantidad: cantidad, numCantidad: numCantidad, nombreUnidad: nombreUnidad, leerDecimal: leerDecimal,
     iso: iso, hoyISO: hoyISO, aFecha: aFecha, sumarDias: sumarDias, diasEntre: diasEntre,
     fecha: fecha, fechaCorta: fechaCorta, fechaLarga: fechaLarga, mesNombre: mesNombre, mesDe: mesDe, vence: vence,
