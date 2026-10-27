@@ -199,8 +199,7 @@
   }
   .sonando span { display: block; color: var(--gris); }
   .sonando b { display: block; font-weight: 600; }
-
-  .desliza { bottom: var(--relleno-abajo); left: 26%; }
+  .sonando .estado { display: flex; margin-top: .15em; }
 
   .menu {
     position: absolute;
@@ -219,18 +218,6 @@
   .menu a:hover, .menu a:focus-visible { color: var(--blanco); }
   .menu a[aria-current] { color: var(--blanco); }
   .menu a[aria-current]::before { content: "• "; }
-
-  .asa {
-    position: absolute;
-    left: 50%;
-    bottom: .55vw;
-    width: 2vw;
-    height: .42vw;
-    min-height: 4px;
-    transform: translateX(-50%);
-    border: 1px solid rgba(255, 255, 255, .35);
-    border-radius: 99px;
-  }
 
   .saludo, .chica, .columnas, .intro, .sonando, .menu, .logo { z-index: 2; }
 
@@ -377,6 +364,20 @@
   .fotos .foto--ancha { grid-column: span 2; }
   .fotos .foto--baja { height: 24vw; }
   .foto--amigas img { object-position: center 28%; }
+  .foto--hamburguesa img { object-position: center 55%; }
+  /* La foto del letrero llena el hueco de arriba a la izquierda, junto al título;
+     el texto sigue abajo, alineado con la última línea del título */
+  .cabeza { grid-template-rows: 1fr auto; }
+  .cabeza .titulo { grid-row: 1 / span 2; }
+  .cabeza .entrada { grid-row: 2; }
+  .cabeza__foto {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 12vw;
+    margin: 6vw var(--relleno) 2vw;
+    padding: 0 !important;
+  }
+  .cabeza__foto img { object-position: 60% 38%; }
   .pilares {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -735,9 +736,7 @@
     }
     .sonando { bottom: 46px; gap: 8px; }
     .disco { width: 34px; }
-    .desliza { display: none; }
     .menu { left: var(--relleno); justify-content: space-between; gap: 0; }
-    .asa { width: 28px; bottom: 6px; }
   }
 
   /* Teléfono: secciones */
@@ -757,7 +756,9 @@
     .cabecera .col-c { margin-left: auto; padding-right: var(--relleno); }
     .titulo { margin-top: 56px; }
     .entrada { margin-top: 28px; }
-    .fotos { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 40px; }
+    .cabeza .titulo, .cabeza .entrada, .cabeza__foto { grid-row: auto; }
+    .cabeza__foto { height: 72vw; margin: 32px var(--relleno) 0; }
+    .fotos { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
     .fotos .foto { height: 62vw; }
     .fotos .foto--chef, .fotos .foto--amigas, .fotos .foto--pasta { grid-column: span 2; height: 58vw; }
     .pilares { grid-template-columns: 1fr; gap: 22px; margin-top: 40px; }
@@ -863,10 +864,9 @@
 
     <div class="sonando">
       <div class="disco" aria-hidden="true"><svg viewBox="0 0 564 688"><use href="#jaguar"/></svg></div>
-      <p><span>Hoy en La Jungla:</span><b id="hoy-estado">Martes a domingo</b><span id="hoy-detalle">11:30 a. m. – 11:30 p. m.</span></p>
+      <p><span id="hoy-dias">Abiertos de martes a domingo</span><b id="hoy-horas">11:30 a. m. – 11:30 p. m.</b><span class="estado" id="hoy-estado" hidden></span></p>
     </div>
 
-    <a class="chica desliza" href="#nosotros">(Desliza para ver más)</a>
 
     <nav aria-label="Principal">
       <ul class="menu">
@@ -878,7 +878,6 @@
       </ul>
     </nav>
 
-    <span class="asa" aria-hidden="true"></span>
   </div>
 </section>
 
@@ -888,14 +887,15 @@
     <span class="col-b">Nosotros</span>
     <span class="col-c">Av. Perimetral, Puerto Ayacucho</span>
   </div>
-  <div class="reticula">
+  <div class="reticula cabeza">
     <h2 class="titulo col-c" id="t-nosotros" data-aparece><span>Los mejores</span><span>planes ocurren</span><span>alrededor de</span><span>una buena mesa.</span></h2>
     <p class="media entrada col-ab" data-aparece>La Jungla es un gastro bar en Puerto Ayacucho con tres cocinas en una sola carta: <span class="gris">clásica, asiática y mexicana.</span></p>
+    <figure class="foto cabeza__foto" data-aparece><img src="img/fotos/letrero.webp" alt="El jaguar de La Jungla recortado en una lámina de metal iluminada" width="690" height="820" loading="lazy" decoding="async"></figure>
   </div>
   <div class="reticula">
     <div class="fotos col-todo" data-aparece>
       <figure class="foto foto--salon"><img src="img/fotos/salon.webp" alt="El salón con plantas colgantes, mesas de madera y una pantalla" width="630" height="770" loading="lazy" decoding="async"></figure>
-      <figure class="foto foto--letrero"><img src="img/fotos/letrero.webp" alt="El jaguar de La Jungla recortado en una lámina de metal iluminada" width="690" height="820" loading="lazy" decoding="async"></figure>
+      <figure class="foto foto--hamburguesa"><img src="img/fotos/hamburguesa.webp" alt="Una hamburguesa con queso, tomate y lechuga sostenida con las dos manos" width="923" height="1130" loading="lazy" decoding="async"></figure>
       <figure class="foto foto--chef"><img src="img/fotos/chef.webp" alt="El chef saltea en un wok con llamas en la cocina" width="823" height="875" loading="lazy" decoding="async"></figure>
       <figure class="foto foto--amigas foto--ancha foto--baja"><img src="img/fotos/amigas.webp" alt="Tres amigas comparten hamburguesas y papas fritas en una mesa" width="923" height="900" loading="lazy" decoding="async"></figure>
       <figure class="foto foto--pasta foto--baja"><img src="img/fotos/pasta.webp" alt="Pasta amatriciana con tocineta y parmesano" width="923" height="700" loading="lazy" decoding="async"></figure>
@@ -1512,37 +1512,41 @@
       return { abierto: false, abre: '' };
     }
 
-    var hoyEstado = document.getElementById('hoy-estado');
-    var hoyDetalle = document.getElementById('hoy-detalle');
-    var estado = document.getElementById('estado');
+    // «Abierto ahora / Cerrado ahora» en la portada y en Visítanos
+    var estados = [document.getElementById('hoy-estado'), document.getElementById('estado')];
     function ponerEstado() {
-      var e = estadoActual();
-      hoyEstado.textContent = e.abierto ? 'Abierto ahora' : 'Cerrado ahora';
-      hoyDetalle.textContent = e.abierto ? 'Hasta las ' + horaBonita(e.cierre) : e.abre;
-      estado.textContent = e.abierto ? 'Abierto ahora' : 'Cerrado ahora';
-      estado.classList.toggle('abierto', e.abierto);
-      estado.hidden = false;
+      var abierto = estadoActual().abierto;
+      estados.forEach(function (el) {
+        el.textContent = abierto ? 'Abierto ahora' : 'Cerrado ahora';
+        el.classList.toggle('abierto', abierto);
+        el.hidden = false;
+      });
     }
     ponerEstado();
     setInterval(ponerEstado, 60000);
 
-    // ---------- Horario en Visítanos: agrupa los días seguidos con el mismo horario y marca el de hoy
-    (function () {
-      var orden = [1, 2, 3, 4, 5, 6, 0], grupos = [];
-      orden.forEach(function (d) {
-        var clave = JSON.stringify(CONFIG.horario[d]), g = grupos[grupos.length - 1];
-        if (g && g.clave === clave) g.dias.push(d);
-        else grupos.push({ clave: clave, dias: [d], r: CONFIG.horario[d] });
-      });
-      // Primero los días que abrimos
-      grupos.sort(function (a, b) { return !!b.r - !!a.r; });
-      var hoy = ahora().dia;
-      document.getElementById('horario').innerHTML = grupos.map(function (g) {
-        var nombre = DIAS[g.dias[0]] + (g.dias.length > 1 ? ' a ' + DIAS[g.dias[g.dias.length - 1]].toLowerCase() : '');
-        return '<tr' + (g.dias.indexOf(hoy) >= 0 ? ' class="hoy"' : '') + '><th scope="row">' + nombre + '</th><td>' +
-          (g.r ? horaBonita(g.r[0]) + ' – ' + horaBonita(g.r[1]) : 'Cerrado') + '</td></tr>';
-      }).join('');
-    })();
+    // ---------- Horario: agrupa los días seguidos con el mismo horario, los que abrimos primero
+    var grupos = [];
+    [1, 2, 3, 4, 5, 6, 0].forEach(function (d) {
+      var clave = JSON.stringify(CONFIG.horario[d]), g = grupos[grupos.length - 1];
+      if (g && g.clave === clave) g.dias.push(d);
+      else grupos.push({ clave: clave, dias: [d], r: CONFIG.horario[d] });
+    });
+    grupos.sort(function (a, b) { return !!b.r - !!a.r; });
+    grupos.forEach(function (g) {
+      g.nombre = DIAS[g.dias[0]] + (g.dias.length > 1 ? ' a ' + DIAS[g.dias[g.dias.length - 1]].toLowerCase() : '');
+      g.horas = g.r ? horaBonita(g.r[0]) + ' – ' + horaBonita(g.r[1]) : 'Cerrado';
+    });
+
+    // Portada: el horario principal (abajo a la izquierda)
+    document.getElementById('hoy-dias').textContent = 'Abiertos de ' + grupos[0].nombre.toLowerCase();
+    document.getElementById('hoy-horas').textContent = grupos[0].horas;
+
+    // Visítanos: la tabla completa, con el día de hoy marcado
+    var hoy = ahora().dia;
+    document.getElementById('horario').innerHTML = grupos.map(function (g) {
+      return '<tr' + (g.dias.indexOf(hoy) >= 0 ? ' class="hoy"' : '') + '><th scope="row">' + g.nombre + '</th><td>' + g.horas + '</td></tr>';
+    }).join('');
 
     // ---------- Carta: pestañas por sección (sin JavaScript se ven todas, una debajo de otra)
     var carta = document.getElementById('carta');
