@@ -16,7 +16,7 @@
   :root {
     --negro: #000;
     --blanco: #fff;
-    --gris: #8b8b8b;
+    --gris: #969696;
     --borde: rgba(255, 255, 255, .22);
     --rojo: #ff1f1f;
 
@@ -26,6 +26,7 @@
     --relleno-abajo: .7vw;
     --chica: max(11px, .8vw);  /* textos pequeños: ciudad, menú, columnas */
     --radio: clamp(14px, 2.5vw, 40px);
+    --grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 .07'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 
     /* Escala del resto del sitio */
     --titulo: 7.4vw;             /* títulos de sección */
@@ -66,6 +67,17 @@
     overflow: hidden;
     isolation: isolate;
   }
+
+  /* El jaguar en 3D queda fijo detrás de toda la página: en la portada se ve limpio
+     y las demás hojas pasan por encima con una capa granulada */
+  .escenario {
+    position: fixed;
+    inset: var(--margen);
+    z-index: 0;
+    overflow: hidden;
+    border-radius: var(--radio);
+  }
+  main, footer { position: relative; z-index: 1; }
 
   #escena {
     position: absolute;
@@ -230,12 +242,17 @@
 
   html { scroll-behavior: smooth; }
 
+  /* Capa granulada: grano fino sobre negro translúcido, para que el texto se lea bien
+     sobre el 3D que sigue moviéndose detrás (y que ahí se pinta desenfocado, ver SUAVE) */
   .hoja {
     position: relative;
     margin: 0 var(--margen) var(--margen);
     padding: var(--relleno) 0 calc(var(--relleno) * 5);
     border: 1px solid var(--borde);
     border-radius: var(--radio);
+    background-color: rgba(0, 0, 0, .8);
+    background-image: var(--grano);
+    background-size: 160px 160px;
     scroll-margin-top: var(--margen);
   }
 
@@ -477,7 +494,7 @@
     padding: 1.1vw 1.2vw;
     border: 1px solid var(--borde);
     border-radius: 1.1vw 1.1vw 1.1vw .25vw;
-    background: #0b0b0b;
+    background: rgba(255, 255, 255, .04);
     font-size: var(--cuerpo);
     font-weight: 500;
     line-height: 1.5;
@@ -820,12 +837,15 @@
   </symbol>
 </svg>
 
+<div class="escenario" aria-hidden="true">
+  <svg class="respaldo" viewBox="0 0 564 688"><use href="#jaguar"/></svg>
+  <canvas id="escena"></canvas>
+  <div class="rayas"></div>
+</div>
+
 <main>
 <section class="portada" id="inicio">
   <div class="marco">
-    <svg class="respaldo" viewBox="0 0 564 688" aria-hidden="true"><use href="#jaguar"/></svg>
-    <canvas id="escena" aria-hidden="true"></canvas>
-    <div class="rayas" aria-hidden="true"></div>
 
     <a class="logo" href="#inicio" aria-label="La Jungla, inicio">
       <svg viewBox="0 0 661 869"><use href="#marca"/></svg>
@@ -1372,8 +1392,8 @@
       </div>
       <div class="dato">
         <span class="etiqueta">Reservas y delivery</span>
-        <p><a data-whatsapp href="#reservas">WhatsApp <span class="pendiente">[+58 000-000 0000]</span></a></p>
-        <p><a href="https://www.instagram.com/la__jungla/" target="_blank" rel="noopener">@la__jungla</a></p>
+        <p><a data-whatsapp href="#reservas">WhatsApp 0416-502 7741</a></p>
+        <p><a href="https://www.instagram.com/la___jungla/" target="_blank" rel="noopener">@la___jungla</a></p>
       </div>
       <div class="acciones">
         <a class="boton" id="como-llegar" href="https://maps.app.goo.gl/PvVZHpvzqGDr9Zyn9" target="_blank" rel="noopener">Cómo llegar ↗</a>
@@ -1402,7 +1422,7 @@
   <p class="marca-grande" aria-hidden="true"><span class="marca-grande__la">LA</span>JUNGLA</p>
   <div class="reticula cabecera abajo">
     <span class="col-a">© <span data-anio>2026</span> · RIF J-401829481</span>
-    <a class="col-b" href="https://www.instagram.com/la__jungla/" target="_blank" rel="noopener">Instagram</a>
+    <a class="col-b" href="https://www.instagram.com/la___jungla/" target="_blank" rel="noopener">Instagram</a>
     <a class="col-c" data-whatsapp href="#reservas">WhatsApp</a>
   </div>
 </footer>
@@ -1419,8 +1439,8 @@
   // ===================== Datos del restaurante =====================
   // Cambiar aquí cuando cambie algo; el resto de la página se actualiza solo.
   var CONFIG = {
-    // [Número de WhatsApp para reservas y delivery: código de país y número, sin «+» ni espacios. Ej.: 584141234567]
-    whatsapp: '',
+    // Número de WhatsApp para reservas y delivery: código de país y número, sin «+» ni espacios
+    whatsapp: '584165027741',
     // Enlace de Google Maps del local (botón «Cómo llegar»)
     mapa: 'https://maps.app.goo.gl/PvVZHpvzqGDr9Zyn9',
     // Horario por día, 0 = domingo … 6 = sábado: ['11:30', '23:30'] o null si ese día cierra
@@ -1752,17 +1772,23 @@
   import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
   import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
   import { RGBShiftShader } from 'three/addons/shaders/RGBShiftShader.js';
+  import { HorizontalBlurShader } from 'three/addons/shaders/HorizontalBlurShader.js';
+  import { VerticalBlurShader } from 'three/addons/shaders/VerticalBlurShader.js';
   import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
   import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
-  const marco = document.querySelector('.marco');
+  const escenario = document.querySelector('.escenario');
   const lienzo = document.getElementById('escena');
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // ?t=4.5 congela la animación en ese segundo del ciclo (sirve para revisar una toma concreta)
   const tFijo = new URLSearchParams(location.search).get('t');
 
   const renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  // Resolución completa en la portada. Detrás de las hojas se pinta a poca resolución y
+  // desenfocado dentro del propio 3D (un blur de CSS sobre el 3D en movimiento sería caro
+  // en teléfonos); así además gasta menos batería.
+  const NITIDO = Math.min(devicePixelRatio, 1.5), SUAVE = 0.35;
+  renderer.setPixelRatio(NITIDO);
   renderer.toneMapping = THREE.NoToneMapping;
 
   const escena = new THREE.Scene();
@@ -2002,6 +2028,14 @@
   const rgb = new ShaderPass(RGBShiftShader);
   rgb.uniforms.amount.value = 0.0006;
   composer.addPass(rgb);
+  // Desenfoque para cuando el 3D queda detrás de las hojas (apagado en la portada).
+  // Se aplica sobre la imagen ya reducida (SUAVE), así que cuesta muy poco.
+  const desenfoque = [HorizontalBlurShader, VerticalBlurShader, HorizontalBlurShader, VerticalBlurShader].map(s => {
+    const pase = new ShaderPass(s);
+    pase.enabled = false;
+    composer.addPass(pase);
+    return pase;
+  });
   composer.addPass(new OutputPass());
 
   // ---------- Recorrido de cámara (11,2 s, como el video): toma inclinada, de frente y muy de cerca
@@ -2088,30 +2122,47 @@
     composer.render();
   }
 
+  // Con «reducir movimiento» o ?t= se pinta un solo fotograma y se repinta al cambiar de tamaño
+  let fotogramaFijo = null;
+
   function medir() {
-    const w = marco.clientWidth, h = marco.clientHeight;
+    const w = escenario.clientWidth, h = escenario.clientHeight;
     aspecto = w / h;
     renderer.setSize(w, h, false);
     composer.setSize(w, h);
     bloom.resolution.set(w, h);
     camara.aspect = aspecto;
+    const pr = renderer.getPixelRatio();
+    desenfoque.forEach((pase, i) => {
+      if (i % 2 === 0) pase.uniforms.h.value = 1.6 / (w * pr);
+      else pase.uniforms.v.value = 1.6 / (h * pr);
+    });
+    if (fotogramaFijo) fotogramaFijo();
   }
   medir();
   addEventListener('resize', medir);
 
-  let visible = true;
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(marco);
+  let nitido = true;
+  new IntersectionObserver(([e]) => {
+    const ahora = e.intersectionRatio > 0.05;
+    if (ahora === nitido) return;
+    nitido = ahora;
+    renderer.setPixelRatio(nitido ? NITIDO : SUAVE);
+    composer.setPixelRatio(nitido ? NITIDO : SUAVE);
+    desenfoque.forEach(pase => { pase.enabled = !nitido; });
+    medir();
+  }, { threshold: [0, 0.05, 0.2] }).observe(document.getElementById('inicio'));
 
   const inicio = performance.now();
   if (tFijo !== null || quieto) {
     // Fotograma fijo: el que pida ?t= o, con «reducir movimiento», la toma de frente
     const s = tFijo !== null ? parseFloat(tFijo) % CICLO : 4.6;
-    const uno = () => pintar(s);
-    uno();
-    addEventListener('resize', uno);
+    fotogramaFijo = () => pintar(s);
+    fotogramaFijo();
   } else {
+    // Sigue en movimiento mientras se baja por la página; solo se detiene con la pestaña oculta
     renderer.setAnimationLoop(() => {
-      if (!visible || document.hidden) return;
+      if (document.hidden) return;
       pintar(((performance.now() - inicio) / 1000) % CICLO);
     });
   }
