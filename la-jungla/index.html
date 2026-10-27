@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.classList.add('js');</script>
 <title>La Jungla · Gastro Bar</title>
 <meta name="description" content="La Jungla, gastro bar en Puerto Ayacucho, estado Amazonas.">
 <meta name="robots" content="noindex">
@@ -23,9 +24,17 @@
     --relleno: 1.16vw;         /* del marco al texto */
     --relleno-abajo: .7vw;
     --chica: max(11px, .8vw);  /* textos pequeños: ciudad, menú, columnas */
+    --radio: clamp(14px, 2.5vw, 40px);
+
+    /* Escala del resto del sitio */
+    --titulo: 7.4vw;             /* títulos de sección */
+    --media: 1.9vw;              /* texto mediano en negrita, como el de la portada */
+    --plato: max(17px, 1.35vw);  /* nombres de platos y datos */
+    --cuerpo: max(15px, 1.1vw);  /* descripciones */
   }
 
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
 
   html, body {
     margin: 0;
@@ -52,7 +61,7 @@
     position: absolute;
     inset: var(--margen);
     border: 1px solid var(--borde);
-    border-radius: clamp(14px, 2.5vw, 40px);
+    border-radius: var(--radio);
     overflow: hidden;
     isolation: isolate;
   }
@@ -195,8 +204,8 @@
   }
   .menu a { color: var(--gris); transition: color .2s ease; }
   .menu a:hover, .menu a:focus-visible { color: var(--blanco); }
-  .menu a[aria-current="page"] { color: var(--blanco); }
-  .menu a[aria-current="page"]::before { content: "• "; }
+  .menu a[aria-current] { color: var(--blanco); }
+  .menu a[aria-current]::before { content: "• "; }
 
   .asa {
     position: absolute;
@@ -211,6 +220,410 @@
   }
 
   .saludo, .chica, .columnas, .intro, .sonando, .menu, .logo { z-index: 2; }
+
+  /* ===================== Resto del sitio =====================
+     Mismo lenguaje que la portada: cada sección es una hoja con el marco redondeado,
+     los textos se apoyan en tres anclas (0 %, 26 % y 42,5 % del ancho) y hay tres
+     tamaños de letra: título enorme, texto mediano en negrita y texto chico.
+     El rojo solo es luz y acción (reservar, abierto ahora). */
+
+  html { scroll-behavior: smooth; }
+
+  .hoja {
+    position: relative;
+    margin: 0 var(--margen) var(--margen);
+    padding: var(--relleno) 0 calc(var(--relleno) * 5);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    scroll-margin-top: var(--margen);
+  }
+
+  .reticula {
+    display: grid;
+    grid-template-columns: 26% 16.5% minmax(0, 1fr);
+  }
+  .reticula > * { min-width: 0; padding-right: var(--relleno); }
+  .col-a    { grid-column: 1; padding-left: var(--relleno); }
+  .col-b    { grid-column: 2; }
+  .col-c    { grid-column: 3; }
+  .col-ab   { grid-column: 1 / 3; padding-left: var(--relleno); }
+  .col-bc   { grid-column: 2 / 4; }
+  .col-todo { grid-column: 1 / -1; padding-left: var(--relleno); }
+
+  /* Fila de arriba de cada hoja: número, nombre y un dato a la derecha (como la portada) */
+  .cabecera {
+    margin: 0;
+    font-size: var(--chica);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .cabecera .col-c { text-align: right; }
+  .cabecera a { transition: color .2s ease; }
+  .cabecera a:hover { color: var(--gris); }
+
+  .titulo {
+    grid-row: 1;
+    margin: 6vw 0 0;
+    font-size: var(--titulo);
+    font-weight: 700;
+    line-height: .84;
+    letter-spacing: -.035em;
+  }
+  .titulo span { display: block; }
+
+  .media {
+    margin: 0;
+    font-size: var(--media);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.025em;
+  }
+  .entrada { grid-row: 1; align-self: end; }
+  .gris { color: var(--gris); }
+
+  .cuerpo {
+    margin: 0;
+    font-size: var(--cuerpo);
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--gris);
+  }
+
+  .etiqueta {
+    display: block;
+    margin: 0 0 .6em;
+    padding: 0;
+    font-size: var(--chica);
+    font-weight: 600;
+    color: var(--gris);
+  }
+
+  /* Datos que faltan: subrayados en rojo hasta cambiarlos por los reales */
+  .pendiente {
+    text-decoration: underline dashed rgba(255, 31, 31, .8) 1px;
+    text-underline-offset: .22em;
+  }
+
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+    padding: .8em 1.25em;
+    border: 1px solid var(--borde);
+    border-radius: 99px;
+    background: none;
+    color: var(--blanco);
+    font-family: inherit;
+    font-size: max(13px, .95vw);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .boton:hover { background: var(--blanco); border-color: var(--blanco); color: var(--negro); }
+  .boton--rojo { background: var(--rojo); border-color: var(--rojo); color: var(--negro); }
+  .boton--grande { padding: 1em 1.6em; font-size: max(15px, 1.2vw); }
+  :focus-visible { outline: 2px solid var(--blanco); outline-offset: 3px; }
+
+  /* Huecos de foto: se ven así hasta que lleguen las fotos reales */
+  .foto {
+    position: relative;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: calc(var(--radio) * .5);
+    background: #0a0a0a;
+  }
+  .foto > svg { width: auto; height: 42%; color: rgba(255, 255, 255, .07); }
+  .foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .foto figcaption {
+    position: absolute;
+    left: var(--relleno);
+    bottom: var(--relleno);
+    font-size: var(--chica);
+    font-weight: 600;
+    color: var(--gris);
+  }
+
+  /* ---------- Nosotros */
+  .fotos {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--relleno);
+    margin-top: 5vw;
+  }
+  .fotos .foto { height: 34vw; }
+  .pilares {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--relleno);
+    margin: 4vw 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pilares li { padding-top: .9vw; border-top: 1px solid var(--borde); }
+  .pilares h3 { margin: 0 0 .7em; font-size: var(--chica); font-weight: 600; }
+
+  /* ---------- Menú */
+  .carta { margin-top: 5vw; }
+  .indice {
+    position: sticky;
+    top: calc(var(--margen) + var(--relleno));
+    align-self: start;
+    font-size: var(--chica);
+    font-weight: 600;
+    line-height: 2;
+  }
+  .indice ul { margin: 0; padding: 0; list-style: none; }
+  .indice a { color: var(--gris); transition: color .2s ease; }
+  .indice a:hover, .indice a[aria-current] { color: var(--blanco); }
+  .indice a[aria-current]::before { content: "• "; }
+  .categorias { padding-right: 0; }
+  .categoria {
+    display: grid;
+    grid-template-columns: 22.3% minmax(0, 1fr);  /* cae en las anclas 26 % y 42,5 % de la hoja */
+    margin-bottom: 4.5vw;
+    scroll-margin-top: calc(var(--margen) + var(--relleno));
+  }
+  .categoria:last-child { margin-bottom: 0; }
+  .categoria h3 {
+    margin: 0;
+    padding-right: var(--relleno);
+    font-size: var(--media);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.025em;
+  }
+  .platos { margin: 0; padding: 0 var(--relleno) 0 0; list-style: none; }
+  .plato { padding: 1vw 0 1.1vw; border-top: 1px solid var(--borde); }
+  .plato:last-child { border-bottom: 1px solid var(--borde); }
+  .plato__fila {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2vw;
+  }
+  .plato h4, .precio {
+    margin: 0;
+    font-size: var(--plato);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.015em;
+  }
+  .precio { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .plato .cuerpo { margin-top: .3em; max-width: 44em; }
+  .sello {
+    margin-left: .6em;
+    font-size: var(--chica);
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--rojo);
+    vertical-align: .15em;
+  }
+
+  /* ---------- Reservas */
+  .reserva { margin-top: 5vw; }
+  .vista { align-self: start; position: sticky; top: calc(var(--margen) + var(--relleno)); }
+  .burbuja {
+    margin: 0;
+    padding: 1.1vw 1.2vw;
+    border: 1px solid var(--borde);
+    border-radius: 1.1vw 1.1vw 1.1vw .25vw;
+    background: #0b0b0b;
+    font-size: var(--cuerpo);
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .formulario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.6vw var(--relleno);
+    align-content: start;
+  }
+  .campo { display: block; min-width: 0; margin: 0; padding: 0; border: 0; }
+  .campo--ancho { grid-column: 1 / -1; }
+  .campo input, .campo select {
+    width: 100%;
+    padding: .45em 0;
+    border: 0;
+    border-bottom: 1px solid var(--borde);
+    border-radius: 0;
+    background: none;
+    color: var(--blanco);
+    font-family: inherit;
+    font-size: max(16px, 1.35vw);
+    font-weight: 600;
+    color-scheme: dark;
+    accent-color: var(--rojo);
+    caret-color: var(--rojo);
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  .campo input::placeholder { color: #555; }
+  .campo input:focus, .campo select:focus { border-bottom-color: var(--blanco); }
+  .campo select option { background: #111; }
+  .campo[aria-invalid="true"] input, .campo[aria-invalid="true"] select { border-bottom-color: var(--rojo); }
+  .personas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .2em 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .personas button {
+    width: 2.3em;
+    height: 2.3em;
+    border: 1px solid var(--borde);
+    border-radius: 50%;
+    background: none;
+    color: var(--blanco);
+    font-family: inherit;
+    font-size: max(14px, 1vw);
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .personas button:hover { background: var(--blanco); color: var(--negro); }
+  .personas output { font-size: max(16px, 1.35vw); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .ocasiones { display: flex; flex-wrap: wrap; gap: .5vw; }
+  .ocasiones label { position: relative; cursor: pointer; }
+  .ocasiones input { position: absolute; opacity: 0; pointer-events: none; }
+  .ocasiones span {
+    display: inline-block;
+    padding: .7em 1.1em;
+    border: 1px solid var(--borde);
+    border-radius: 99px;
+    font-size: max(13px, .95vw);
+    font-weight: 600;
+    transition: background .2s ease, color .2s ease;
+  }
+  .ocasiones input:checked + span { background: var(--blanco); color: var(--negro); }
+  .ocasiones input:focus-visible + span { outline: 2px solid var(--blanco); outline-offset: 3px; }
+  .enviar { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2vw 1.6vw; margin-top: 1vw; }
+  .aviso { margin: 0; font-size: var(--chica); font-weight: 600; color: var(--rojo); }
+
+  /* ---------- Visítanos */
+  .visita { margin-top: 5vw; }
+  .datos { display: grid; gap: 2.6vw; align-content: start; }
+  .dato p { margin: 0; font-size: var(--plato); font-weight: 700; line-height: 1.3; letter-spacing: -.015em; }
+  .dato a { transition: color .2s ease; }
+  .dato a:hover { color: var(--gris); }
+  .horario { width: 100%; border-collapse: collapse; font-size: var(--cuerpo); }
+  .horario th, .horario td { padding: .45em 0; border-bottom: 1px solid var(--borde); text-align: left; }
+  .horario th { font-weight: 500; color: var(--gris); }
+  .horario td { font-weight: 600; text-align: right; }
+  .acciones { display: flex; flex-wrap: wrap; gap: .6vw; }
+  .visita .col-c { display: flex; }
+  .mapa {
+    position: relative;
+    flex: 1;
+    min-height: 34vw;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: calc(var(--radio) * .5);
+    background: #0a0a0a;
+  }
+  .mapa iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(1) invert(.92) contrast(.9) brightness(.85);
+  }
+  .mapa .nota {
+    position: absolute;
+    left: var(--relleno);
+    bottom: var(--relleno);
+    padding: .5em .8em;
+    border-radius: 99px;
+    background: rgba(0, 0, 0, .78);
+    font-size: var(--chica);
+    font-weight: 600;
+  }
+  .estado { display: inline-flex; align-items: center; gap: .5em; }
+  .estado::before {
+    content: "";
+    width: .6em;
+    height: .6em;
+    border-radius: 50%;
+    background: var(--gris);
+  }
+  .estado.abierto::before { background: var(--rojo); animation: latido 2s ease-out infinite; }
+  @keyframes latido {
+    0% { box-shadow: 0 0 0 0 rgba(255, 31, 31, .6); }
+    70%, 100% { box-shadow: 0 0 0 .55em rgba(255, 31, 31, 0); }
+  }
+
+  /* ---------- Pie */
+  .hoja.pie { padding-bottom: var(--relleno-abajo); overflow: hidden; }
+  .marca-grande {
+    margin: 7vw 0 0;
+    padding: 0 var(--relleno);
+    font-size: 18.8vw;
+    font-weight: 700;
+    line-height: .8;
+    letter-spacing: -.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .pie .abajo { margin-top: 2.4vw; }
+  .pie .abajo a { color: var(--gris); }
+  .pie .abajo a:hover { color: var(--blanco); }
+
+  /* ---------- Barra flotante (aparece al salir de la portada) */
+  .barra {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--margen) + 6px);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 1.4vw;
+    padding: .4vw .4vw .4vw 1vw;
+    border: 1px solid var(--borde);
+    border-radius: 99px;
+    background: rgba(0, 0, 0, .72);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    font-size: var(--chica);
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 160%);
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1), opacity .3s ease, visibility 0s linear .5s;
+  }
+  .barra.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition-delay: 0s;
+  }
+  .barra__logo { display: block; height: max(22px, 1.7vw); }
+  .barra__logo svg { display: block; width: auto; height: 100%; }
+  .barra a:not(.boton):not(.barra__logo) { color: var(--gris); transition: color .2s ease; }
+  .barra a:not(.boton):not(.barra__logo):hover,
+  .barra a[aria-current]:not(.barra__logo) { color: var(--blanco); }
+  .barra a[aria-current]:not(.barra__logo)::before { content: "• "; }
+  .barra .boton { padding: .85em 1.2em; font-size: var(--chica); }
+
+  /* Aparición suave al llegar (sin JavaScript o con «reducir movimiento», todo se ve quieto) */
+  .js [data-aparece] {
+    opacity: 0;
+    transform: translateY(1.4vw);
+    transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
+  }
+  .js [data-aparece].visto { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js [data-aparece] { opacity: 1; transform: none; transition: none; }
+    .estado.abierto::before { animation: none; }
+  }
 
   /* Teléfono */
   @media (max-width: 700px) {
@@ -244,6 +657,66 @@
     .menu { left: var(--relleno); justify-content: space-between; gap: 0; }
     .asa { width: 28px; bottom: 6px; }
   }
+
+  /* Teléfono: secciones */
+  @media (max-width: 700px) {
+    :root {
+      --titulo: 15.5vw;
+      --media: 21px;
+      --plato: 17px;
+      --cuerpo: 15px;
+    }
+    .hoja { padding-bottom: 64px; }
+    .reticula { grid-template-columns: minmax(0, 1fr); }
+    .reticula > * { grid-column: 1; grid-row: auto; padding-left: var(--relleno); }
+    .cabecera { display: flex; gap: 16px; }
+    .cabecera > * { padding: 0; }
+    .cabecera > :first-child { padding-left: var(--relleno); }
+    .cabecera .col-c { margin-left: auto; padding-right: var(--relleno); }
+    .titulo { margin-top: 56px; }
+    .entrada { margin-top: 28px; }
+    .fotos { grid-template-columns: 1fr; margin-top: 40px; }
+    .fotos .foto { height: 64vw; }
+    .fotos .foto:last-child { height: 96vw; }
+    .pilares { grid-template-columns: 1fr; gap: 22px; margin-top: 40px; }
+    .pilares li { padding-top: 12px; }
+    .carta { margin-top: 40px; }
+    .indice {
+      top: 0;
+      z-index: 5;
+      padding: 0;
+      background: rgba(0, 0, 0, .86);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .indice ul {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 12px var(--relleno);
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .indice ul::-webkit-scrollbar { display: none; }
+    .categorias { margin-top: 18px; }
+    .categoria { grid-template-columns: 1fr; margin-bottom: 44px; scroll-margin-top: 52px; }
+    .categoria h3 { margin-bottom: 14px; }
+    .plato { padding: 14px 0 15px; }
+    .reserva { margin-top: 40px; }
+    .vista { position: static; order: 2; margin-top: 36px; }
+    .burbuja { padding: 14px 16px; border-radius: 14px 14px 14px 4px; }
+    .formulario { gap: 28px 16px; }
+    .ocasiones { gap: 8px; }
+    .enviar { gap: 14px; }
+    .visita { margin-top: 40px; }
+    .datos { gap: 28px; }
+    .acciones { gap: 8px; }
+    .mapa { min-height: 82vw; margin-top: 36px; }
+    .marca-grande { margin-top: 56px; font-size: 16vw; }
+    .pie .abajo { margin-top: 20px; }
+    .barra { gap: 18px; padding: 5px 5px 5px 14px; }
+    .solo-ancho { display: none; }
+  }
 </style>
 <script type="importmap">
 {
@@ -263,13 +736,14 @@
   </symbol>
 </svg>
 
-<main class="portada">
+<main>
+<section class="portada" id="inicio">
   <div class="marco">
     <svg class="respaldo" viewBox="26 40 564 688" aria-hidden="true"><use href="#jaguar"/></svg>
     <canvas id="escena" aria-hidden="true"></canvas>
     <div class="rayas" aria-hidden="true"></div>
 
-    <a class="logo" href="#" aria-label="La Jungla, inicio">
+    <a class="logo" href="#inicio" aria-label="La Jungla, inicio">
       <svg viewBox="26 40 564 688"><use href="#jaguar"/></svg>
     </a>
     <p class="chica ciudad">Puerto Ayacucho <span id="reloj">10:09</span></p>
@@ -292,14 +766,14 @@
 
     <div class="sonando">
       <div class="disco" aria-hidden="true"><svg viewBox="26 40 564 688"><use href="#jaguar"/></svg></div>
-      <p><span>Sonando en la barra:</span><b>[Canción]</b><span>[Artista]</span></p>
+      <p><span>Sonando en la barra:</span><b class="pendiente">[Canción]</b><span class="pendiente">[Artista]</span></p>
     </div>
 
-    <p class="chica desliza">(Desliza para ver más)</p>
+    <a class="chica desliza" href="#nosotros">(Desliza para ver más)</a>
 
     <nav aria-label="Principal">
       <ul class="menu">
-        <li><a href="#" aria-current="page">Inicio</a></li>
+        <li><a href="#inicio" aria-current="true">Inicio</a></li>
         <li><a href="#nosotros">Nosotros</a></li>
         <li><a href="#menu">Menú</a></li>
         <li><a href="#reservas">Reservas</a></li>
@@ -309,19 +783,484 @@
 
     <span class="asa" aria-hidden="true"></span>
   </div>
+</section>
+
+<section class="hoja" id="nosotros" aria-labelledby="t-nosotros">
+  <div class="reticula cabecera">
+    <span class="col-a">(01)</span>
+    <span class="col-b">Nosotros</span>
+    <span class="col-c">Puerto Ayacucho, Amazonas</span>
+  </div>
+  <div class="reticula">
+    <h2 class="titulo col-c" id="t-nosotros" data-aparece><span>Comer,</span><span>brindar y</span><span>quedarse</span><span>un rato más.</span></h2>
+    <p class="media entrada col-ab" data-aparece>La Jungla es un gastro bar en Puerto Ayacucho. <span class="gris pendiente">[Su historia en dos líneas: quién lo lleva, desde cuándo y qué lo hace distinto.]</span></p>
+  </div>
+  <div class="reticula">
+    <div class="fotos col-todo" data-aparece>
+      <figure class="foto"><svg viewBox="26 40 564 688" aria-hidden="true"><use href="#jaguar"/></svg><figcaption class="pendiente">[Foto: el salón de noche]</figcaption></figure>
+      <figure class="foto"><svg viewBox="26 40 564 688" aria-hidden="true"><use href="#jaguar"/></svg><figcaption class="pendiente">[Foto: la barra]</figcaption></figure>
+    </div>
+  </div>
+  <div class="reticula">
+    <ul class="pilares col-bc" data-aparece>
+      <li><h3>Cocina</h3><p class="cuerpo pendiente">[Qué se come: platos fuertes, para compartir, ingredientes de la región.]</p></li>
+      <li><h3>Coctelería</h3><p class="cuerpo pendiente">[Qué se toma: cócteles de la casa, clásicos, cervezas.]</p></li>
+      <li><h3>Ambiente</h3><p class="cuerpo pendiente">[Cómo es la noche: música, eventos, días especiales.]</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="hoja" id="menu" aria-labelledby="t-menu">
+  <div class="reticula cabecera">
+    <span class="col-a">(02)</span>
+    <span class="col-b">Menú</span>
+    <span class="col-c pendiente">[Precios en dólares]</span>
+  </div>
+  <div class="reticula">
+    <h2 class="titulo col-c" id="t-menu" data-aparece><span>La carta.</span></h2>
+    <p class="media entrada col-ab" data-aparece>De la cocina y de la barra, <span class="gris">para compartir o para ti solo.</span></p>
+  </div>
+  <div class="reticula carta">
+    <nav class="indice col-a" aria-label="Categorías del menú">
+      <ul>
+        <li><a href="#carta-entradas">Entradas</a></li>
+        <li><a href="#carta-principales">Principales</a></li>
+        <li><a href="#carta-compartir">Para compartir</a></li>
+        <li><a href="#carta-postres">Postres</a></li>
+        <li><a href="#carta-cocteles">Cócteles</a></li>
+        <li><a href="#carta-bebidas">Bebidas</a></li>
+      </ul>
+    </nav>
+    <div class="categorias col-bc">
+      <section class="categoria" id="carta-entradas" aria-labelledby="c-entradas">
+        <h3 id="c-entradas">Entradas</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+        </ul>
+      </section>
+      <section class="categoria" id="carta-principales" aria-labelledby="c-principales">
+        <h3 id="c-principales">Principales</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span> <span class="sello">De la casa</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+        </ul>
+      </section>
+      <section class="categoria" id="carta-compartir" aria-labelledby="c-compartir">
+        <h3 id="c-compartir">Para compartir</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+        </ul>
+      </section>
+      <section class="categoria" id="carta-postres" aria-labelledby="c-postres">
+        <h3 id="c-postres">Postres</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del plato]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Descripción breve: ingredientes principales.]</p>
+          </li>
+        </ul>
+      </section>
+      <section class="categoria" id="carta-cocteles" aria-labelledby="c-cocteles">
+        <h3 id="c-cocteles">Cócteles</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del cóctel]</span> <span class="sello">De la casa</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Base y sabores: ron, parchita, hierbabuena…]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del cóctel]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Base y sabores.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Nombre del cóctel]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Base y sabores.]</p>
+          </li>
+        </ul>
+      </section>
+      <section class="categoria" id="carta-bebidas" aria-labelledby="c-bebidas">
+        <h3 id="c-bebidas">Bebidas</h3>
+        <ul class="platos">
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Cervezas]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Marcas y presentaciones.]</p>
+          </li>
+          <li class="plato">
+            <div class="plato__fila"><h4><span class="pendiente">[Jugos y bebidas sin alcohol]</span></h4><span class="precio pendiente">[$0]</span></div>
+            <p class="cuerpo pendiente">[Sabores.]</p>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="hoja" id="reservas" aria-labelledby="t-reservas">
+  <div class="reticula cabecera">
+    <span class="col-a">(03)</span>
+    <span class="col-b">Reservas</span>
+    <span class="col-c">Por WhatsApp</span>
+  </div>
+  <div class="reticula">
+    <h2 class="titulo col-c" id="t-reservas" data-aparece><span>Reserva</span><span>tu mesa.</span></h2>
+    <p class="media entrada col-ab" data-aparece>Elige el día, la hora y cuántos vienen. <span class="gris">Te abrimos WhatsApp con el mensaje listo para enviar.</span></p>
+  </div>
+  <div class="reticula reserva">
+    <div class="vista col-ab">
+      <span class="etiqueta">Así llegará tu mensaje</span>
+      <p class="burbuja" id="vista-mensaje" aria-live="polite"></p>
+    </div>
+    <form class="formulario col-c" id="form-reserva" novalidate>
+      <label class="campo" data-campo="nombre">
+        <span class="etiqueta">Nombre</span>
+        <input name="nombre" autocomplete="name" placeholder="¿A nombre de quién?" required>
+      </label>
+      <div class="campo">
+        <span class="etiqueta" id="l-personas">Personas</span>
+        <div class="personas" role="group" aria-labelledby="l-personas">
+          <button type="button" data-paso="-1" aria-label="Una persona menos">−</button>
+          <output id="personas" aria-live="polite">2</output>
+          <button type="button" data-paso="1" aria-label="Una persona más">+</button>
+        </div>
+      </div>
+      <label class="campo" data-campo="fecha">
+        <span class="etiqueta">Fecha</span>
+        <input type="date" name="fecha" required>
+      </label>
+      <label class="campo" data-campo="hora">
+        <span class="etiqueta">Hora</span>
+        <select name="hora" required></select>
+      </label>
+      <fieldset class="campo campo--ancho">
+        <legend class="etiqueta">Ocasión (opcional)</legend>
+        <div class="ocasiones">
+          <label><input type="radio" name="ocasion" value="" checked><span>Ninguna</span></label>
+          <label><input type="radio" name="ocasion" value="Cumpleaños"><span>Cumpleaños</span></label>
+          <label><input type="radio" name="ocasion" value="Aniversario"><span>Aniversario</span></label>
+          <label><input type="radio" name="ocasion" value="Reunión de trabajo"><span>Reunión de trabajo</span></label>
+          <label><input type="radio" name="ocasion" value="Otra celebración"><span>Otra celebración</span></label>
+        </div>
+      </fieldset>
+      <label class="campo campo--ancho">
+        <span class="etiqueta">Algo más (opcional)</span>
+        <input name="nota" placeholder="Ej.: venimos con un bebé, alergia al maní">
+      </label>
+      <div class="enviar campo--ancho">
+        <button class="boton boton--rojo boton--grande" type="submit">Enviar por WhatsApp</button>
+        <p class="cuerpo">Te respondemos por el mismo chat para confirmar.</p>
+      </div>
+      <p class="aviso campo--ancho" id="aviso-reserva" role="alert" hidden></p>
+    </form>
+  </div>
+</section>
+
+<section class="hoja" id="contacto" aria-labelledby="t-contacto">
+  <div class="reticula cabecera">
+    <span class="col-a">(04)</span>
+    <span class="col-b">Visítanos</span>
+    <span class="col-c"><span class="estado" id="estado" hidden></span></span>
+  </div>
+  <div class="reticula">
+    <h2 class="titulo col-c" id="t-contacto" data-aparece><span>Ven a</span><span>La Jungla.</span></h2>
+    <p class="media entrada col-ab" data-aparece>Estamos en Puerto Ayacucho, <span class="gris">estado Amazonas.</span></p>
+  </div>
+  <div class="reticula visita">
+    <div class="datos col-ab">
+      <div class="dato">
+        <span class="etiqueta">Dirección</span>
+        <p class="pendiente">[Dirección exacta]</p>
+        <p class="gris">Puerto Ayacucho, Amazonas</p>
+      </div>
+      <div class="dato">
+        <span class="etiqueta">Horario</span>
+        <table class="horario">
+          <tbody id="horario">
+            <tr><th scope="row">Lunes a jueves</th><td class="pendiente">[00:00 – 00:00]</td></tr>
+            <tr><th scope="row">Viernes y sábado</th><td class="pendiente">[00:00 – 00:00]</td></tr>
+            <tr><th scope="row">Domingo</th><td class="pendiente">[00:00 – 00:00]</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dato">
+        <span class="etiqueta">Contacto</span>
+        <p><a data-whatsapp href="#reservas">WhatsApp <span class="pendiente">[+58 000-000 0000]</span></a></p>
+        <p><a href="https://www.instagram.com/la__jungla/" target="_blank" rel="noopener">@la__jungla</a></p>
+      </div>
+      <div class="acciones">
+        <a class="boton" id="como-llegar" href="https://www.google.com/maps/search/?api=1&amp;query=Puerto+Ayacucho%2C+Amazonas" target="_blank" rel="noopener">Cómo llegar ↗</a>
+        <a class="boton boton--rojo" data-whatsapp href="#reservas">Escribir por WhatsApp</a>
+      </div>
+    </div>
+    <div class="col-c">
+      <div class="mapa">
+        <iframe title="Mapa: La Jungla en Puerto Ayacucho" src="https://www.google.com/maps?q=Puerto+Ayacucho,+Amazonas,+Venezuela&amp;z=14&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <span class="nota pendiente">[Mapa provisional: falta el enlace de Google Maps]</span>
+      </div>
+    </div>
+  </div>
+</section>
 </main>
 
+<footer class="hoja pie">
+  <div class="reticula cabecera">
+    <span class="col-a">La Jungla Gastro Bar</span>
+    <span class="col-b solo-ancho">Puerto Ayacucho, Amazonas</span>
+    <a class="col-c" href="#inicio">Volver arriba ↑</a>
+  </div>
+  <p class="marca-grande" aria-hidden="true">La Jungla</p>
+  <div class="reticula cabecera abajo">
+    <span class="col-a">© <span data-anio>2026</span></span>
+    <a class="col-b" href="https://www.instagram.com/la__jungla/" target="_blank" rel="noopener">Instagram</a>
+    <a class="col-c" data-whatsapp href="#reservas">WhatsApp</a>
+  </div>
+</footer>
+
+<nav class="barra" id="barra" aria-label="Accesos rápidos">
+  <a class="barra__logo" href="#inicio" aria-label="Inicio"><svg viewBox="26 40 564 688" aria-hidden="true"><use href="#jaguar"/></svg></a>
+  <a class="solo-ancho" href="#nosotros">Nosotros</a>
+  <a href="#menu">Menú</a>
+  <a href="#contacto">Ubicación</a>
+  <a class="boton boton--rojo" href="#reservas">Reservar</a>
+</nav>
+
 <script>
-  // Hora local de Puerto Ayacucho y año en curso
+  // ===================== Datos del restaurante =====================
+  // Cambiar aquí cuando lleguen los datos reales; el resto de la página se actualiza solo.
+  var CONFIG = {
+    // [Número de WhatsApp para reservas: código de país y número, sin «+» ni espacios. Ej.: 584141234567]
+    whatsapp: '',
+    // [Enlace de Google Maps del local]. Sin él, «Cómo llegar» abre Puerto Ayacucho.
+    mapa: '',
+    // Horario por día, 0 = domingo … 6 = sábado: ['18:00', '02:00'] o null si ese día cierra.
+    // Mientras sea null no se muestra «Abierto ahora / Cerrado».
+    horario: null,
+    // [Horas que se ofrecen para reservar]
+    horasReserva: { desde: '12:00', hasta: '23:00', cada: 30 }
+  };
+
   (function () {
+    var ZONA = 'America/Caracas';
+    var DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+    // ---------- Hora local de Puerto Ayacucho y año en curso
     var reloj = document.getElementById('reloj');
-    var formato = new Intl.DateTimeFormat('es-VE', {
-      timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: false
+    var formatoReloj = new Intl.DateTimeFormat('es-VE', { timeZone: ZONA, hour: '2-digit', minute: '2-digit', hour12: false });
+    function ponerHora() { reloj.textContent = formatoReloj.format(new Date()); }
+    ponerHora();
+    setInterval(ponerHora, 15000);
+    var anio = new Date().getFullYear();
+    document.getElementById('anio').textContent = anio;
+    document.querySelectorAll('[data-anio]').forEach(function (el) { el.textContent = anio; });
+
+    // ---------- Enlaces de WhatsApp y del mapa
+    function enlaceWhatsapp(texto) {
+      return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(texto);
+    }
+    document.querySelectorAll('[data-whatsapp]').forEach(function (a) {
+      a.href = enlaceWhatsapp('Hola, La Jungla. ');
+      a.target = '_blank';
+      a.rel = 'noopener';
     });
-    function poner() { reloj.textContent = formato.format(new Date()); }
-    poner();
-    setInterval(poner, 15000);
-    document.getElementById('anio').textContent = new Date().getFullYear();
+    if (CONFIG.mapa) document.getElementById('como-llegar').href = CONFIG.mapa;
+
+    // ---------- Hora actual en Puerto Ayacucho: día de la semana y minutos desde medianoche
+    function ahora() {
+      var p = {};
+      new Intl.DateTimeFormat('en-US', { timeZone: ZONA, weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false })
+        .formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+      return { dia: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), min: (+p.hour % 24) * 60 + +p.minute };
+    }
+    function minutos(hhmm) { var x = hhmm.split(':'); return +x[0] * 60 + +x[1]; }
+    var formatoHora = new Intl.DateTimeFormat('es-VE', { hour: 'numeric', minute: '2-digit', hour12: true });
+    function horaBonita(hhmm) {
+      var m = minutos(hhmm);
+      return formatoHora.format(new Date(2000, 0, 1, Math.floor(m / 60), m % 60));
+    }
+
+    // ---------- Horario y «Abierto ahora» (solo cuando CONFIG.horario tenga datos)
+    if (CONFIG.horario) {
+      document.getElementById('horario').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(function (d) {
+        var r = CONFIG.horario[d];
+        return '<tr><th scope="row">' + DIAS[d] + '</th><td>' +
+          (r ? horaBonita(r[0]) + ' – ' + horaBonita(r[1]) : 'Cerrado') + '</td></tr>';
+      }).join('');
+      var estado = document.getElementById('estado');
+      var abierto = function () {
+        var n = ahora(), hoy = CONFIG.horario[n.dia], ayer = CONFIG.horario[(n.dia + 6) % 7];
+        if (hoy) {
+          var a = minutos(hoy[0]), c = minutos(hoy[1]);
+          if (c > a ? n.min >= a && n.min < c : n.min >= a) return true;
+        }
+        // Lo que queda de la noche anterior, si cerró después de medianoche
+        return !!(ayer && minutos(ayer[1]) < minutos(ayer[0]) && n.min < minutos(ayer[1]));
+      };
+      var ponerEstado = function () {
+        var si = abierto();
+        estado.textContent = si ? 'Abierto ahora' : 'Cerrado ahora';
+        estado.classList.toggle('abierto', si);
+        estado.hidden = false;
+      };
+      ponerEstado();
+      setInterval(ponerEstado, 60000);
+    }
+
+    // ---------- Reserva: arma el mensaje y abre WhatsApp
+    var form = document.getElementById('form-reserva');
+    var vista = document.getElementById('vista-mensaje');
+    var salidaPersonas = document.getElementById('personas');
+    var aviso = document.getElementById('aviso-reserva');
+    var personas = 2;
+
+    var hoyISO = new Intl.DateTimeFormat('en-CA', { timeZone: ZONA }).format(new Date());
+    form.fecha.min = hoyISO;
+    form.fecha.value = hoyISO;
+
+    var r = CONFIG.horasReserva;
+    for (var m = minutos(r.desde); m <= minutos(r.hasta); m += r.cada) {
+      var hhmm = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+      form.hora.add(new Option(horaBonita(hhmm), hhmm));
+    }
+    form.hora.value = '20:00';
+
+    function fechaBonita(iso) {
+      if (!iso) return '';
+      var x = iso.split('-');
+      return new Date(+x[0], +x[1] - 1, +x[2]).toLocaleDateString('es-VE', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+    function mensaje() {
+      var ocasion = form.querySelector('[name=ocasion]:checked').value;
+      var lineas = [
+        'Hola, La Jungla. Quiero reservar una mesa:',
+        '• Nombre: ' + (form.nombre.value.trim() || '…'),
+        '• Personas: ' + personas,
+        '• Fecha: ' + (fechaBonita(form.fecha.value) || '…'),
+        '• Hora: ' + (form.hora.value ? horaBonita(form.hora.value) : '…')
+      ];
+      if (ocasion) lineas.push('• Ocasión: ' + ocasion);
+      if (form.nota.value.trim()) lineas.push('• Nota: ' + form.nota.value.trim());
+      return lineas.join('\n');
+    }
+    function actualizar() { vista.textContent = mensaje(); }
+
+    form.querySelectorAll('[data-paso]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        personas = Math.min(30, Math.max(1, personas + +b.dataset.paso));
+        salidaPersonas.textContent = personas;
+        actualizar();
+      });
+    });
+    form.addEventListener('input', function (e) {
+      var campo = e.target.closest('[data-campo]');
+      if (campo) campo.removeAttribute('aria-invalid');
+      actualizar();
+    });
+    form.addEventListener('change', actualizar);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var falta = ['nombre', 'fecha', 'hora'].filter(function (n) { return !form[n].value.trim(); });
+      form.querySelectorAll('[data-campo]').forEach(function (c) {
+        if (falta.indexOf(c.dataset.campo) >= 0) c.setAttribute('aria-invalid', 'true');
+      });
+      if (falta.length) {
+        aviso.textContent = 'Falta ' + falta.map(function (n) { return { nombre: 'el nombre', fecha: 'la fecha', hora: 'la hora' }[n]; }).join(' y ') + '.';
+        aviso.hidden = false;
+        form[falta[0]].focus();
+        return;
+      }
+      aviso.hidden = true;
+      window.open(enlaceWhatsapp(mensaje()), '_blank', 'noopener');
+    });
+    actualizar();
+
+    // ---------- Barra flotante: aparece al salir de la portada y se esconde en el pie,
+    // que ya tiene sus propios enlaces
+    var barra = document.getElementById('barra');
+    var fueraPortada = false, enPie = false;
+    function ponerBarra() { barra.classList.toggle('visible', fueraPortada && !enPie); }
+    new IntersectionObserver(function (e) {
+      fueraPortada = e[0].intersectionRatio < 0.2;
+      ponerBarra();
+    }, { threshold: [0, 0.2, 1] }).observe(document.getElementById('inicio'));
+    new IntersectionObserver(function (e) {
+      enPie = e[0].isIntersecting;
+      ponerBarra();
+    }, { rootMargin: '0px 0px -12% 0px' }).observe(document.querySelector('.pie'));
+
+    // ---------- Sección actual marcada con «•» en el menú de la portada y en la barra
+    var enlacesSeccion = document.querySelectorAll('.menu a, .barra a:not(.boton):not(.barra__logo)');
+    var observaSeccion = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        enlacesSeccion.forEach(function (a) {
+          if (a.getAttribute('href') === '#' + e.target.id) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    ['inicio', 'nosotros', 'menu', 'reservas', 'contacto'].forEach(function (id) {
+      observaSeccion.observe(document.getElementById(id));
+    });
+
+    // ---------- Categoría actual en el índice del menú
+    var enlacesCarta = document.querySelectorAll('.indice a');
+    var observaCarta = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        enlacesCarta.forEach(function (a) {
+          var es = a.getAttribute('href') === '#' + e.target.id;
+          if (es) {
+            a.setAttribute('aria-current', 'true');
+            // En el teléfono el índice es una fila que se desliza: lleva a la vista la categoría actual
+            var fila = a.closest('ul');
+            if (fila.scrollWidth > fila.clientWidth) fila.scrollTo({ left: a.parentNode.offsetLeft - 16, behavior: 'smooth' });
+          } else a.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    document.querySelectorAll('.categoria').forEach(function (c) { observaCarta.observe(c); });
+
+    // ---------- Aparición suave al llegar
+    var observaAparece = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visto'); observaAparece.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('[data-aparece]').forEach(function (el) { observaAparece.observe(el); });
   })();
 </script>
 
