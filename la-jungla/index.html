@@ -587,7 +587,7 @@
     grid-template-columns: minmax(0, 1fr) 34%;
     gap: var(--relleno);
   }
-  .lugar figcaption, .mapa .nota {
+  .lugar figcaption {
     padding: .5em .8em;
     border-radius: 99px;
     background: rgba(0, 0, 0, .78);
@@ -609,13 +609,6 @@
     height: 100%;
     border: 0;
     filter: grayscale(1) invert(.92) contrast(.9) brightness(.85);
-  }
-  .mapa .nota {
-    position: absolute;
-    left: var(--relleno);
-    bottom: var(--relleno);
-    font-size: var(--chica);
-    font-weight: 600;
   }
   .estado { display: inline-flex; align-items: center; gap: .5em; }
   .estado::before {
@@ -1404,7 +1397,6 @@
       <div class="lugar">
         <div class="mapa">
           <iframe title="Mapa: La Jungla Gastro Bar en la avenida Perimetral, Puerto Ayacucho" src="https://www.google.com/maps?q=La+Jungla+Gastro+Bar,+Avenida+Perimetral,+Puerto+Ayacucho,+Amazonas&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          <span class="nota pendiente">[Confirmar que el pin sea el del local]</span>
         </div>
         <figure class="foto foto--fachada"><img src="img/fotos/fachada.webp" alt="La entrada de La Jungla de noche, con plantas y el letrero iluminado" width="700" height="700" loading="lazy" decoding="async"><figcaption>Así se ve la entrada</figcaption></figure>
       </div>
